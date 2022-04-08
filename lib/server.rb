@@ -1,8 +1,7 @@
-require 'sinatra'
+require "sinatra"
 
 class Server < Sinatra::Base
-  get '/' do
+  get "/" do
     Services::Example.new.execute
   end
 end
-

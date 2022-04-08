@@ -3,4 +3,3 @@ describe Services::Example do
     expect(described_class.new.execute).to eq("GOV.UK Forms API")
   end
 end
-

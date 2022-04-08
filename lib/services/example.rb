@@ -3,4 +3,3 @@ class Services::Example
     "GOV.UK Forms API"
   end
 end
-

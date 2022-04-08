@@ -1,0 +1,53 @@
+# The below is taken from the GOV.UK Rubocop config
+
+AllCops:
+  NewCops: disable
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**'
+    - 'config.ru'
+    - 'tmp/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+
+  DisplayCopNames:
+    Enabled: true
+
+  ExtraDetails:
+    Enabled: true
+
+  DisplayStyleGuide:
+    Enabled: true
+
+# Introduced in: c69a7eb3af955d6c4c0cf0c3cec8e9f330c74429
+# Documenting every class is a lot of effort and we don't
+# expect to get any value from this. Another risk of adding
+# more documentation is the potential for confusion if that
+# documentation gets out-of-sync with the class/module.
+Style/Documentation:
+  Enabled: false
+
+# Introduced in: b171d652d3e434b74ddc621df3b5be24c49bc7e8
+# This cop was added in preperation for a Ruby feature
+# that is no longer likely to become part of the language.
+# https://github.com/rubocop-hq/rubocop/issues/7197
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# We have no concensus on this. Using the nested style is the
+# default for generated Rails app (see 'config/application.rb').
+# Using the compact style can help to reduce boilerplate within
+# modules. At the time of writing, the auto-correct for this Cop
+# is unsafe for moving to either style.
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# "Try not to mix up single-quoted and double-quoted
+# strings within a file: it can make the code harder to read.
+# Definitely don't mix up single-quoted and double-quoted
+# strings within a method. If in doubt, use double-quoted strings,
+# because you’ll probably need to use interpolation somewhere.
+Style/StringLiterals:
+  EnforcedStyle: double_quotes

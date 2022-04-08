@@ -36,6 +36,7 @@ GEM
       tilt (~> 2.0)
     tilt (2.0.10)
     unicode-display_width (2.1.0)
+    zeitwerk (2.5.4)
 
 PLATFORMS
   x86_64-linux
@@ -44,6 +45,10 @@ DEPENDENCIES
   puma (~> 5.0)
   rubocop
   sinatra (~> 2.2.0)
+  zeitwerk (~> 2.5)
+
+RUBY VERSION
+   ruby 3.0.3p157
 
 BUNDLED WITH
    2.2.33

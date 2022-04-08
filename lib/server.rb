@@ -2,7 +2,7 @@ require 'sinatra'
 
 class Server < Sinatra::Base
   get '/' do
-    "GOV.UK Forms - API"
+    Services::Example.new.execute
   end
 end
 

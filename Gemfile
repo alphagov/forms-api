@@ -11,3 +11,7 @@ gem 'zeitwerk', '~> 2.5'
 group :development do
   gem "rubocop"
 end
+
+group :test do
+  gem "rspec"
+end

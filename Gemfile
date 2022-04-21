@@ -10,6 +10,10 @@ gem "sequel", "~> 5.55"
 gem "sinatra", "~> 2.2.0"
 gem "zeitwerk", "~> 2.5"
 
+group :development, :test do
+  gem "dotenv"
+end
+
 group :development do
   gem "rubocop"
 end

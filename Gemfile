@@ -9,9 +9,9 @@ gem "puma", "~> 5.0"
 gem "sequel", "~> 5.55"
 gem "sinatra", "~> 2.2.0"
 gem "zeitwerk", "~> 2.5"
+gem "dotenv", "~> 2.7.6"
 
 group :development, :test do
-  gem "dotenv"
   gem "pry"
 end
 

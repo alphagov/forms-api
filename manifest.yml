@@ -1,0 +1,9 @@
+---
+applications:
+- name: forms-api-dev
+  memory: 256M
+  command: bundle exec rackup -o 0.0.0.0 -p $PORT
+  services:
+    - forms-api-dev-db
+  env:
+    RACK_ENV: production

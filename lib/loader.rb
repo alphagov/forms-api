@@ -1,4 +1,3 @@
-require "dotenv/load"
 require "zeitwerk"
 require_relative "server"
 require_relative "../db/database"

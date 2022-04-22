@@ -12,6 +12,7 @@ gem "zeitwerk", "~> 2.5"
 
 group :development, :test do
   gem "dotenv"
+  gem "pry"
 end
 
 group :development do

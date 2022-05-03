@@ -10,6 +10,7 @@ gem "sequel", "~> 5.55"
 gem "sinatra", "~> 2.2.0"
 gem "zeitwerk", "~> 2.5"
 gem "dotenv", "~> 2.7.6"
+gem "sentry-ruby", "~> 5.3.0"
 
 group :development, :test do
   gem "pry"

@@ -7,3 +7,4 @@ applications:
     - forms-api-dev-db
   env:
     RACK_ENV: production
+    SENTRY_DSN: ((SENTRY_DSN))

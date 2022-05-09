@@ -39,6 +39,14 @@ This will start the server on `localhost:9292`
 
 ## Configuration and deployment
 
+### Environment variables
+
+
+| Name | Purpose |
+| ------------- | ------------- |
+| `DATABASE_URL` | The URL to the postgres database|
+| `SENTRY_DSN` | The DSN provided by Sentry |
+
 TODO: Add these details once we've got our deployment running.
 
 ## Explain how to test the project

@@ -53,4 +53,4 @@ Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 Metrics/BlockLength:
-  IgnoredMethods: ['resource']
+  IgnoredMethods: ['resource', 'describe']

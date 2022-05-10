@@ -25,7 +25,11 @@ class Server < Grape::API
     end
     route_param :formid do
       get do
-        Services::Example.new.execute(params[:formid])
+        {
+          form_id: params[:formid],
+          form_name: "form name",
+          user: "user@example.com"
+        }
       end
     end
 
@@ -36,8 +40,9 @@ class Server < Grape::API
     end
     put ":id" do
       {
-        user: "fake user",
-        form_id: 1
+        form_id: params[:formid],
+        form_name: "form name",
+        user: "user@example.com"
       }
     end
 
@@ -46,7 +51,7 @@ class Server < Grape::API
       requires :id, type: String, desc: "Form ID."
     end
     delete ":id" do
-      {}
+      "Deleted."
     end
   end
 

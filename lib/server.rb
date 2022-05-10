@@ -9,7 +9,8 @@ class Server < Grape::API
   resource :forms do
     desc "Create a form."
     params do
-      requires :form, type: String, desc: "Form data."
+      requires :name, type: String, desc: "Form name."
+      requires :submission_email, type: String, desc: "Submission email."
     end
     post do
       {
@@ -36,13 +37,14 @@ class Server < Grape::API
     desc "Update a form."
     params do
       requires :id, type: String, desc: "Form ID."
-      requires :data, type: String, desc: "Form data."
+      requires :name, type: String, desc: "Form name."
+      requires :submission_email, type: String, desc: "Submission email."
     end
     put ":id" do
       {
-        id: id,
-        name: "form name",
-        submission_email: "user@example.com"
+        id: params[:id],
+        name: params[:name],
+        submission_email: params[:submission_email]
       }
     end
 

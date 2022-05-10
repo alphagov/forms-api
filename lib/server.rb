@@ -13,8 +13,9 @@ class Server < Grape::API
     end
     post do
       {
-        user: "fake user",
-        form_id: 1
+        form_id: 1,
+        form_name: "form name",
+        user: "user@example.com"
       }
     end
 
@@ -47,15 +48,15 @@ class Server < Grape::API
     delete ":id" do
       {}
     end
-
-    # swagger docs must be at the end of the class
-    add_swagger_documentation(
-      hide_documentation_path: true,
-      api_version: "v1",
-      info: {
-        title: "GOV.UK Forms API",
-        description: "Core Forms management API"
-      }
-    )
   end
+
+  # swagger docs must be at the end of the class
+  add_swagger_documentation(
+    hide_documentation_path: true,
+    api_version: "v1",
+    info: {
+      title: "GOV.UK Forms API",
+      description: "Core Forms management API"
+    }
+  )
 end

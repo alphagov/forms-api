@@ -1,6 +1,6 @@
 describe Services::Example do
   it "works" do
-    expect(described_class.new.get_forms("test"))
-      .to eq("{\"test\":{\"item2\":{\"item3\":\"ok\"}}}")
+    expect(described_class.new.execute("test"))
+      .to eq("GOV.UK Forms API: test")
   end
 end

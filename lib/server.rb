@@ -13,22 +13,22 @@ class Server < Grape::API
     end
     post do
       {
-        form_id: 1,
-        form_name: "form name",
-        user: "user@example.com"
+        id: 1,
+        name: "form name",
+        submission_email: "user@example.com"
       }
     end
 
     desc "Read a form."
     params do
-      requires :formid, type: Integer, desc: "Form ID."
+      requires :id, type: Integer, desc: "Form ID."
     end
-    route_param :formid do
+    route_param :id do
       get do
         {
-          form_id: params[:formid],
-          form_name: "form name",
-          user: "user@example.com"
+          id: params[:id],
+          name: "form name",
+          submission_email: "user@example.com"
         }
       end
     end
@@ -36,13 +36,13 @@ class Server < Grape::API
     desc "Update a form."
     params do
       requires :id, type: String, desc: "Form ID."
-      requires :status, type: String, desc: "Form data."
+      requires :data, type: String, desc: "Form data."
     end
     put ":id" do
       {
-        form_id: params[:formid],
-        form_name: "form name",
-        user: "user@example.com"
+        id: id,
+        name: "form name",
+        submission_email: "user@example.com"
       }
     end
 

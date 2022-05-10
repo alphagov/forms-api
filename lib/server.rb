@@ -1,29 +1,61 @@
 require "grape"
-require 'grape-swagger'
+require "grape-swagger"
 
 class Server < Grape::API
-  version 'v1', using: :path, vendor: 'forms'
+  version "v1", using: :path, vendor: "forms"
   format :json
   prefix :api
 
   resource :forms do
-    desc 'Returns all forms.'
+    desc "Create a form."
     params do
-      requires :result, type: Integer, desc: 'Result ID.'
+      requires :form, type: String, desc: "Form data."
     end
-    route_param :result do
+    post do
+      {
+        user: "fake user",
+        form_id: 1
+      }
+    end
+
+    desc "Read a form."
+    params do
+      requires :formid, type: Integer, desc: "Form ID."
+    end
+    route_param :formid do
       get do
-        Services::Example.new.execute(params[:result])
+        Services::Example.new.execute(params[:formid])
       end
     end
 
+    desc "Update a form."
+    params do
+      requires :id, type: String, desc: "Form ID."
+      requires :status, type: String, desc: "Form data."
+    end
+    put ":id" do
+      {
+        user: "fake user",
+        form_id: 1
+      }
+    end
+
+    desc "Delete a status."
+    params do
+      requires :id, type: String, desc: "Form ID."
+    end
+    delete ":id" do
+      {}
+    end
+
+    # swagger docs must be at the end of the class
+    add_swagger_documentation(
+      hide_documentation_path: true,
+      api_version: "v1",
+      info: {
+        title: "GOV.UK Forms API",
+        description: "Core Forms management API"
+      }
+    )
   end
-
-
-  add_swagger_documentation hide_documentation_path: true,
-                            api_version: 'v1',
-                            info: {
-                              title: 'GOV.UK Forms API',
-                              description: 'Core Forms management API'
-                            }
 end

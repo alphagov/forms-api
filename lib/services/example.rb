@@ -4,14 +4,12 @@ class Services::Example
   end
 
   def get_forms(name)
-
     JSON({
-        name => {
-            item2: {
-                item3: 'ok'
-            }
-        }
-    })
+           name => {
+             item2: {
+               item3: "ok"
+             }
+           }
+         })
   end
-
 end

@@ -7,6 +7,27 @@ class Server < Grape::API
   prefix :api
 
   resource :forms do
+    desc "Return all forms."
+    get do
+      [
+        {
+          id: 1,
+          name: "form name",
+          submission_email: "user@example.com"
+        },
+        {
+          id: 2,
+          name: "form name",
+          submission_email: "user@example.com"
+        },
+        {
+          id: 3,
+          name: "form name",
+          submission_email: "user@example.com"
+        }
+      ]
+    end
+
     desc "Create a form."
     params do
       requires :name, type: String, desc: "Form name."

@@ -1,4 +1,4 @@
-![build status badge](https://img.shields.io/github/workflow/status/alphagov/forms-api/Deploy%20to%20GOV.UK%20PaaS?label=Deploy%20to%20paas&style=for-the-badge
+![build status badge](https://img.shields.io/github/workflow/status/alphagov/forms-api/Deploy%20to%20GOV.UK%20PaaS?label=Deploy%20to%20paas&style=for-the-badge)
 ![tests status](https://img.shields.io/github/workflow/status/alphagov/forms-api/Ruby?label=Tests&style=for-the-badge)
 
 # GOV.UK Forms - API

@@ -1,6 +1,11 @@
+![build status badge](https://img.shields.io/github/workflow/status/alphagov/forms-api/Deploy%20to%20GOV.UK%20PaaS?label=Deploy%20to%20paas&style=for-the-badge
+![tests status](https://img.shields.io/github/workflow/status/alphagov/forms-api/Ruby?label=Tests&style=for-the-badge)
+
 # GOV.UK Forms - API
 
 `forms-api` is the API for the GOV.UK Forms platform. It is a Ruby application that is built using Sinatra, currently using a Postgresql database for data storage and is used for storing/serving the form configurations that are created by form creators.
+
+Dev server url: https://forms-api-dev.london.cloudapps.digital/api/v1/forms/
 
 ## Before you start
 

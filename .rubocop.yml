@@ -51,3 +51,6 @@ Style/ClassAndModuleChildren:
 # because you’ll probably need to use interpolation somewhere.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Metrics/BlockLength:
+  IgnoredMethods: ['resource', 'describe']

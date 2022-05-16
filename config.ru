@@ -18,4 +18,8 @@ end
 
 $stdout.sync = true
 
+Database.use do |db|
+  migrator = Migrator.new
+  migrator.migrate(db)
+end
 run Server

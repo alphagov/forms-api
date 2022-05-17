@@ -2,13 +2,11 @@ require "sequel"
 require_relative "./migrator"
 
 class Database
-  def self.use
+  def self.existing_database
     database = Sequel.connect(ENV["DATABASE_URL"])
     database.extension :pg_json
     database.extension :pg_array
-    yield(database)
-  ensure
-    database.disconnect
+    database
   end
 
   def self.fresh_database(url, name)

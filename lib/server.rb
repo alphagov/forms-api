@@ -56,7 +56,7 @@ class Server < Grape::API
       requires :id, type: String, desc: "Form ID."
     end
     delete ":id" do
-      "Deleted."
+      @database[:forms].where(id: params[:id]).delete
     end
   end
 

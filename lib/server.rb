@@ -1,10 +1,19 @@
 require "grape"
 require "grape-swagger"
+require "pry"
 
 class Server < Grape::API
   version "v1", using: :path, vendor: "forms"
   format :json
   prefix :api
+
+  before do
+    @database = Database.existing_database
+  end
+
+  after do
+    @database.disconnect
+  end
 
   resource :forms do
     desc "Return all forms."
@@ -34,11 +43,8 @@ class Server < Grape::API
       requires :submission_email, type: String, desc: "Submission email."
     end
     post do
-      {
-        id: 1,
-        name: "form name",
-        submission_email: "user@example.com"
-      }
+      repository = Repositories::ExampleRepository.new(@database)
+      repository.test_query(params[:name], params[:submission_email])[:result]
     end
 
     desc "Read a form."

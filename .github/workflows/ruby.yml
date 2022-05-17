@@ -24,6 +24,19 @@ jobs:
       matrix:
         ruby-version: ['3.0.3']
 
+    services:
+      postgres:
+        image: postgres:13-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+    env:
+      ENV: "test"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby

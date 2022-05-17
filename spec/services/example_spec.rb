@@ -1,7 +1,9 @@
-describe Services::Example do
+describe Repositories::ExampleRepository do
+  include_context "with database"
+
   it "works" do
-    binding.pry
-    expect(described_class.new.execute("test"))
-      .to eq("GOV.UK Forms API: test")
+    subject = described_class.new(database)
+    result = subject.test_query
+    expect(result[:result]).to eq(1)
   end
 end

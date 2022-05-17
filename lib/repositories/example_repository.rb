@@ -1,12 +1,14 @@
 class Repositories::ExampleRepository
-  def test_query
-    res = nil
-    Database.use do |db|
-      res = db.fetch("SELECT 1 as test").first
-    end
+  def initialize(database)
+    @database = database
+  end
+
+  def test_query(name, email)
+    id = @database[:forms].insert(name: name, submission_email: email)
+    created_form = @database[:forms].where(id: id).first
 
     {
-      result: res[:test]
+      result: created_form
     }
   end
 end

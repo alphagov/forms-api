@@ -1,6 +1,7 @@
 ENV["RACK_ENV"] = "test"
 require "loader"
 require "pry"
+require_relative "database_context"
 
 RSpec.configure do |config|
   database = Database.fresh_database(ENV["TEST_DATABASE_URL"], ENV["TEST_DATABASE_NAME"])

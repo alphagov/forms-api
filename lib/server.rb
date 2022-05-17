@@ -48,11 +48,7 @@ class Server < Grape::API
       requires :submission_email, type: String, desc: "Submission email."
     end
     put ":id" do
-      {
-        id: params[:id],
-        name: params[:name],
-        submission_email: params[:submission_email]
-      }
+      @database[:forms].where(id: params[:id]).update(name: params[:name], submission_email: params[:submission_email])
     end
 
     desc "Delete a status."

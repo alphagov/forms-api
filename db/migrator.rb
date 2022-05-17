@@ -13,4 +13,3 @@ class Migrator
     Sequel::Migrator.run(database, "#{__dir__}/migrations")
   end
 end
-

@@ -15,7 +15,7 @@ class Database
       db.execute "CREATE DATABASE #{name}"
     end
 
-    database = Sequel.connect([url,name].join("/"))
+    database = Sequel.connect([url, name].join("/"))
     database.extension :pg_json
     database.extension :pg_array
     migrator = Migrator.new

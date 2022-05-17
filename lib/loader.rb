@@ -6,7 +6,7 @@ require_relative "server"
 require_relative "../db/database"
 require_relative "../db/migrator"
 
-Dotenv.load(".env.#{RACK_ENV}")
+Dotenv.load(".env", ".env.#{RACK_ENV}")
 
 loader = Zeitwerk::Loader.new
 loader.push_dir(__dir__)

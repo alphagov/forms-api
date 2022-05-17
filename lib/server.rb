@@ -18,23 +18,7 @@ class Server < Grape::API
   resource :forms do
     desc "Return all forms."
     get do
-      [
-        {
-          id: 1,
-          name: "form name",
-          submission_email: "user@example.com"
-        },
-        {
-          id: 2,
-          name: "form name",
-          submission_email: "user@example.com"
-        },
-        {
-          id: 3,
-          name: "form name",
-          submission_email: "user@example.com"
-        }
-      ]
+      @database[:forms].all
     end
 
     desc "Create a form."

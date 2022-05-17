@@ -3,7 +3,8 @@ describe Repositories::ExampleRepository do
 
   it "works" do
     subject = described_class.new(database)
-    result = subject.test_query
-    expect(result[:result]).to eq(1)
+    result = subject.test_query("name", "email")
+    expect(result[:result][:name]).to eq("name")
+    expect(result[:result][:submission_email]).to eq("email")
   end
 end

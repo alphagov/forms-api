@@ -1,4 +1,5 @@
 require "sequel"
+require "uri"
 require_relative "./migrator"
 
 class Database
@@ -9,13 +10,17 @@ class Database
     database
   end
 
-  def self.fresh_database(url, name)
-    Sequel.connect(url) do |db|
-      db.execute "DROP DATABASE IF EXISTS #{name}"
-      db.execute "CREATE DATABASE #{name}"
+  def self.fresh_database
+    url = URI.parse(ENV["DATABASE_URL"])
+    database_name = url.path[1..]
+    url.path = ""
+
+    Sequel.connect(url.to_s) do |db|
+      db.execute "DROP DATABASE IF EXISTS #{database_name}"
+      db.execute "CREATE DATABASE #{database_name}"
     end
 
-    database = Sequel.connect([url, name].join("/"))
+    database = Sequel.connect(ENV["DATABASE_URL"])
     database.extension :pg_json
     database.extension :pg_array
     migrator = Migrator.new

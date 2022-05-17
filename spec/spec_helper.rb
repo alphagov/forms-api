@@ -4,7 +4,8 @@ require "pry"
 require_relative "database_context"
 
 RSpec.configure do |config|
-  database = Database.fresh_database(ENV["TEST_DATABASE_URL"], ENV["TEST_DATABASE_NAME"])
+  ENV["DATABASE_URL"] = "#{ENV['DATABASE_URL']}_test"
+  database = Database.fresh_database
 
   config.before(:all) { @database = database }
 

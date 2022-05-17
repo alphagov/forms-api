@@ -37,11 +37,7 @@ class Server < Grape::API
     end
     route_param :id do
       get do
-        {
-          id: params[:id],
-          name: "form name",
-          submission_email: "user@example.com"
-        }
+        @database[:forms].where(id: params[:id]).first
       end
     end
 

@@ -1,6 +1,5 @@
 require "grape"
 require "grape-swagger"
-require "pry"
 
 class Server < Grape::API
   version "v1", using: :path, vendor: "forms"

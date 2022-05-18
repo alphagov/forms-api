@@ -46,6 +46,7 @@ This will start the server on `localhost:9292`
 
 ### Environment variables
 
+Environment variables can be set using `.env` and `.env.development`/`env.test` for environment specific variables.
 
 | Name | Purpose |
 | ------------- | ------------- |

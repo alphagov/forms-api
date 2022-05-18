@@ -48,6 +48,8 @@ class Server < Grape::API
     end
     put ":id" do
       @database[:forms].where(id: params[:id]).update(name: params[:name], submission_email: params[:submission_email])
+
+      { success: true }
     end
 
     desc "Delete a status."
@@ -56,6 +58,7 @@ class Server < Grape::API
     end
     delete ":id" do
       @database[:forms].where(id: params[:id]).delete
+      { success: true }
     end
   end
 

@@ -1,8 +1,4 @@
-RACK_ENV = ENV['RACK_ENV'] ||= 'development' unless defined?(RACK_ENV)
-require 'dotenv'
 require './lib/loader'
-
-Dotenv.load(".env.#{RACK_ENV}")
 
 unless ENV['SENTRY_DSN'].nil?
   require 'sentry-ruby'
@@ -17,5 +13,10 @@ unless ENV['SENTRY_DSN'].nil?
 end
 
 $stdout.sync = true
+
+database = Database.existing_database
+migrator = Migrator.new
+migrator.migrate(database)
+database.disconnect
 
 run Server

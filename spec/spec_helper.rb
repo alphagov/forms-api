@@ -1,6 +1,14 @@
+ENV["RACK_ENV"] = "test"
 require "loader"
+require "pry"
+require_relative "database_context"
 
 RSpec.configure do |config|
+  ENV["DATABASE_URL"] = "#{ENV['DATABASE_URL']}_test"
+  database = Database.fresh_database
+
+  config.before(:all) { @database = database }
+
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end

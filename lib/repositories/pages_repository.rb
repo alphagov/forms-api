@@ -25,4 +25,8 @@ class Repositories::PagesRepository
       answer_type: answer_type
     )
   end
+
+  def delete(page_id)
+    @database[:pages].where(id: page_id).delete
+  end
 end

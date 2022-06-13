@@ -4,7 +4,7 @@ class Repositories::PagesRepository
   end
 
   def create(form_id, question_text, question_short_name, hint_text, answer_type)
-    id = @database[:pages].insert(
+    @database[:pages].insert(
       form_id: form_id,
       question_text: question_text, 
       question_short_name: question_short_name, 
@@ -14,7 +14,7 @@ class Repositories::PagesRepository
   end
 
   def get(page_id)
-    page = @database[:pages].where(id: page_id).all.last
+    @database[:pages].where(id: page_id).all.last
   end
 
   def update(page_id, question_text, question_short_name, hint_text, answer_type)
@@ -28,5 +28,9 @@ class Repositories::PagesRepository
 
   def delete(page_id)
     @database[:pages].where(id: page_id).delete
+  end
+
+  def get_pages_in_form(form_id)
+    @database[:pages].where(form_id: form_id).all
   end
 end

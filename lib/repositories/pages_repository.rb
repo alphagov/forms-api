@@ -16,4 +16,13 @@ class Repositories::PagesRepository
   def get(page_id)
     page = @database[:pages].where(id: page_id).all.last
   end
+
+  def update(page_id, question_text, question_short_name, hint_text, answer_type)
+    @database[:pages].where(id: page_id).update(
+      question_text: question_text, 
+      question_short_name: question_short_name, 
+      hint_text: hint_text, 
+      answer_type: answer_type
+    )
+  end
 end

@@ -27,4 +27,17 @@ describe Repositories::PagesRepository do
       expect(page[:form_id]).to eq(form_id)
     end
   end
+
+  context "updating a page" do
+    it "updates a page" do
+      page_id = subject.create(form_id, "question_text", "question_short_name", "hint_text", "answer_type")
+      subject.update(page_id, "question_text2", "question_short_name2", "hint_text2", "answer_type2")
+      page = subject.get(page_id)
+      expect(page[:question_text]).to eq("question_text2")
+      expect(page[:question_short_name]).to eq("question_short_name2")
+      expect(page[:hint_text]).to eq("hint_text2")
+      expect(page[:answer_type]).to eq("answer_type2")
+      expect(page[:form_id]).to eq(form_id)
+    end
+  end
 end

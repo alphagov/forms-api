@@ -42,7 +42,8 @@ class Server < Grape::API
         requires :submission_email, type: String, desc: "Submission email."
       end
       put do
-        @database[:forms].where(id: params[:form_id]).update(name: params[:name], submission_email: params[:submission_email])
+        @database[:forms].where(id: params[:form_id]).update(name: params[:name],
+                                                             submission_email: params[:submission_email])
 
         { success: true }
       end
@@ -64,7 +65,8 @@ class Server < Grape::API
           requires :question_text, type: String, desc: "Question text"
           optional :question_short_name, type: String, desc: "Question short name."
           optional :hint_text, type: String, desc: "Hint text"
-          requires :answer_type, type: Symbol, values: [:single_line, :address, :date, :email, :national_insurance_number, :phone_number], desc: "Answer type"
+          requires :answer_type, type: Symbol,
+                                 values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
         end
         post do
           {}
@@ -81,7 +83,8 @@ class Server < Grape::API
             requires :question_text, type: String, desc: "Question text"
             optional :question_short_name, type: String, desc: "Question short name."
             optional :hint_text, type: String, desc: "Hint text"
-            requires :answer_type, type: Symbol, values: [:single_line, :address, :date, :email, :national_insurance_number, :phone_number], desc: "Answer type"
+            requires :answer_type, type: Symbol,
+                                   values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
           end
           put do
             {}

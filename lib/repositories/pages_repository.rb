@@ -12,4 +12,8 @@ class Repositories::PagesRepository
       answer_type: answer_type
     )
   end
+
+  def get(page_id)
+    page = @database[:pages].where(id: page_id).all.last
+  end
 end

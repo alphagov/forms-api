@@ -71,13 +71,14 @@ class Server < Grape::API
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
-          repository.create(
+          id = repository.create(
             params[:form_id], 
             params[:question_text], 
             params[:question_short_name], 
             params[:hint_text], 
             params[:answer_type]
           )
+          {id: id}
         end
 
         route_param :page_id do
@@ -104,12 +105,14 @@ class Server < Grape::API
               params[:hint_text], 
               params[:answer_type]
             )
+            {success: true}
           end
 
           desc "Delete a page."
           delete do
             repository = Repositories::PagesRepository.new(@database)
             repository.delete(params[:page_id])
+            {success: true}
           end
         end
       end

@@ -57,7 +57,8 @@ class Server < Grape::API
       resource :pages do
         desc "Return all pages for the form"
         get do
-          []
+          repository = Repositories::PagesRepository.new(@database)
+          repository.get_pages_in_form(params[:form_id])
         end
 
         desc "Create a new page."
@@ -65,17 +66,25 @@ class Server < Grape::API
           requires :question_text, type: String, desc: "Question text"
           optional :question_short_name, type: String, desc: "Question short name."
           optional :hint_text, type: String, desc: "Hint text"
-          requires :answer_type, type: Symbol,
-                                 values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+          requires :answer_type, type: String,
+                                 values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
         end
         post do
-          {}
+          repository = Repositories::PagesRepository.new(@database)
+          repository.create(
+            params[:form_id], 
+            params[:question_text], 
+            params[:question_short_name], 
+            params[:hint_text], 
+            params[:answer_type]
+          )
         end
 
         route_param :page_id do
           desc "Get a page."
           get do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.get(params[:page_id])
           end
 
           desc "Update a page."
@@ -83,16 +92,24 @@ class Server < Grape::API
             requires :question_text, type: String, desc: "Question text"
             optional :question_short_name, type: String, desc: "Question short name."
             optional :hint_text, type: String, desc: "Hint text"
-            requires :answer_type, type: Symbol,
-                                   values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+            requires :answer_type, type: String,
+                                   values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
           end
           put do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.update(
+              params[:page_id], 
+              params[:question_text], 
+              params[:question_short_name], 
+              params[:hint_text], 
+              params[:answer_type]
+            )
           end
 
           desc "Delete a page."
           delete do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.delete(params[:page_id])
           end
         end
       end

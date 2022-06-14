@@ -12,7 +12,7 @@ class Server < Grape::API
 
   rescue_from :all do |e|
     Sentry.capture_exception(e)
-    error! "Error", 500
+    error! e.message, 500
   end
 
   before do
@@ -26,7 +26,8 @@ class Server < Grape::API
   resource :forms do
     desc "Return all forms."
     get do
-      @database[:forms].all
+      repository = Repositories::FormsRepository.new(@database)
+      repository.get_all
     end
 
     desc "Create a form."
@@ -35,14 +36,16 @@ class Server < Grape::API
       requires :submission_email, type: String, desc: "Submission email."
     end
     post do
-      repository = Repositories::ExampleRepository.new(@database)
-      repository.test_query(params[:name], params[:submission_email])[:result]
+      repository = Repositories::FormsRepository.new(@database)
+      id = repository.create(params[:name], params[:submission_email])
+      {id: id}
     end
 
     route_param :form_id do
       desc "Read a form."
       get do
-        @database[:forms].where(id: params[:form_id]).first
+        repository = Repositories::FormsRepository.new(@database)
+        repository.get(params[:form_id])
       end
 
       desc "Update a form."
@@ -51,15 +54,16 @@ class Server < Grape::API
         requires :submission_email, type: String, desc: "Submission email."
       end
       put do
-        @database[:forms].where(id: params[:form_id]).update(name: params[:name],
-                                                             submission_email: params[:submission_email])
+        repository = Repositories::FormsRepository.new(@database)
+        repository.update(params[:form_id], params[:name], params[:submission_email])
 
         { success: true }
       end
 
       desc "Delete a form."
       delete do
-        @database[:forms].where(id: params[:form_id]).delete
+        repository = Repositories::FormsRepository.new(@database)
+        repository.delete(params[:form_id])
         { success: true }
       end
 

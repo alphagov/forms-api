@@ -1,7 +1,7 @@
 describe Repositories::FormsRepository do
   include_context "with database"
 
-  let(:subject) {described_class.new(database)}
+  let(:subject) { described_class.new(database) }
 
   context "creating a new form" do
     it "creates a form" do
@@ -42,12 +42,12 @@ describe Repositories::FormsRepository do
 
   context "getting all forms" do
     it "gets all forms" do
-      form_id_1 = subject.create("name", "submission_email")
-      form_id_2 = subject.create("name", "submission_email")
+      form_id1 = subject.create("name", "submission_email")
+      form_id2 = subject.create("name", "submission_email")
       forms = subject.get_all
       expect(forms.length).to eq(2)
-      expect(forms[0][:id]).to eq(form_id_1)
-      expect(forms[1][:id]).to eq(form_id_2)
+      expect(forms[0][:id]).to eq(form_id1)
+      expect(forms[1][:id]).to eq(form_id2)
     end
   end
 end

@@ -1,8 +1,8 @@
 describe Repositories::PagesRepository do
   include_context "with database"
 
-  let(:subject) {described_class.new(database)}
-  let(:form_id) {database[:forms].insert(name: "name", submission_email: "email")}
+  let(:subject) { described_class.new(database) }
+  let(:form_id) { database[:forms].insert(name: "name", submission_email: "email") }
 
   context "creating a new page" do
     it "creates a page" do

@@ -22,7 +22,7 @@ class Repositories::FormsRepository
     @database[:forms].where(id: form_id).delete
   end
 
-  def get_all
+  def fetch_all
     @database[:forms].all
   end
 end

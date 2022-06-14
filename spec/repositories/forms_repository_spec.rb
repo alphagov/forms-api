@@ -44,7 +44,7 @@ describe Repositories::FormsRepository do
     it "gets all forms" do
       form_id1 = subject.create("name", "submission_email")
       form_id2 = subject.create("name", "submission_email")
-      forms = subject.get_all
+      forms = subject.fetch_all
       expect(forms.length).to eq(2)
       expect(forms[0][:id]).to eq(form_id1)
       expect(forms[1][:id]).to eq(form_id2)

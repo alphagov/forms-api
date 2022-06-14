@@ -27,7 +27,7 @@ class Server < Grape::API
     desc "Return all forms."
     get do
       repository = Repositories::FormsRepository.new(@database)
-      repository.get_all
+      repository.fetch_all
     end
 
     desc "Create a form."

@@ -5,6 +5,15 @@ class Server < Grape::API
   version "v1", using: :path, vendor: "forms"
   format :json
   prefix :api
+  
+  rescue_from Grape::Exceptions::ValidationErrors do |e|
+    error!(e, 400)
+  end
+
+  rescue_from :all do |e|
+    Sentry.capture_exception(e)
+    error! "Error", 500
+  end
 
   before do
     @database = Database.existing_database

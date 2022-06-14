@@ -24,6 +24,7 @@ class Server < Grape::API
   end
 
   resource :forms do
+
     desc "Return all forms."
     get do
       repository = Repositories::FormsRepository.new(@database)
@@ -42,6 +43,14 @@ class Server < Grape::API
     end
 
     route_param :form_id do
+      before do
+        repository = Repositories::FormsRepository.new(@database)
+        form = repository.get(params[:form_id])
+        if form.nil? 
+          error! :not_found, 404
+        end
+      end
+
       desc "Read a form."
       get do
         repository = Repositories::FormsRepository.new(@database)
@@ -56,7 +65,6 @@ class Server < Grape::API
       put do
         repository = Repositories::FormsRepository.new(@database)
         repository.update(params[:form_id], params[:name], params[:submission_email])
-
         { success: true }
       end
 
@@ -68,6 +76,14 @@ class Server < Grape::API
       end
 
       resource :pages do
+        before do
+          repository = Repositories::FormsRepository.new(@database)
+          form = repository.get(params[:form_id])
+          if form.nil? 
+            error! :not_found, 404
+          end
+        end
+
         desc "Return all pages for the form"
         get do
           repository = Repositories::PagesRepository.new(@database)
@@ -95,14 +111,19 @@ class Server < Grape::API
         end
 
         route_param :page_id do
+
+          before do
+            repository = Repositories::PagesRepository.new(@database)
+            page = repository.get(params[:page_id])
+            if page.nil? 
+              error! :not_found, 404
+            end
+          end
+
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            page = repository.get(params[:page_id])
-            if page.nil?
-              error! :not_found, 404
-            end
-            page
+            repository.get(params[:page_id])
           end
 
           desc "Update a page."
@@ -122,9 +143,6 @@ class Server < Grape::API
               params[:hint_text], 
               params[:answer_type]
             )
-            if updated_pages == 0
-              error! :not_found, 404
-            end
             {success: true}
           end
 
@@ -132,9 +150,6 @@ class Server < Grape::API
           delete do
             repository = Repositories::PagesRepository.new(@database)
             deleted_pages = repository.delete(params[:page_id])
-            if deleted_pages == 0
-              error! :not_found, 404
-            end
             {success: true}
           end
         end

@@ -52,12 +52,12 @@ describe Repositories::PagesRepository do
 
   context "getting pages for a form" do
     it "gets pages for a form" do
-      page_id_1 = subject.create(form_id, "question_text", "question_short_name", "hint_text", "answer_type")
-      page_id_2 = subject.create(form_id, "question_text", "question_short_name", "hint_text", "answer_type")
+      page_id1 = subject.create(form_id, "question_text", "question_short_name", "hint_text", "answer_type")
+      page_id2 = subject.create(form_id, "question_text", "question_short_name", "hint_text", "answer_type")
       pages = subject.get_pages_in_form(form_id)
       expect(pages.length).to eq(2)
-      expect(pages[0][:id]).to eq(page_id_1)
-      expect(pages[1][:id]).to eq(page_id_2)
+      expect(pages[0][:id]).to eq(page_id1)
+      expect(pages[1][:id]).to eq(page_id2)
     end
   end
 end

@@ -85,7 +85,11 @@ class Server < Grape::API
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            repository.get(params[:page_id])
+            page = repository.get(params[:page_id])
+            if page.nil?
+              error! :not_found, 404
+            end
+            page
           end
 
           desc "Update a page."
@@ -98,20 +102,26 @@ class Server < Grape::API
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
-            repository.update(
+            updated_pages = repository.update(
               params[:page_id], 
               params[:question_text], 
               params[:question_short_name], 
               params[:hint_text], 
               params[:answer_type]
             )
+            if updated_pages == 0
+              error! :not_found, 404
+            end
             {success: true}
           end
 
           desc "Delete a page."
           delete do
             repository = Repositories::PagesRepository.new(@database)
-            repository.delete(params[:page_id])
+            deleted_pages = repository.delete(params[:page_id])
+            if deleted_pages == 0
+              error! :not_found, 404
+            end
             {success: true}
           end
         end

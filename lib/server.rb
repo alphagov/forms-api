@@ -6,6 +6,15 @@ class Server < Grape::API
   format :json
   prefix :api
 
+  rescue_from Grape::Exceptions::ValidationErrors do |e|
+    error!(e, 400)
+  end
+
+  rescue_from :all do |e|
+    Sentry.capture_exception(e)
+    error! e.message, 500
+  end
+
   before do
     @database = Database.existing_database
   end
@@ -17,7 +26,8 @@ class Server < Grape::API
   resource :forms do
     desc "Return all forms."
     get do
-      @database[:forms].all
+      repository = Repositories::FormsRepository.new(@database)
+      repository.fetch_all
     end
 
     desc "Create a form."
@@ -26,14 +36,22 @@ class Server < Grape::API
       requires :submission_email, type: String, desc: "Submission email."
     end
     post do
-      repository = Repositories::ExampleRepository.new(@database)
-      repository.test_query(params[:name], params[:submission_email])[:result]
+      repository = Repositories::FormsRepository.new(@database)
+      id = repository.create(params[:name], params[:submission_email])
+      { id: id }
     end
 
     route_param :form_id do
+      before do
+        repository = Repositories::FormsRepository.new(@database)
+        form = repository.get(params[:form_id])
+        error! :not_found, 404 if form.nil?
+      end
+
       desc "Read a form."
       get do
-        @database[:forms].where(id: params[:form_id]).first
+        repository = Repositories::FormsRepository.new(@database)
+        repository.get(params[:form_id])
       end
 
       desc "Update a form."
@@ -42,22 +60,29 @@ class Server < Grape::API
         requires :submission_email, type: String, desc: "Submission email."
       end
       put do
-        @database[:forms].where(id: params[:form_id]).update(name: params[:name],
-                                                             submission_email: params[:submission_email])
-
+        repository = Repositories::FormsRepository.new(@database)
+        repository.update(params[:form_id], params[:name], params[:submission_email])
         { success: true }
       end
 
       desc "Delete a form."
       delete do
-        @database[:forms].where(id: params[:form_id]).delete
+        repository = Repositories::FormsRepository.new(@database)
+        repository.delete(params[:form_id])
         { success: true }
       end
 
       resource :pages do
+        before do
+          repository = Repositories::FormsRepository.new(@database)
+          form = repository.get(params[:form_id])
+          error! :not_found, 404 if form.nil?
+        end
+
         desc "Return all pages for the form"
         get do
-          []
+          repository = Repositories::PagesRepository.new(@database)
+          repository.get_pages_in_form(params[:form_id])
         end
 
         desc "Create a new page."
@@ -65,17 +90,32 @@ class Server < Grape::API
           requires :question_text, type: String, desc: "Question text"
           optional :question_short_name, type: String, desc: "Question short name."
           optional :hint_text, type: String, desc: "Hint text"
-          requires :answer_type, type: Symbol,
-                                 values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+          requires :answer_type, type: String,
+                                 values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
         end
         post do
-          {}
+          repository = Repositories::PagesRepository.new(@database)
+          id = repository.create(
+            params[:form_id],
+            params[:question_text],
+            params[:question_short_name],
+            params[:hint_text],
+            params[:answer_type]
+          )
+          { id: id }
         end
 
         route_param :page_id do
+          before do
+            repository = Repositories::PagesRepository.new(@database)
+            page = repository.get(params[:page_id])
+            error! :not_found, 404 if page.nil?
+          end
+
           desc "Get a page."
           get do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.get(params[:page_id])
           end
 
           desc "Update a page."
@@ -83,16 +123,26 @@ class Server < Grape::API
             requires :question_text, type: String, desc: "Question text"
             optional :question_short_name, type: String, desc: "Question short name."
             optional :hint_text, type: String, desc: "Hint text"
-            requires :answer_type, type: Symbol,
-                                   values: %i[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+            requires :answer_type, type: String,
+                                   values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
           end
           put do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.update(
+              params[:page_id],
+              params[:question_text],
+              params[:question_short_name],
+              params[:hint_text],
+              params[:answer_type]
+            )
+            { success: true }
           end
 
           desc "Delete a page."
           delete do
-            {}
+            repository = Repositories::PagesRepository.new(@database)
+            repository.delete(params[:page_id])
+            { success: true }
           end
         end
       end

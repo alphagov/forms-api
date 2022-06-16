@@ -11,9 +11,7 @@ class Server < Grape::API
   end
 
   rescue_from :all do |e|
-    unless ENV['SENTRY_DSN'].nil?
-      Sentry.capture_exception(e)
-    end
+    Sentry.capture_exception(e) unless ENV["SENTRY_DSN"].nil?
 
     error! e.message, 500
   end
@@ -91,10 +89,8 @@ class Server < Grape::API
         get do
           repository = Repositories::PagesRepository.new(@database)
           pages = repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-          pages.each_with_index do |page, i|
-            if i < pages.length - 1
-              pages[i][:next] = pages[i+1][:id]
-            end
+          pages.each_with_index do |_page, i|
+            pages[i][:next] = pages[i + 1][:id] if i < pages.length - 1
           end
           pages
         end

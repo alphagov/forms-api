@@ -56,7 +56,7 @@ class Server < Grape::API
 
         form = repository.get(params[:form_id])
         pages = page_repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-        form[:start_page] = pages.first[:id]
+        form[:start_page] = (pages.first[:id] if pages.any?)
         form
       end
 

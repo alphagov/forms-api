@@ -125,7 +125,11 @@ class Server < Grape::API
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            repository.get(params[:page_id])
+            page = repository.get(params[:page_id])
+            all_pages = repository.get_pages_in_form(params[:form_id]).sort_by { |p| p[:id] }
+            next_page_index = (all_pages.find_index { |p| p[:id].to_i == params[:page_id].to_i }) + 1
+            page[:next] = (all_pages[next_page_index][:id] if next_page_index < all_pages.length)
+            page
           end
 
           desc "Update a page."

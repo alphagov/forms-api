@@ -3,13 +3,14 @@ class Repositories::PagesRepository
     @database = database
   end
 
-  def create(form_id, question_text, question_short_name, hint_text, answer_type)
+  def create(form_id, question_text, question_short_name, hint_text, answer_type, next_page)
     @database[:pages].insert(
       form_id: form_id,
       question_text: question_text,
       question_short_name: question_short_name,
       hint_text: hint_text,
-      answer_type: answer_type
+      answer_type: answer_type,
+      next: next_page
     )
   end
 
@@ -17,12 +18,13 @@ class Repositories::PagesRepository
     @database[:pages].where(id: page_id).all.last
   end
 
-  def update(page_id, question_text, question_short_name, hint_text, answer_type)
+  def update(page_id, question_text, question_short_name, hint_text, answer_type, next_page)
     @database[:pages].where(id: page_id).update(
       question_text: question_text,
       question_short_name: question_short_name,
       hint_text: hint_text,
-      answer_type: answer_type
+      answer_type: answer_type,
+      next: next_page
     )
   end
 

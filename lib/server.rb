@@ -105,12 +105,13 @@ class Server < Grape::API
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
+
           id = repository.create(
             params[:form_id],
             params[:question_text],
             params[:question_short_name],
             params[:hint_text],
-            params[:answer_type]
+            params[:answer_type],
           )
           { id: id }
         end

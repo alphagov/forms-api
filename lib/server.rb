@@ -55,8 +55,8 @@ class Server < Grape::API
         page_repository = Repositories::PagesRepository.new(@database)
 
         form = repository.get(params[:form_id])
-        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-        form[:start_page] = (pages.first[:id] if pages.any?)
+        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by { |page| page.id }
+        form[:start_page] = (pages.first.id if pages.any?)
         form
       end
 
@@ -88,7 +88,7 @@ class Server < Grape::API
         desc "Return all pages for the form"
         get do
           repository = Repositories::PagesRepository.new(@database)
-          repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
+          repository.get_pages_in_form(params[:form_id]).sort_by { |page| page.id }.map(&:to_h)
         end
 
         desc "Create a new page."
@@ -103,14 +103,16 @@ class Server < Grape::API
         post do
           repository = Repositories::PagesRepository.new(@database)
 
-          id = repository.create(
-            params[:form_id],
-            params[:question_text],
-            params[:question_short_name],
-            params[:hint_text],
-            params[:answer_type],
-            params[:next]
-          )
+          page = Domain::Page.new.tap do |page|
+            page.form_id =params[:form_id]
+            page.question_text =params[:question_text]
+            page.question_short_name =params[:question_short_name]
+            page.hint_text =params[:hint_text]
+            page.answer_type =params[:answer_type]
+            page.next =params[:next]
+          end
+
+          id = repository.create(page)
           { id: }
         end
 
@@ -124,7 +126,7 @@ class Server < Grape::API
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            repository.get(params[:page_id])
+            repository.get(params[:page_id]).to_h
           end
 
           desc "Update a page."
@@ -138,14 +140,18 @@ class Server < Grape::API
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
-            repository.update(
-              params[:page_id],
-              params[:question_text],
-              params[:question_short_name],
-              params[:hint_text],
-              params[:answer_type],
-              params[:next]
-            )
+            page = Domain::Page.new.tap do |page|
+              page.id = params[:page_id]
+              page.form_id =params[:form_id]
+              page.question_text =params[:question_text]
+              page.question_short_name =params[:question_short_name]
+              page.hint_text =params[:hint_text]
+              page.answer_type =params[:answer_type]
+              page.next =params[:next]
+            end
+
+            repository.update(page)
+
             { success: true }
           end
 

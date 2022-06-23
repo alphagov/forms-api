@@ -88,11 +88,7 @@ class Server < Grape::API
         desc "Return all pages for the form"
         get do
           repository = Repositories::PagesRepository.new(@database)
-          pages = repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-          pages.each_with_index do |_page, i|
-            pages[i][:next] = pages[i + 1][:id] if i < pages.length - 1
-          end
-          pages
+          repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
         end
 
         desc "Create a new page."
@@ -102,6 +98,7 @@ class Server < Grape::API
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+          optional :next, type: String, desc: "The ID of the next page"
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
@@ -112,6 +109,7 @@ class Server < Grape::API
             params[:question_short_name],
             params[:hint_text],
             params[:answer_type],
+            params[:next]
           )
           { id: id }
         end
@@ -126,11 +124,7 @@ class Server < Grape::API
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            page = repository.get(params[:page_id])
-            all_pages = repository.get_pages_in_form(params[:form_id]).sort_by { |p| p[:id] }
-            next_page_index = (all_pages.find_index { |p| p[:id].to_i == params[:page_id].to_i }) + 1
-            page[:next] = (all_pages[next_page_index][:id] if next_page_index < all_pages.length)
-            page
+            repository.get(params[:page_id])
           end
 
           desc "Update a page."
@@ -140,6 +134,7 @@ class Server < Grape::API
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+            optional :next, type: String, desc: "The ID of the next page"
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
@@ -148,7 +143,8 @@ class Server < Grape::API
               params[:question_text],
               params[:question_short_name],
               params[:hint_text],
-              params[:answer_type]
+              params[:answer_type],
+              params[:next]
             )
             { success: true }
           end

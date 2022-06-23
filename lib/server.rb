@@ -39,7 +39,7 @@ class Server < Grape::API
     post do
       repository = Repositories::FormsRepository.new(@database)
       id = repository.create(params[:name], params[:submission_email])
-      { id: id }
+      { id: }
     end
 
     route_param :form_id do
@@ -111,7 +111,7 @@ class Server < Grape::API
             params[:answer_type],
             params[:next]
           )
-          { id: id }
+          { id: }
         end
 
         route_param :page_id do

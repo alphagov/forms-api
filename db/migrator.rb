@@ -6,7 +6,7 @@ class Migrator
   end
 
   def destroy(database)
-    migrate_to(database, 0) 
+    migrate_to(database, 0)
   end
 
   def migrate(database)
@@ -16,5 +16,4 @@ class Migrator
   def migrate_to(database, version)
     Sequel::Migrator.run(database, "#{__dir__}/migrations", target: version)
   end
-
 end

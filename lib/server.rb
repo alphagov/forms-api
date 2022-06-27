@@ -139,14 +139,15 @@ class Server < Grape::API
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
-            page = Domain::Page.new
-            page.id = params[:page_id]
-            page.form_id = params[:form_id]
-            page.question_text = params[:question_text]
-            page.question_short_name = params[:question_short_name]
-            page.hint_text = params[:hint_text]
-            page.answer_type = params[:answer_type]
-            page.next = params[:next]
+            page = Domain::Page.new.tap do |page|
+              page.id = params[:page_id]
+              page.form_id = params[:form_id]
+              page.question_text = params[:question_text]
+              page.question_short_name = params[:question_short_name]
+              page.hint_text = params[:hint_text]
+              page.answer_type = params[:answer_type]
+              page.next = params[:next]
+            end
 
             repository.update(page)
 

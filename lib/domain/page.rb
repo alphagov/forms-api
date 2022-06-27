@@ -9,7 +9,8 @@ class Domain::Page
 
   def to_h
     {
-      id: id,
+      id:,
+      form_id:,
       question_text:,
       question_short_name:,
       hint_text:,

@@ -1,11 +1,11 @@
 class Domain::Page
   attr_accessor :id,
-    :form_id,
-    :question_text,
-    :question_short_name,
-    :hint_text,
-    :answer_type,
-    :next
+                :form_id,
+                :question_text,
+                :question_short_name,
+                :hint_text,
+                :answer_type,
+                :next
 
   def to_h
     {
@@ -15,8 +15,7 @@ class Domain::Page
       question_short_name:,
       hint_text:,
       answer_type:,
-      next:,
+      next:
     }
   end
 end
-

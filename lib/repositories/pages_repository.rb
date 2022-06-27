@@ -3,26 +3,30 @@ class Repositories::PagesRepository
     @database = database
   end
 
-  def create(form_id, question_text, question_short_name, hint_text, answer_type)
+  def create(page)
     @database[:pages].insert(
-      form_id: form_id,
-      question_text: question_text,
-      question_short_name: question_short_name,
-      hint_text: hint_text,
-      answer_type: answer_type
+      form_id: page.form_id,
+      question_text: page.question_text,
+      question_short_name: page.question_short_name,
+      hint_text: page.hint_text,
+      answer_type: page.answer_type,
+      next: page.next
     )
   end
 
   def get(page_id)
-    @database[:pages].where(id: page_id).all.last
+    found_page = @database[:pages].where(id: page_id).all.last
+
+    page_from_data(found_page)
   end
 
-  def update(page_id, question_text, question_short_name, hint_text, answer_type)
-    @database[:pages].where(id: page_id).update(
-      question_text: question_text,
-      question_short_name: question_short_name,
-      hint_text: hint_text,
-      answer_type: answer_type
+  def update(page)
+    @database[:pages].where(id: page.id).update(
+      question_text: page.question_text,
+      question_short_name: page.question_short_name,
+      hint_text: page.hint_text,
+      answer_type: page.answer_type,
+      next: page.next
     )
   end
 
@@ -31,6 +35,20 @@ class Repositories::PagesRepository
   end
 
   def get_pages_in_form(form_id)
-    @database[:pages].where(form_id: form_id).all
+    @database[:pages].where(form_id:).all.map { |p| page_from_data(p) }
+  end
+
+  private
+
+  def page_from_data(page_data)
+    Domain::Page.new.tap do |page|
+      page.id = page_data[:id]
+      page.form_id = page_data[:form_id]
+      page.question_text = page_data[:question_text]
+      page.question_short_name = page_data[:question_short_name]
+      page.hint_text = page_data[:hint_text]
+      page.answer_type = page_data[:answer_type]
+      page.next = page_data[:next]
+    end
   end
 end

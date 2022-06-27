@@ -39,7 +39,7 @@ class Server < Grape::API
     post do
       repository = Repositories::FormsRepository.new(@database)
       id = repository.create(params[:name], params[:submission_email])
-      { id: id }
+      { id: }
     end
 
     route_param :form_id do
@@ -55,8 +55,8 @@ class Server < Grape::API
         page_repository = Repositories::PagesRepository.new(@database)
 
         form = repository.get(params[:form_id])
-        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-        form[:start_page] = (pages.first[:id] if pages.any?)
+        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by(&:id)
+        form[:start_page] = (pages.first.id if pages.any?)
         form
       end
 
@@ -88,11 +88,7 @@ class Server < Grape::API
         desc "Return all pages for the form"
         get do
           repository = Repositories::PagesRepository.new(@database)
-          pages = repository.get_pages_in_form(params[:form_id]).sort_by { |page| page[:id] }
-          pages.each_with_index do |_page, i|
-            pages[i][:next] = pages[i + 1][:id] if i < pages.length - 1
-          end
-          pages
+          repository.get_pages_in_form(params[:form_id]).sort_by(&:id).map(&:to_h)
         end
 
         desc "Create a new page."
@@ -102,17 +98,21 @@ class Server < Grape::API
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+          optional :next, type: String, desc: "The ID of the next page"
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
-          id = repository.create(
-            params[:form_id],
-            params[:question_text],
-            params[:question_short_name],
-            params[:hint_text],
-            params[:answer_type]
-          )
-          { id: id }
+
+          page = Domain::Page.new
+          page.form_id = params[:form_id]
+          page.question_text = params[:question_text]
+          page.question_short_name = params[:question_short_name]
+          page.hint_text = params[:hint_text]
+          page.answer_type = params[:answer_type]
+          page.next = params[:next]
+
+          id = repository.create(page)
+          { id: }
         end
 
         route_param :page_id do
@@ -125,11 +125,7 @@ class Server < Grape::API
           desc "Get a page."
           get do
             repository = Repositories::PagesRepository.new(@database)
-            page = repository.get(params[:page_id])
-            all_pages = repository.get_pages_in_form(params[:form_id]).sort_by { |p| p[:id] }
-            next_page_index = (all_pages.find_index { |p| p[:id].to_i == params[:page_id].to_i }) + 1
-            page[:next] = (all_pages[next_page_index][:id] if next_page_index < all_pages.length)
-            page
+            repository.get(params[:page_id]).to_h
           end
 
           desc "Update a page."
@@ -139,16 +135,21 @@ class Server < Grape::API
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+            optional :next, type: String, desc: "The ID of the next page"
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
-            repository.update(
-              params[:page_id],
-              params[:question_text],
-              params[:question_short_name],
-              params[:hint_text],
-              params[:answer_type]
-            )
+            page = Domain::Page.new
+            page.id = params[:page_id]
+            page.form_id = params[:form_id]
+            page.question_text = params[:question_text]
+            page.question_short_name = params[:question_short_name]
+            page.hint_text = params[:hint_text]
+            page.answer_type = params[:answer_type]
+            page.next = params[:next]
+
+            repository.update(page)
+
             { success: true }
           end
 

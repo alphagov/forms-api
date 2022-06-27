@@ -4,8 +4,8 @@ class Repositories::ExampleRepository
   end
 
   def test_query(name, email)
-    id = @database[:forms].insert(name: name, submission_email: email)
-    created_form = @database[:forms].where(id: id).first
+    id = @database[:forms].insert(name:, submission_email: email)
+    created_form = @database[:forms].where(id:).first
 
     {
       result: created_form

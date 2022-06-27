@@ -62,6 +62,12 @@ TODO: Add these details once we've got our deployment running.
 bundle exec rspec
 ```
 
+## To run the linter
+
+```bash
+bundle exec rubocop -A
+```
+
 ## Support
 
 Raise a Github issue if you need support.

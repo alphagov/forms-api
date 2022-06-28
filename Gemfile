@@ -17,10 +17,13 @@ group :development, :test do
 end
 
 group :development do
+  gem "guard"
+  gem "guard-rack"
   gem "rubocop"
 end
 
 group :test do
+  gem "guard-rspec"
   gem "rspec"
 end
 

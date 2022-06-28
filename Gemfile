@@ -18,10 +18,13 @@ end
 
 group :development do
   gem "rubocop"
+  gem "guard"
+  gem "guard-rack"
 end
 
 group :test do
   gem "rspec"
+  gem "guard-rspec"
 end
 
 gem "grape", "~> 1.6"

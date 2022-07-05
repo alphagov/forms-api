@@ -1,27 +1,26 @@
-.PHONY: setup
+.PHONY: setup serve serve-watch test test watch lint lint-fix install db db-down
+
 setup:
 	bundle install
 
-.PHONY: serve
 serve: setup
 	bundle exec rackup
 
-.PHONY: serve-watch
 serve-watch: setup
 	bundle exec guard -i --notify false -P rack
 
-.PHONY: test
 test: setup
 	bundle exec rspec
 
-.PHONY: test watch
 test-watch: setup
 	bundle exec guard -i --notify false -P rspec
 
-.PHONY: lint
 lint:
 	bundle exec rubocop
 
-.PHONY: lint-fix
 lint-fix:
 	bundle exec rubocop -A
+db:
+	docker-compose up -d
+clean:
+	docker-compose down

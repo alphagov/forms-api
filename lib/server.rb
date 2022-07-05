@@ -35,10 +35,11 @@ class Server < Grape::API
     params do
       requires :name, type: String, desc: "Form name."
       requires :submission_email, type: String, desc: "Submission email."
+      requires :org, type: String, desc: "Organization slug."
     end
     post do
       repository = Repositories::FormsRepository.new(@database)
-      id = repository.create(params[:name], params[:submission_email])
+      id = repository.create(params[:name], params[:submission_email], params[:org])
       { id: }
     end
 
@@ -64,10 +65,11 @@ class Server < Grape::API
       params do
         requires :name, type: String, desc: "Form name."
         requires :submission_email, type: String, desc: "Submission email."
+        requires :org, type: String, desc: "Organization slug."
       end
       put do
         repository = Repositories::FormsRepository.new(@database)
-        repository.update(params[:form_id], params[:name], params[:submission_email])
+        repository.update(params[:form_id], params[:name], params[:submission_email], params[:org])
         { success: true }
       end
 
@@ -139,14 +141,15 @@ class Server < Grape::API
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
-            page = Domain::Page.new
-            page.id = params[:page_id]
-            page.form_id = params[:form_id]
-            page.question_text = params[:question_text]
-            page.question_short_name = params[:question_short_name]
-            page.hint_text = params[:hint_text]
-            page.answer_type = params[:answer_type]
-            page.next = params[:next]
+            page = Domain::Page.new.tap do |p|
+              p.id = params[:page_id]
+              p.form_id = params[:form_id]
+              p.question_text = params[:question_text]
+              p.question_short_name = params[:question_short_name]
+              p.hint_text = params[:hint_text]
+              p.answer_type = params[:answer_type]
+              p.next = params[:next]
+            end
 
             repository.update(page)
 

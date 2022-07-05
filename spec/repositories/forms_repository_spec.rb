@@ -9,7 +9,7 @@ describe Repositories::FormsRepository do
       created_form = database[:forms].where(id: result).all.last
       expect(created_form[:name]).to eq("name")
       expect(created_form[:submission_email]).to eq("submission_email")
-      expect(created_form[:org]).to eq("org")
+      expect(created_form[:org]).to eq("org"
     end
   end
 

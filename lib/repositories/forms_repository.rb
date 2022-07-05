@@ -3,7 +3,7 @@ class Repositories::FormsRepository
     @database = database
   end
 
-  def create(name, submission_email, org  )
+  def create(name, submission_email, org)
     @database[:forms].insert(name:, submission_email:, org:)
   end
 
@@ -15,7 +15,7 @@ class Repositories::FormsRepository
     @database[:forms].where(id: form_id).update(
       name:,
       submission_email:,
-      org:,
+      org:
     )
   end
 

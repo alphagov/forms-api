@@ -1,5 +1,3 @@
-require "pry"
-
 describe "migration 4" do
   include_context "with database"
 

@@ -1,6 +1,5 @@
 ENV["RACK_ENV"] = "test"
 require "loader"
-require "pry"
 require_relative "database_context"
 
 RSpec.configure do |config|

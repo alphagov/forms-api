@@ -28,16 +28,20 @@ We recommend using a version manager to install and manage these, such as:
 git clone git@github.com:alphagov/forms-api.git
 cd forms-api
 
-# 2. Install the ruby dependencies
-bundle install
+# 2. Run the setup command
+make install
 ```
 
 ### Running the app
 
-You can run the server via `rackup`:
+You can run the server via `make serve` or `make serve-watch` to re-run on changes:
 
 ```bash
-bundle exec rackup
+# Running the server without watching for changes
+make serve
+
+# Running the server watching for changes
+make serve-watch
 ```
 
 This will start the server on `localhost:9292`
@@ -59,13 +63,20 @@ TODO: Add these details once we've got our deployment running.
 
 ```bash
 # Run the Ruby test suite
-bundle exec rspec
+make test
+
+# Run the Ruby test re-running on changes
+make test-watch
 ```
 
 ## To run the linter
 
 ```bash
-bundle exec rubocop -A
+# Run rubocop and display errors
+make lint
+
+# Run rubocop with fixes and display errors
+make lint-fix
 ```
 
 ## Support

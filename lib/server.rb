@@ -6,6 +6,12 @@ class Server < Grape::API
   format :json
   prefix :api
 
+  helpers do
+    def authenticate()
+      error!('Unauthorized', 401) unless headers['X-API-Key'] == ENV["API_KEY"]
+    end
+  end
+
   rescue_from Grape::Exceptions::ValidationErrors do |e|
     error!(e, 400)
   end
@@ -17,6 +23,7 @@ class Server < Grape::API
   end
 
   before do
+    authenticate
     @database = Database.existing_database
   end
 

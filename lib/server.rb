@@ -34,7 +34,6 @@ class Server < Grape::API
   resource :forms do
     desc "Return all forms."
     get do
-      authenticate
       repository = Repositories::FormsRepository.new(@database)
       repository.fetch_all
     end

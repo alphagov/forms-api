@@ -21,6 +21,13 @@ describe Repositories::FormsRepository do
       expect(form[:submission_email]).to eq("submission_email")
       expect(form[:org]).to eq("org")
     end
+    it "gets a form by org" do
+      subject.create("name", "submission_email", "org")
+      form = subject.get_by_org("org").first
+      expect(form[:name]).to eq("name")
+      expect(form[:submission_email]).to eq("submission_email")
+      expect(form[:org]).to eq("org")
+    end
   end
 
   context "updating a form" do

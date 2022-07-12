@@ -29,7 +29,7 @@ git clone git@github.com:alphagov/forms-api.git
 cd forms-api
 
 # 2. Run the setup command
-make install
+make setup
 ```
 
 ### Running the app

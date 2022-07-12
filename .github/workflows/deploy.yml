@@ -31,3 +31,4 @@ jobs:
           cf target -o ${{ secrets.CF_ORGANISATION }} -s ${{ secrets.CF_SPACE }}
           cf push --strategy rolling \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            --var API_KEY=${{ secrets.API_KEY }}

@@ -8,7 +8,7 @@ class Server < Grape::API
 
   helpers do
     def authenticate
-      error!("Unauthorized", 401) unless headers["X-API-Key"] == ENV["API_KEY"]
+      error!("Unauthorized", 401) unless headers["X-Api-Token"] == ENV["API_KEY"]
     end
   end
 
@@ -34,6 +34,7 @@ class Server < Grape::API
   resource :forms do
     desc "Return all forms."
     get do
+      authenticate
       repository = Repositories::FormsRepository.new(@database)
       repository.fetch_all
     end

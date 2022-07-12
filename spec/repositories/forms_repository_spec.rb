@@ -23,10 +23,15 @@ describe Repositories::FormsRepository do
     end
     it "gets a form by org" do
       subject.create("name", "submission_email", "org")
-      form = subject.get_by_org("org").first
-      expect(form[:name]).to eq("name")
-      expect(form[:submission_email]).to eq("submission_email")
-      expect(form[:org]).to eq("org")
+      subject.create("name2", "submission_email", "org")
+      forms = subject.get_by_org("org")
+      expect(forms.length).to eq(2)
+      expect(forms[0][:name]).to eq("name")
+      expect(forms[0][:submission_email]).to eq("submission_email")
+      expect(forms[0][:org]).to eq("org")
+      expect(forms[1][:name]).to eq("name2")
+      expect(forms[1][:submission_email]).to eq("submission_email")
+      expect(forms[1][:org]).to eq("org")
     end
   end
 

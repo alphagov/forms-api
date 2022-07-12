@@ -12,7 +12,7 @@ class Repositories::FormsRepository
   end
 
   def get_by_org(org)
-    @database[:forms].where(org: org).all
+    @database[:forms].where(org).all
   end
 
   def update(form_id, name, submission_email, org)

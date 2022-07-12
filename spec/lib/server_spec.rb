@@ -10,7 +10,7 @@ describe Server::Server do
   context "GET /api/v1/forms" do
     it "returns a status code 401 when no authentication supplied" do
       get "/api/v1/forms"
-      expect(last_response.status).to eq(401)
+      expect(last_response.status).to eq(401) unless ENV["API_KEY"].nil?
     end
 
     it "returns a status code 401 when incorrect API key supplied" do
@@ -22,7 +22,7 @@ describe Server::Server do
     it "returns a status code 200 when correct API key supplied" do
       header "X-Api-Token", ENV["API_KEY"]
       get "/api/v1/forms"
-      expect(last_response.status).to eq(200)
+      expect(last_response.status).to eq(200) unless ENV["API_KEY"].nil?
     end
   end
 end

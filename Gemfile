@@ -19,6 +19,7 @@ end
 group :development do
   gem "guard"
   gem "guard-rack"
+  gem "rack-test"
   gem "rubocop"
 end
 

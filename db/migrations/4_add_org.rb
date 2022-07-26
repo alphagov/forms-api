@@ -1,3 +1,5 @@
+require "pry"
+
 Sequel.migration do
   up do
     add_column :forms, :org, String

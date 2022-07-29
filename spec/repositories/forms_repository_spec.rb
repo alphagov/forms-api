@@ -56,9 +56,9 @@ describe Repositories::FormsRepository do
 
     it "deletes associated pages for the form" do
       form_id = subject.create("name", "submission_email", "org")
-      database[:pages].insert(form_id: form_id, question_text: "question_text", answer_type: "email")
+      database[:pages].insert(form_id:, question_text: "question_text", answer_type: "email")
       subject.delete(form_id)
-      pages = database[:pages].where(form_id: form_id)
+      pages = database[:pages].where(form_id:)
       expect(pages.count).to eq(0)
     end
   end

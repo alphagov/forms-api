@@ -53,6 +53,14 @@ describe Repositories::FormsRepository do
       result = subject.delete(form_id)
       expect(result).to eq(1)
     end
+
+    it "deletes associated pages for the form" do
+      form_id = subject.create("name", "submission_email", "org")
+      database[:pages].insert(form_id: form_id, question_text: "question_text", answer_type: "email")
+      subject.delete(form_id)
+      pages = database[:pages].where(form_id: form_id)
+      expect(pages.count).to eq(0)
+    end
   end
 
   context "getting all forms" do

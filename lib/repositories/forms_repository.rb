@@ -26,6 +26,7 @@ class Repositories::FormsRepository
   end
 
   def delete(form_id)
+    @database[:pages].where(form_id:).delete
     @database[:forms].where(id: form_id).delete
   end
 

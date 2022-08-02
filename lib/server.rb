@@ -104,7 +104,6 @@ class Server < Grape::API
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
-          optional :next, type: String, desc: "The ID of the next page"
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
@@ -115,7 +114,6 @@ class Server < Grape::API
           page.question_short_name = params[:question_short_name]
           page.hint_text = params[:hint_text]
           page.answer_type = params[:answer_type]
-          page.next = params[:next]
 
           id = repository.create(page)
           { id: }

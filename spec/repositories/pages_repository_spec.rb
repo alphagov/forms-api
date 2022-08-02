@@ -19,14 +19,15 @@ describe Repositories::PagesRepository do
 
   context "creating a new page" do
     it "creates a page" do
-      result = subject.create(page)
-      created_page = database[:pages].where(id: result).all.last
+      first_page_result = subject.create(page)
+      subject.create(page)
+
+      created_page = database[:pages].where(id: first_page_result).all.last
 
       expect(created_page[:question_text]).to eq("question_text")
       expect(created_page[:question_short_name]).to eq("question_short_name")
       expect(created_page[:hint_text]).to eq("hint_text")
       expect(created_page[:answer_type]).to eq("answer_type")
-      expect(created_page[:next]).to eq("next")
       expect(created_page[:form_id]).to eq(form_id)
     end
   end
@@ -39,7 +40,6 @@ describe Repositories::PagesRepository do
       expect(found_page.question_short_name).to eq("question_short_name")
       expect(found_page.hint_text).to eq("hint_text")
       expect(found_page.answer_type).to eq("answer_type")
-      expect(found_page.next).to eq("next")
       expect(found_page.form_id).to eq(form_id)
     end
   end
@@ -72,11 +72,43 @@ describe Repositories::PagesRepository do
     end
   end
 
-  context "deleting a page" do
+  context "deleting a page which exists" do
     it "deletes a page" do
       page_id = subject.create(page)
       result = subject.delete(page_id)
+
       expect(result).to eq(1)
+    end
+
+    it "updates other page next values" do
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+      third_page_id = subject.create(page)
+
+      result = subject.delete(second_page_id)
+
+      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      expect(first_page_next).to eq(third_page_id.to_s)
+      expect(result).to eq(1)
+    end
+  end
+
+  context "deleting a page which does not exist" do
+    it "does not update other page next values" do
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+      third_page_id = subject.create(page)
+
+      result = subject.delete(999)
+
+      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      second_page_next = database[:pages].where(id: second_page_id).get(:next)
+      third_page_next = database[:pages].where(id: third_page_id).get(:next)
+
+      expect(result).to eq(0)
+      expect(first_page_next).to eq(second_page_id.to_s)
+      expect(second_page_next).to eq(third_page_id.to_s)
+      expect(third_page_next).to eq(nil)
     end
   end
 

@@ -19,7 +19,7 @@ class Repositories::FormsRepository
     @database[:forms].where(id: form_id).update(
       name:,
       submission_email:,
-      org:,
+      org:
     )
   end
 

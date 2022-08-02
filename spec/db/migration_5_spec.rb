@@ -12,6 +12,8 @@ describe "migration 5" do
     migrator.migrate_to(database, 5)
 
     updated_form = database[:forms].where(id: form_id).first
-    expect(updated_form[:published]).to eq(false)
+    expect(updated_form[:published_at]).to eq(nil)
+    expect(updated_form[:created_at]).to eq(nil)
+    expect(updated_form[:update_at]).to eq(nil)
   end
 end

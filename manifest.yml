@@ -5,6 +5,7 @@ applications:
   command: bundle exec rackup -o 0.0.0.0 -p $PORT
   services:
     - forms-api-dev-db
+    - forms-api-dev-splunk
   env:
     RACK_ENV: production
     SENTRY_DSN: ((SENTRY_DSN))

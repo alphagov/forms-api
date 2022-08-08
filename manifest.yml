@@ -1,11 +1,11 @@
 ---
 applications:
-- name: forms-api-dev
+- name: forms-api-((PAAS_ENVIRONMENT))
   memory: 256M
   command: bundle exec rackup -o 0.0.0.0 -p $PORT
   services:
-    - forms-api-dev-db
-    - forms-api-dev-splunk
+    - forms-api-((PAAS_ENVIRONMENT))-db
+    - forms-api-((PAAS_ENVIRONMENT))-splunk
   env:
     RACK_ENV: production
     SENTRY_DSN: ((SENTRY_DSN))

@@ -30,4 +30,5 @@ jobs:
           cf auth "${{ secrets.CF_USER }}" "${{ secrets.CF_PASSWORD }}"
           cf target -o ${{ secrets.CF_ORGANISATION }} -s ${{ secrets.CF_SPACE }}
           cf push --strategy rolling \
+            --var PAAS_ENVIRONMENT=dev \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }}

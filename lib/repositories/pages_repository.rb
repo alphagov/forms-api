@@ -52,7 +52,7 @@ class Repositories::PagesRepository
   end
 
   def get_pages_in_form(form_id)
-    @database[:pages].where(form_id:).order(:next).all.map { |p| page_from_data(p) }
+    @database[:pages].where(form_id:).order(:id).all.map { |p| page_from_data(p) }
   end
 
   private

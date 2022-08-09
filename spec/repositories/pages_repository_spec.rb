@@ -2,7 +2,10 @@ describe Repositories::PagesRepository do
   include_context "with database"
 
   let(:subject) { described_class.new(database) }
-  let(:form_id) { database[:forms].insert(name: "name", submission_email: "email") }
+  let(:form_id) do
+    repository = Repositories::FormsRepository.new(@database)
+    repository.create("name", "email", "org")
+  end
   let(:page) do
     Domain::Page.new.tap do |page|
       page.form_id = form_id
@@ -60,6 +63,12 @@ describe Repositories::PagesRepository do
       expect(page.answer_type).to eq("answer_type2")
       expect(page.next).to eq("next_page")
       expect(page.form_id).to eq(form_id)
+
+      repository = Repositories::FormsRepository.new(@database)
+      form = repository.get(form_id)
+      puts form
+      expect(form[:created_at].to_i).to be_within(0).of(Time.now.to_i)
+      expect(form[:updated_at].to_i).to be_within(0).of(Time.now.to_i)
     end
   end
 

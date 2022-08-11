@@ -2,6 +2,14 @@ ENV["RACK_ENV"] = "test"
 require "loader"
 require_relative "database_context"
 
+require "simplecov"
+
+SimpleCov.coverage_dir("coverage/backend")
+SimpleCov.minimum_coverage 95
+SimpleCov.start do
+  enable_coverage :branch
+end
+
 RSpec.configure do |config|
   ENV["DATABASE_URL"] = "#{ENV['DATABASE_URL']}_test"
   database = Database.fresh_database

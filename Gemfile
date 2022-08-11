@@ -25,6 +25,8 @@ end
 group :test do
   gem "guard-rspec"
   gem "rspec"
+  # Code coverage reporter
+  gem "simplecov", "~> 0.21.2", require: false
 end
 
 gem "grape", "~> 1.6"

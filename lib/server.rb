@@ -8,7 +8,7 @@ class Server < Grape::API
 
   helpers do
     def authenticate
-      error!("Unauthorized", 401) unless headers["X-Api-Token"] == ENV["API_KEY"] || ENV["API_KEY"].nil? && !headers["X-Api-Token"].nil?
+      error!("Unauthorized", 401) unless headers["X-Api-Token"] == ENV["API_KEY"] 
     end
   end
 

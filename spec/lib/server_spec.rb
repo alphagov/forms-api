@@ -35,10 +35,10 @@ describe Server::Server do
       stub_const("ENV", ENV.to_hash.merge("API_KEY" => nil))
     end
 
-    it "returns a status code 200 when supplied with incorrect api key" do
+    it "returns a status code 401 when supplied with incorrect api key" do
       header "X-Api-Token", "an-api-key"
       get "/api/v1/forms", { org: "gds" }
-      expect(last_response.status).to eq(200)
+      expect(last_response.status).to eq(401)
     end
 
     it "returns a status code 200 when supplied with no api key" do

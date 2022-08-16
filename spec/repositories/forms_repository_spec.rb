@@ -14,7 +14,7 @@ describe Repositories::FormsRepository do
       expect(created_form[:org]).to eq("org")
       expect(created_form[:live_at]).to eq(nil)
       expect(created_form[:created_at].to_i).to be_within(3).of(Time.now.to_i)
-      expect(created_form[:updated_at]).to eq(nil)
+      expect(created_form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
     end
   end
 

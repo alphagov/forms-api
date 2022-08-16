@@ -4,7 +4,7 @@ class Repositories::FormsRepository
   end
 
   def create(name, submission_email, org)
-    @database[:forms].insert(name:, submission_email:, org:, created_at: Time.now)
+    @database[:forms].insert(name:, submission_email:, org:, created_at: Time.now, updated_at: Time.now)
   end
 
   def get(form_id)

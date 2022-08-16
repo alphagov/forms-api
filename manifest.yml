@@ -9,3 +9,4 @@ applications:
   env:
     RACK_ENV: production
     SENTRY_DSN: ((SENTRY_DSN))
+    API_KEY: ((API_KEY))

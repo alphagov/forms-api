@@ -29,7 +29,7 @@ git clone git@github.com:alphagov/forms-api.git
 cd forms-api
 
 # 2. Run the setup command
-make install
+make setup
 ```
 
 ### Running the app
@@ -56,6 +56,7 @@ Environment variables can be set using `.env` and `.env.development`/`env.test` 
 | ------------- | ------------- |
 | `DATABASE_URL` | The URL to the postgres database|
 | `SENTRY_DSN` | The DSN provided by Sentry |
+| `API_KEY` | The API key for authentication |
 
 TODO: Add these details once we've got our deployment running.
 

@@ -89,7 +89,39 @@ describe Repositories::PagesRepository do
 
       first_page_next = database[:pages].where(id: first_page_id).get(:next)
       expect(first_page_next).to eq(third_page_id.to_s)
+
       expect(result).to eq(1)
+    end
+
+    it "updates other page next values" do
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+      third_page_id = subject.create(page)
+
+      result = subject.delete(second_page_id)
+
+      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      expect(first_page_next).to eq(third_page_id.to_s)
+      expect(result).to eq(1)
+    end
+  end
+
+  context "deleting a page which does not exist" do
+    it "does not update other page next values" do
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+      third_page_id = subject.create(page)
+
+      result = subject.delete(999)
+
+      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      second_page_next = database[:pages].where(id: second_page_id).get(:next)
+      third_page_next = database[:pages].where(id: third_page_id).get(:next)
+
+      expect(result).to eq(0)
+      expect(first_page_next).to eq(second_page_id.to_s)
+      expect(second_page_next).to eq(third_page_id.to_s)
+      expect(third_page_next).to eq(nil)
     end
   end
 

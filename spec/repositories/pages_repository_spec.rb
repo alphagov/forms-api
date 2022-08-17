@@ -66,7 +66,6 @@ describe Repositories::PagesRepository do
 
       repository = Repositories::FormsRepository.new(@database)
       form = repository.get(form_id)
-      puts form
       expect(form[:created_at].to_i).to be_within(0).of(Time.now.to_i)
       expect(form[:updated_at].to_i).to be_within(0).of(Time.now.to_i)
     end

@@ -1,3 +1,5 @@
+require "date"
+
 describe Repositories::FormsRepository do
   include_context "with database"
 
@@ -10,6 +12,9 @@ describe Repositories::FormsRepository do
       expect(created_form[:name]).to eq("name")
       expect(created_form[:submission_email]).to eq("submission_email")
       expect(created_form[:org]).to eq("org")
+      expect(created_form[:live_at]).to eq(nil)
+      expect(created_form[:created_at].to_i).to be_within(3).of(Time.now.to_i)
+      expect(created_form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
     end
   end
 
@@ -38,12 +43,14 @@ describe Repositories::FormsRepository do
   context "updating a form" do
     it "updates a form" do
       form_id = subject.create("name", "submission_email", "org")
-      update_result = subject.update(form_id, "name2", "submission_email2", "org2")
+      update_result = subject.update(form_id, "name2", "submission_email2", "org2", Time.now)
       form = subject.get(form_id)
       expect(update_result).to eq(1)
       expect(form[:name]).to eq("name2")
       expect(form[:submission_email]).to eq("submission_email2")
       expect(form[:org]).to eq("org2")
+      expect(form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
+      expect(form[:live_at].to_i).to be_within(3).of(Time.now.to_i)
     end
   end
 

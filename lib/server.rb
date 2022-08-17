@@ -76,10 +76,11 @@ class Server < Grape::API
         requires :name, type: String, desc: "Form name."
         requires :submission_email, type: String, desc: "Submission email."
         requires :org, type: String, desc: "Organization slug."
+        requires :live_at, type: String, desc: "Live at."
       end
       put do
         repository = Repositories::FormsRepository.new(@database)
-        repository.update(params[:form_id], params[:name], params[:submission_email], params[:org])
+        repository.update(params[:form_id], params[:name], params[:submission_email], params[:org], params[:live_at])
         { success: true }
       end
 

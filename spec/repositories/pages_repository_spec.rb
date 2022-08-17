@@ -4,7 +4,11 @@ describe Repositories::PagesRepository do
   let(:subject) { described_class.new(database) }
   let(:form_id) do
     repository = Repositories::FormsRepository.new(@database)
-    repository.create("name", "email", "org")
+    repository.create("Form 1", "email", "org")
+  end
+  let(:another_form_id) do
+    repository = Repositories::FormsRepository.new(@database)
+    repository.create("Form 2", "email", "org")
   end
   let(:page) do
     Domain::Page.new.tap do |page|
@@ -13,14 +17,24 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name"
       page.hint_text = "hint_text"
       page.answer_type = "answer_type"
-      page.next = "next"
+      page.next = nil
+    end
+  end
+
+  let(:page_for_another_form) do
+    Domain::Page.new.tap do |page|
+      page.form_id = another_form_id
+      page.question_text = "question_text"
+      page.question_short_name = "question_short_name"
+      page.hint_text = "hint_text"
+      page.answer_type = "answer_type"
+      page.next = nil
     end
   end
 
   context "creating a new page" do
-    it "creates a page" do
+    it "creates a single page" do
       first_page_result = subject.create(page)
-      subject.create(page)
 
       created_page = database[:pages].where(id: first_page_result).all.last
 
@@ -29,6 +43,30 @@ describe Repositories::PagesRepository do
       expect(created_page[:hint_text]).to eq("hint_text")
       expect(created_page[:answer_type]).to eq("answer_type")
       expect(created_page[:form_id]).to eq(form_id)
+      expect(created_page[:next]).to be_nil
+    end
+  end
+
+  context "create a second page for the same form" do
+    it "should set the previous next attribute to the new page id" do
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+
+      first_page_result = database[:pages].where(id: first_page_id)
+
+      expect(first_page_result.get(:next)).to eq(second_page_id.to_s)
+    end
+
+    it "should not update another form pages next attribute" do
+      another_form_page_id = subject.create(page_for_another_form)
+      first_page_id = subject.create(page)
+      second_page_id = subject.create(page)
+
+      first_page_result = database[:pages].where(id: first_page_id)
+      another_form_page_result = database[:pages].where(id: another_form_page_id)
+
+      expect(first_page_result.get(:next)).to eq(second_page_id.to_s)
+      expect(another_form_page_result.get(:next)).to be_nil
     end
   end
 

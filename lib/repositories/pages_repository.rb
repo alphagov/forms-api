@@ -17,7 +17,7 @@ class Repositories::PagesRepository
         answer_type: page.answer_type
       )
 
-      @database[:pages].where(next: nil).exclude(id: new_page_id).update(next: new_page_id)
+      @database[:pages].where(form_id: page.form_id, next: nil).exclude(id: new_page_id).update(next: new_page_id)
 
       new_page_id
     end

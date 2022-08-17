@@ -7,6 +7,7 @@ unless ENV['SENTRY_DSN'].nil?
     config.dsn = ENV['SENTRY_DSN']
     config.breadcrumbs_logger = [:sentry_logger, :http_logger]
     config.traces_sample_rate = 0.5
+    config.environment = ENV["PAAS_ENVIRONMENT"] || "local"
   end
 
   use Sentry::Rack::CaptureExceptions

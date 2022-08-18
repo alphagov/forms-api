@@ -125,11 +125,8 @@ GEM
       parser (>= 3.1.1.0)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
-    sentry-ruby (5.3.0)
+    sentry-ruby (5.4.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      sentry-ruby-core (= 5.3.0)
-    sentry-ruby-core (5.3.0)
-      concurrent-ruby
     sequel (5.55.0)
     shellany (0.0.1)
     simplecov (0.21.2)
@@ -169,7 +166,7 @@ DEPENDENCIES
   rack-test
   rspec
   rubocop
-  sentry-ruby (~> 5.3.0)
+  sentry-ruby (~> 5.4.0)
   sequel (~> 5.55)
   simplecov (~> 0.21.2)
   sinatra (~> 2.2.0)

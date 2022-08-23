@@ -8,7 +8,6 @@ class Server < Grape::API
     content_type "text/plain"
     body "PONG"
   end
-
   # Private API version 1 endpoints
   mount APIv1
 

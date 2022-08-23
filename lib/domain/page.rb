@@ -5,7 +5,7 @@ class Domain::Page
                 :question_short_name,
                 :hint_text,
                 :answer_type,
-                :next
+                :next_page
 
   def to_h
     {
@@ -15,7 +15,7 @@ class Domain::Page
       question_short_name:,
       hint_text:,
       answer_type:,
-      next:
+      next_page:
     }
   end
 end

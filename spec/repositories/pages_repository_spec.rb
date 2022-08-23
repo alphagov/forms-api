@@ -17,7 +17,7 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name"
       page.hint_text = "hint_text"
       page.answer_type = "answer_type"
-      page.next = nil
+      page.next_page = nil
     end
   end
 
@@ -28,7 +28,7 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name"
       page.hint_text = "hint_text"
       page.answer_type = "answer_type"
-      page.next = nil
+      page.next_page = nil
     end
   end
 
@@ -43,21 +43,21 @@ describe Repositories::PagesRepository do
       expect(created_page[:hint_text]).to eq("hint_text")
       expect(created_page[:answer_type]).to eq("answer_type")
       expect(created_page[:form_id]).to eq(form_id)
-      expect(created_page[:next]).to be_nil
+      expect(created_page[:next_page]).to be_nil
     end
   end
 
   context "create a second page for the same form" do
-    it "should set the previous next attribute to the new page id" do
+    it "should set the previous next_page attribute to the new page id" do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
 
       first_page_result = database[:pages].where(id: first_page_id)
 
-      expect(first_page_result.get(:next)).to eq(second_page_id.to_s)
+      expect(first_page_result.get(:next_page)).to eq(second_page_id.to_s)
     end
 
-    it "should not update another form pages next attribute" do
+    it "should not update another form pages next_page attribute" do
       another_form_page_id = subject.create(page_for_another_form)
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
@@ -65,8 +65,8 @@ describe Repositories::PagesRepository do
       first_page_result = database[:pages].where(id: first_page_id)
       another_form_page_result = database[:pages].where(id: another_form_page_id)
 
-      expect(first_page_result.get(:next)).to eq(second_page_id.to_s)
-      expect(another_form_page_result.get(:next)).to be_nil
+      expect(first_page_result.get(:next_page)).to eq(second_page_id.to_s)
+      expect(another_form_page_result.get(:next_page)).to be_nil
     end
   end
 
@@ -90,7 +90,7 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name2"
       page.hint_text = "hint_text2"
       page.answer_type = "answer_type2"
-      page.next = "next_page"
+      page.next_page = "next_page"
       update_result = subject.update(page)
 
       page = subject.get(page_id)
@@ -99,7 +99,7 @@ describe Repositories::PagesRepository do
       expect(page.question_short_name).to eq("question_short_name2")
       expect(page.hint_text).to eq("hint_text2")
       expect(page.answer_type).to eq("answer_type2")
-      expect(page.next).to eq("next_page")
+      expect(page.next_page).to eq("next_page")
       expect(page.form_id).to eq(form_id)
 
       repository = Repositories::FormsRepository.new(@database)
@@ -117,43 +117,43 @@ describe Repositories::PagesRepository do
       expect(result).to eq(1)
     end
 
-    it "updates other page next values" do
+    it "updates other page next_page values" do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
       third_page_id = subject.create(page)
 
       result = subject.delete(second_page_id)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
       expect(first_page_next).to eq(third_page_id.to_s)
 
       expect(result).to eq(1)
     end
 
-    it "updates other page next values" do
+    it "updates other page next_page values" do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
       third_page_id = subject.create(page)
 
       result = subject.delete(second_page_id)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next)
+      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
       expect(first_page_next).to eq(third_page_id.to_s)
       expect(result).to eq(1)
     end
   end
 
   context "deleting a page which does not exist" do
-    it "does not update other page next values" do
+    it "does not update other page next_page values" do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
       third_page_id = subject.create(page)
 
       result = subject.delete(999)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next)
-      second_page_next = database[:pages].where(id: second_page_id).get(:next)
-      third_page_next = database[:pages].where(id: third_page_id).get(:next)
+      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
+      second_page_next = database[:pages].where(id: second_page_id).get(:next_page)
+      third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
 
       expect(result).to eq(0)
       expect(first_page_next).to eq(second_page_id.to_s)
@@ -163,16 +163,16 @@ describe Repositories::PagesRepository do
   end
 
   context "deleting a page which does not exist" do
-    it "does not update other page next values" do
+    it "does not update other page next_page values" do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
       third_page_id = subject.create(page)
 
       result = subject.delete(999)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next)
-      second_page_next = database[:pages].where(id: second_page_id).get(:next)
-      third_page_next = database[:pages].where(id: third_page_id).get(:next)
+      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
+      second_page_next = database[:pages].where(id: second_page_id).get(:next_page)
+      third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
 
       expect(result).to eq(0)
       expect(first_page_next).to eq(second_page_id.to_s)

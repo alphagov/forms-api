@@ -147,7 +147,7 @@ class APIv1 < Grape::API
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
-            optional :next, type: String, desc: "The ID of the next page"
+            optional :next_page, type: String, desc: "The ID of the next page"
           end
           put do
             repository = Repositories::PagesRepository.new(@database)
@@ -158,7 +158,7 @@ class APIv1 < Grape::API
               p.question_short_name = params[:question_short_name]
               p.hint_text = params[:hint_text]
               p.answer_type = params[:answer_type]
-              p.next = params[:next]
+              p.next_page = params[:next_page]
             end
 
             repository.update(page)

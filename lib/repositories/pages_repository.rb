@@ -5,8 +5,8 @@ class Repositories::PagesRepository
 
   def create(page)
     # Append the page to the end of the page linked list this means that we
-    # have to set the next value of the page which was last (if there are any
-    # pages) this page would have had next = null. We insert the page then set
+    # have to set the next_page value of the page which was last (if there are any
+    # pages) this page would have had next_page = null. We insert the page then set
     # the value in a single transaction
     @database.transaction(isolation: :serializable) do
       new_page_id = @database[:pages].insert(
@@ -17,7 +17,7 @@ class Repositories::PagesRepository
         answer_type: page.answer_type
       )
 
-      @database[:pages].where(form_id: page.form_id, next: nil).exclude(id: new_page_id).update(next: new_page_id)
+      @database[:pages].where(form_id: page.form_id, next_page: nil).exclude(id: new_page_id).update(next_page: new_page_id)
 
       new_page_id
     end
@@ -35,7 +35,7 @@ class Repositories::PagesRepository
       question_short_name: page.question_short_name,
       hint_text: page.hint_text,
       answer_type: page.answer_type,
-      next: page.next
+      next_page: page.next_page
     )
   end
 
@@ -45,8 +45,8 @@ class Repositories::PagesRepository
 
       # get the next value of our page and update any pages which pointed to us
       # to that instead
-      next_page_id = pages.where(id: page_id).get(:next)
-      pages.where(next: page_id.to_s).update(next: next_page_id)
+      next_page_id = pages.where(id: page_id).get(:next_page)
+      pages.where(next_page: page_id.to_s).update(next_page: next_page_id)
       pages.where(id: page_id).delete
     end
   end
@@ -65,7 +65,7 @@ class Repositories::PagesRepository
       page.question_short_name = page_data[:question_short_name]
       page.hint_text = page_data[:hint_text]
       page.answer_type = page_data[:answer_type]
-      page.next = page_data[:next]
+      page.next_page = page_data[:next_page]
     end
   end
 end

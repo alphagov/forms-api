@@ -15,12 +15,13 @@ class Repositories::FormsRepository
     @database[:forms].where(org:).all
   end
 
-  def update(form_id, name, submission_email, org, live_at)
-    @database[:forms].where(id: form_id).update(
-      name:,
-      submission_email:,
-      org:,
-      live_at:,
+  def update(form)
+    @database[:forms].where(id: form[:form_id]).update(
+      name: form[:name],
+      submission_email: form[:submission_email],
+      org: form[:org],
+      live_at: form[:live_at],
+      privacy_policy_url: form[:privacy_policy_url],
       updated_at: Time.now
     )
   end

@@ -77,10 +77,11 @@ class APIv1 < Grape::API
         requires :submission_email, type: String, desc: "Submission email."
         requires :org, type: String, desc: "Organization slug."
         requires :live_at, type: String, desc: "Live at."
+        optional :privacy_policy_url, type: String, desc: "Privacy policy URL."
       end
       put do
         repository = Repositories::FormsRepository.new(@database)
-        repository.update(params[:form_id], params[:name], params[:submission_email], params[:org], params[:live_at])
+        repository.update(params)
         { success: true }
       end
 

@@ -7,11 +7,12 @@ describe Repositories::FormsRepository do
 
   context "creating a new form" do
     it "creates a form" do
-      result = subject.create("name", "submission_email", "org")
+      result = subject.create("Form 1 (basic form)?", "submission_email", "org")
       created_form = database[:forms].where(id: result).all.last
-      expect(created_form[:name]).to eq("name")
+      expect(created_form[:name]).to eq("Form 1 (basic form)?")
       expect(created_form[:submission_email]).to eq("submission_email")
       expect(created_form[:org]).to eq("org")
+      expect(created_form[:form_slug]).to eq("form-1-basic-form")
       expect(created_form[:live_at]).to eq(nil)
       expect(created_form[:created_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(created_form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
@@ -42,13 +43,14 @@ describe Repositories::FormsRepository do
 
   context "updating a form" do
     it "updates a form" do
-      form_id = subject.create("name", "submission_email", "org")
-      update_result = subject.update({ form_id:, name: "name2", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy" })
+      form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
+      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy" })
       form = subject.get(form_id)
       expect(update_result).to eq(1)
-      expect(form[:name]).to eq("name2")
+      expect(form[:name]).to eq("Form 2 (basic form)?")
       expect(form[:submission_email]).to eq("submission_email2")
       expect(form[:org]).to eq("org2")
+      expect(form[:form_slug]).to eq("form-2-basic-form")
       expect(form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(form[:live_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(form[:privacy_policy_url]).to eq("https://example.com/privacy-policy")

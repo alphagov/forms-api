@@ -4,6 +4,19 @@ describe Repositories::FormsRepository do
   include_context "with database"
 
   let(:subject) { described_class.new(database) }
+  let(:form_id) do
+    subject.create("Form 1 (basic form)?", "submission_email@email", "org")
+  end
+  let(:page) do
+    Domain::Page.new.tap do |page|
+      page.form_id = form_id
+      page.question_text = "question_text"
+      page.question_short_name = "question_short_name"
+      page.hint_text = "hint_text"
+      page.answer_type = "answer_type"
+      page.next_page = nil
+    end
+  end
 
   context "creating a new form" do
     it "creates a form" do
@@ -44,11 +57,24 @@ describe Repositories::FormsRepository do
   context "updating a form" do
     it "updates a form" do
       form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
-      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next" })
+
+      pages_repository = Repositories::PagesRepository.new(@database)
+
+      page_id = pages_repository.create(page)
+      page.id = page_id
+      page.question_text = "question_text2"
+      page.question_short_name = "question_short_name2"
+      page.hint_text = "hint_text2"
+      page.answer_type = "answer_type2"
+      page.next_page = "next_page"
+      page.form_id = form_id
+
+      update_result = subject.update({ form_id: , name: "Form 2 (basic form)?", submission_email: "submission_email2@example.com", org: "org2", privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next", live_at: Time.now })
+
       form = subject.get(form_id)
       expect(update_result).to eq(1)
       expect(form[:name]).to eq("Form 2 (basic form)?")
-      expect(form[:submission_email]).to eq("submission_email2")
+      expect(form[:submission_email]).to eq("submission_email2@example.com")
       expect(form[:org]).to eq("org2")
       expect(form[:form_slug]).to eq("form-2-basic-form")
       expect(form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)

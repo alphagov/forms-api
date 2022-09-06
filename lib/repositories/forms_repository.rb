@@ -16,6 +16,14 @@ class Repositories::FormsRepository
   end
 
   def update(form)
+    if form[:live_at]
+      the_form = @database[:forms].where(id: form[:form_id])
+      raise "Invalid email" unless form[:submission_email].include?("@")
+      raise "Form has no name" unless form[:name]
+      raise "Form has no pages" unless @database[:pages].where(form_id: form[:form_id]).count > 0
+      raise "Form has a privacy policy" unless form[:privacy_policy_url]
+    end
+
     @database[:forms].where(id: form[:form_id]).update(
       name: form[:name],
       submission_email: form[:submission_email],

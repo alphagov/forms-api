@@ -6,7 +6,7 @@ describe "migration 11" do
   before do
     migrator.migrate_to(database, 10)
   end
-  it "changes type of _next_page from string to int from v8 to v9" do
+  it "changes type of _next_page from string to int from v10 to v11" do
     form1 = database[:forms].insert(name: "name", submission_email: "submission_email", org: "testorg")
     form2 = database[:forms].insert(name: "name", submission_email: "submission_email", org: "testorg")
 
@@ -20,5 +20,6 @@ describe "migration 11" do
 
     expect(database[:pages].where(id: page_id2).first[:next_page]).to eq(page_id3)
     expect(database[:pages].where(id: page_id3).first[:next_page]).to be_nil
+    expect(database[:pages].where(id: page_id3).first[:next_page]).to be_in
   end
 end

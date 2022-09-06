@@ -54,7 +54,7 @@ describe Repositories::PagesRepository do
 
       first_page_result = database[:pages].where(id: first_page_id)
 
-      expect(first_page_result.get(:next_page)).to eq(second_page_id.to_s)
+      expect(first_page_result.get(:next_page)).to eq(second_page_id)
     end
 
     it "should not update another form pages next_page attribute" do
@@ -65,7 +65,7 @@ describe Repositories::PagesRepository do
       first_page_result = database[:pages].where(id: first_page_id)
       another_form_page_result = database[:pages].where(id: another_form_page_id)
 
-      expect(first_page_result.get(:next_page)).to eq(second_page_id.to_s)
+      expect(first_page_result.get(:next_page)).to eq(second_page_id)
       expect(another_form_page_result.get(:next_page)).to be_nil
     end
   end
@@ -90,7 +90,7 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name2"
       page.hint_text = "hint_text2"
       page.answer_type = "answer_type2"
-      page.next_page = "next_page"
+      page.next_page = 3
       update_result = subject.update(page)
 
       page = subject.get(page_id)
@@ -99,7 +99,7 @@ describe Repositories::PagesRepository do
       expect(page.question_short_name).to eq("question_short_name2")
       expect(page.hint_text).to eq("hint_text2")
       expect(page.answer_type).to eq("answer_type2")
-      expect(page.next_page).to eq("next_page")
+      expect(page.next_page).to eq(3)
       expect(page.form_id).to eq(form_id)
 
       repository = Repositories::FormsRepository.new(@database)
@@ -125,7 +125,7 @@ describe Repositories::PagesRepository do
       result = subject.delete(second_page_id)
 
       first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
-      expect(first_page_next).to eq(third_page_id.to_s)
+      expect(first_page_next).to eq(third_page_id)
 
       expect(result).to eq(1)
     end
@@ -138,7 +138,7 @@ describe Repositories::PagesRepository do
       result = subject.delete(second_page_id)
 
       first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
-      expect(first_page_next).to eq(third_page_id.to_s)
+      expect(first_page_next).to eq(third_page_id)
       expect(result).to eq(1)
     end
   end
@@ -156,8 +156,8 @@ describe Repositories::PagesRepository do
       third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
 
       expect(result).to eq(0)
-      expect(first_page_next).to eq(second_page_id.to_s)
-      expect(second_page_next).to eq(third_page_id.to_s)
+      expect(first_page_next).to eq(second_page_id)
+      expect(second_page_next).to eq(third_page_id)
       expect(third_page_next).to eq(nil)
     end
   end
@@ -175,8 +175,8 @@ describe Repositories::PagesRepository do
       third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
 
       expect(result).to eq(0)
-      expect(first_page_next).to eq(second_page_id.to_s)
-      expect(second_page_next).to eq(third_page_id.to_s)
+      expect(first_page_next).to eq(second_page_id)
+      expect(second_page_next).to eq(third_page_id)
       expect(third_page_next).to eq(nil)
     end
   end

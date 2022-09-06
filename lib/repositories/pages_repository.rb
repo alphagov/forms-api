@@ -46,7 +46,7 @@ class Repositories::PagesRepository
       # get the next value of our page and update any pages which pointed to us
       # to that instead
       next_page_id = pages.where(id: page_id).get(:next_page)
-      pages.where(next_page: page_id.to_s).update(next_page: next_page_id)
+      pages.where(next_page: page_id).update(next_page: next_page_id)
       pages.where(id: page_id).delete
     end
   end

@@ -20,6 +20,5 @@ describe "migration 11" do
 
     expect(database[:pages].where(id: page_id2).first[:next_page]).to eq(page_id3)
     expect(database[:pages].where(id: page_id3).first[:next_page]).to be_nil
-    expect(database[:pages].where(id: page_id3).first[:next_page]).to be_in
   end
 end

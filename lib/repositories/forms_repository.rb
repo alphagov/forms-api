@@ -18,10 +18,18 @@ class Repositories::FormsRepository
   def update(form)
     if form[:live_at]
       the_form = @database[:forms].where(id: form[:form_id])
-      raise "Invalid email" unless form[:submission_email].include?("@")
-      raise "Form has no name" unless form[:name]
-      raise "Form has no pages" unless @database[:pages].where(form_id: form[:form_id]).count > 0
-      raise "Form has a privacy policy" unless form[:privacy_policy_url]
+      if not form[:submission_email].include?("@")
+        error!({ error: 'invalid', detail: 'email field' }, 400)
+      end
+      if not form[:name]
+        error!({ error: 'missing', detail: 'form name field' }, 400)
+      end
+      if @database[:pages].where(form_id: form[:form_id]).count < 1
+        error!({ error: 'missing', detail: 'form has no pages' }, 400)
+      end
+      if not form[:privacy_policy_url]
+        error!({ error: 'missing', detail: 'form has no privacy policy url' }, 400)
+      end
     end
 
     @database[:forms].where(id: form[:form_id]).update(

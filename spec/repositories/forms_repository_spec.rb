@@ -82,6 +82,28 @@ describe Repositories::FormsRepository do
       expect(form[:privacy_policy_url]).to eq("https://example.com/privacy-policy")
       expect(form[:what_happens_next_text]).to eq("text on what happens next")
     end
+    it "updates a form with bad data" do
+      pages_repository = Repositories::PagesRepository.new(@database)
+
+      page_id = pages_repository.create(page)
+      page.id = page_id
+      page.question_text = "question_text2"
+      page.question_short_name = "question_short_name2"
+      page.hint_text = "hint_text2"
+      page.answer_type = "answer_type2"
+      page.next_page = "next_page"
+      page.form_id = form_id
+      
+      update_result = subject.update({ form_id:, name: "name2", submission_email: "submissionemail2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy" })
+      form = subject.get(form_id)
+      expect(update_result).to eq(1)
+      expect(form[:name]).to eq("name2")
+      expect(form[:submission_email]).to eq("submission@email2")
+      expect(form[:org]).to eq("org2")
+      expect(form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
+      expect(form[:live_at].to_i).to be_within(3).of(Time.now.to_i)
+      expect(form[:privacy_policy_url]).to eq("https://example.com/privacy-policy")
+    end
   end
 
   context "deleting a form" do

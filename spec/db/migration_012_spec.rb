@@ -15,6 +15,6 @@ describe "migration 12" do
 
     updated_form = database[:forms].where(id: form_id).first
 
-    expect(updated_form[:what_happens_next_text]).to eq("some text on what happens next 1")
+    expect(updated_form[:what_happens_next_text]).to eq("some text on what happens next")
   end
 end

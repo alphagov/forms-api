@@ -44,7 +44,7 @@ describe Repositories::FormsRepository do
   context "updating a form" do
     it "updates a form" do
       form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
-      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy" })
+      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next" })
       form = subject.get(form_id)
       expect(update_result).to eq(1)
       expect(form[:name]).to eq("Form 2 (basic form)?")
@@ -54,6 +54,7 @@ describe Repositories::FormsRepository do
       expect(form[:updated_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(form[:live_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(form[:privacy_policy_url]).to eq("https://example.com/privacy-policy")
+      expect(form[:what_happens_next_text]).to eq("text on what happens next")
     end
   end
 

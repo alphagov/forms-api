@@ -78,6 +78,7 @@ class APIv1 < Grape::API
         requires :org, type: String, desc: "Organization slug."
         requires :live_at, type: String, desc: "Live at."
         optional :privacy_policy_url, type: String, desc: "Privacy policy URL."
+        optional :what_happens_next_text, type: String, desc: "What happens next."
       end
       put do
         repository = Repositories::FormsRepository.new(@database)

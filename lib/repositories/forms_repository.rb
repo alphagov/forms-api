@@ -22,6 +22,7 @@ class Repositories::FormsRepository
       org: form[:org],
       live_at: form[:live_at],
       privacy_policy_url: form[:privacy_policy_url],
+      what_happens_next_text: form[:what_happens_next_text],
       form_slug: form[:name].parameterize,
       updated_at: Time.now
     )

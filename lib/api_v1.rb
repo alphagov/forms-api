@@ -53,20 +53,17 @@ class APIv1 < Grape::API
       { id: }
     end
 
-    route_param :form_id do
+    route_param :form_slug do
       before do
-        repository = Repositories::FormsRepository.new(@database)
-        form = repository.get(params[:form_id])
-        error! :not_found, 404 if form.nil?
       end
 
       desc "Read a form."
       get do
         repository = Repositories::FormsRepository.new(@database)
         page_repository = Repositories::PagesRepository.new(@database)
-
-        form = repository.get(params[:form_id])
-        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by(&:id)
+        form = repository.get_by_slug(params[:form_slug])
+        error! :not_found, 404 if form.nil?
+        pages = page_repository.get_pages_in_form(form[:id]).sort_by(&:id)
         form[:start_page] = (pages.first.id if pages.any?)
         form
       end
@@ -95,15 +92,15 @@ class APIv1 < Grape::API
 
       resource :pages do
         before do
-          repository = Repositories::FormsRepository.new(@database)
-          form = repository.get(params[:form_id])
-          error! :not_found, 404 if form.nil?
         end
 
         desc "Return all pages for the form"
         get do
-          repository = Repositories::PagesRepository.new(@database)
-          repository.get_pages_in_form(params[:form_id]).sort_by(&:id).map(&:to_h)
+          repository = Repositories::FormsRepository.new(@database)
+          pages_repository = Repositories::PagesRepository.new(@database)
+          form = repository.get_by_slug(params[:form_slug])
+          error! :not_found, 404 if form.nil?
+          pages_repository.get_pages_in_form(form[:id]).sort_by(&:id).map(&:to_h)
         end
 
         desc "Create a new page."

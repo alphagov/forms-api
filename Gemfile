@@ -8,7 +8,7 @@ gem "dotenv", "~> 2.7.6"
 gem "pg", "~> 1.3.5"
 gem "puma", "~> 5.0"
 gem "sentry-ruby", "~> 5.4.0"
-gem "sequel", "~> 5.55"
+gem "sequel", "~> 5.60"
 gem "zeitwerk", "~> 2.5"
 
 group :development, :test do

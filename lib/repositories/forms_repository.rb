@@ -24,6 +24,10 @@ class Repositories::FormsRepository
       privacy_policy_url: form[:privacy_policy_url],
       what_happens_next_text: form[:what_happens_next_text],
       form_slug: form[:name].parameterize,
+      support_email: form[:support_email],
+      support_phone: form[:support_phone],
+      support_url: form[:support_url],
+      support_url_text: form[:support_url_text],
       updated_at: Time.now
     )
   end

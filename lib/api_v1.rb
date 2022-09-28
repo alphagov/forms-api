@@ -79,6 +79,10 @@ class APIv1 < Grape::API
         requires :live_at, type: String, desc: "Live at."
         optional :privacy_policy_url, type: String, desc: "Privacy policy URL."
         optional :what_happens_next_text, type: String, desc: "What happens next."
+        optional :support_email, type: String, desc: "Support email address"
+        optional :support_phone, type: String, desc: "Support phone contact details"
+        optional :support_url, type: String, desc: "Support url"
+        optional :support_url_text, type: String, desc: "Support url text"
       end
       put do
         repository = Repositories::FormsRepository.new(@database)

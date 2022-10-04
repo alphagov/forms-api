@@ -9,7 +9,7 @@ gem "pg", "~> 1.4.3"
 gem "puma", "~> 5.6"
 gem "sentry-ruby", "~> 5.5.0"
 gem "sequel", "~> 5.61"
-gem "zeitwerk", "~> 2.5"
+gem "zeitwerk", "~> 2.6"
 
 group :development, :test do
   gem "pry"

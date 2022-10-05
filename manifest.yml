@@ -2,6 +2,7 @@
 applications:
   - name: forms-api-((PAAS_ENVIRONMENT))
     memory: 256M
+    instances: ((INSTANCES))
     command: bundle exec rackup -o 0.0.0.0 -p $PORT
     services:
       - forms-api-((PAAS_ENVIRONMENT))-db

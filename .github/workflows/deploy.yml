@@ -32,4 +32,5 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=dev \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --var INSTANCES=2 \
             --var API_KEY=${{ secrets.API_KEY }}

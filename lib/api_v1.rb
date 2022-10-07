@@ -117,7 +117,7 @@ class APIv1 < Grape::API
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
-          optional :is_optional, type: TrueClass, desc: "Optional question?"
+          optional :is_optional, type: String, desc: "Optional question?"
         end
         post do
           repository = Repositories::PagesRepository.new(@database)
@@ -155,7 +155,7 @@ class APIv1 < Grape::API
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
             optional :next_page, type: String, desc: "The ID of the next page"
-            optional :is_optional, type: TrueClass, desc: "Optional question?"
+            optional :is_optional, type: String, desc: "Optional question?"
           end
           put do
             repository = Repositories::PagesRepository.new(@database)

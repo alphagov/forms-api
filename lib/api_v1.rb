@@ -116,7 +116,7 @@ class APIv1 < Grape::API
           optional :question_short_name, type: String, desc: "Question short name."
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
-                                 values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+                                 values: %w[single_line address date email national_insurance_number phone_number long_text], desc: "Answer type"
           optional :is_optional, type: String, desc: "Optional question?"
         end
         post do
@@ -153,7 +153,7 @@ class APIv1 < Grape::API
             optional :question_short_name, type: String, desc: "Question short name."
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
-                                   values: %w[single_line address date email national_insurance_number phone_number], desc: "Answer type"
+                                   values: %w[single_line address date email national_insurance_number phone_number long_text], desc: "Answer type"
             optional :next_page, type: String, desc: "The ID of the next page"
             optional :is_optional, type: String, desc: "Optional question?"
           end

@@ -27,10 +27,6 @@ class APIv1 < Grape::API
     @database = Database.existing_database
   end
 
-  finally do
-    @database.disconnect if @database.present?
-  end
-
   resource :forms do
     desc "Return all forms by org."
     params do

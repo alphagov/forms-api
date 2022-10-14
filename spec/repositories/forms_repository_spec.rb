@@ -44,7 +44,7 @@ describe Repositories::FormsRepository do
   context "updating a form" do
     it "updates a form" do
       form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
-      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next", support_email: "test@email.com", support_phone: "8675309", support_url: "http://www.example.com", support_url_text: "Support page" })
+      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next", declaration_text: "declaration text", support_email: "test@email.com", support_phone: "8675309", support_url: "http://www.example.com", support_url_text: "Support page" })
       form = subject.get(form_id)
       expect(update_result).to eq(1)
       expect(form[:name]).to eq("Form 2 (basic form)?")
@@ -55,6 +55,7 @@ describe Repositories::FormsRepository do
       expect(form[:live_at].to_i).to be_within(3).of(Time.now.to_i)
       expect(form[:privacy_policy_url]).to eq("https://example.com/privacy-policy")
       expect(form[:what_happens_next_text]).to eq("text on what happens next")
+      expect(form[:declaration_text]).to eq("declaration text")
       expect(form[:support_email]).to eq("test@email.com")
       expect(form[:support_phone]).to eq("8675309")
       expect(form[:support_url]).to eq("http://www.example.com")

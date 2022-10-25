@@ -3,11 +3,15 @@ require "uri"
 require_relative "./migrator"
 
 class Database
+  @database = nil
+
   def self.existing_database
-    database = Sequel.connect(ENV["DATABASE_URL"])
-    database.extension :pg_json
-    database.extension :pg_array
-    database
+    if @database.nil?
+      @database = Sequel.connect(ENV["DATABASE_URL"])
+      @database.extension :pg_json
+      @database.extension :pg_array
+    end
+    @database
   end
 
   def self.fresh_database

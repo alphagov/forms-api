@@ -23,4 +23,19 @@ describe "migration 16" do
     expect(existing_form[:question_section_completed]).to eq false
 
   end
+
+  it "marks existing live forms question_section_completed to true" do
+    live_form_id = database[:forms].insert(name: "name 1", submission_email: "submission_email", org: "testorg", live_at: Time.now)
+    draft_form_id = database[:forms].insert(name: "name 2", submission_email: "submission_email", org: "testorg")
+
+    migrator.migrate_to(database, 17)
+
+    live_form = database[:forms].where(id: live_form_id).first
+
+    expect(live_form[:question_section_completed]).to eq true
+
+    draft_form = database[:forms].where(id: draft_form_id).first
+
+    expect(draft_form[:question_section_completed]).to eq false
+  end
 end

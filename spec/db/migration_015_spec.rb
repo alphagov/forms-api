@@ -1,4 +1,4 @@
-describe "migration 14" do
+describe "migration 15" do
   include_context "with database"
 
   let(:migrator) { Migrator.new }

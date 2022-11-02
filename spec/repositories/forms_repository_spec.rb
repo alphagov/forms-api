@@ -44,7 +44,18 @@ describe Repositories::FormsRepository do
   context "updating a form" do
     it "updates a form" do
       form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
-      update_result = subject.update({ form_id:, name: "Form 2 (basic form)?", submission_email: "submission_email2", org: "org2", live_at: Time.now, privacy_policy_url: "https://example.com/privacy-policy", what_happens_next_text: "text on what happens next", declaration_text: "declaration text", support_email: "test@email.com", support_phone: "8675309", support_url: "http://www.example.com", support_url_text: "Support page" })
+      update_result = subject.update({form_id:,
+                                      name: "Form 2 (basic form)?",
+                                      submission_email: "submission_email2",
+                                      org: "org2",
+                                      live_at: Time.now,
+                                      privacy_policy_url: "https://example.com/privacy-policy",
+                                      what_happens_next_text: "text on what happens next",
+                                      declaration_text: "declaration text",
+                                      support_email: "test@email.com",
+                                      support_phone: "8675309",
+                                      support_url: "http://www.example.com",
+                                      support_url_text: "Support page" })
       form = subject.get(form_id)
       expect(update_result).to eq(1)
       expect(form[:name]).to eq("Form 2 (basic form)?")
@@ -60,6 +71,19 @@ describe Repositories::FormsRepository do
       expect(form[:support_phone]).to eq("8675309")
       expect(form[:support_url]).to eq("http://www.example.com")
       expect(form[:support_url_text]).to eq("Support page")
+    end
+
+    it "updates forms question_section_completed" do
+      form_id = subject.create("Form 1 (basic form)?", "submission_email", "org")
+
+      form = subject.get(form_id)
+      expect(form[:question_section_completed]).to eq false
+
+      update_result = subject.update({form_id:,name: "Form 2 (basic form)?",
+                                      question_section_completed: true })
+      form = subject.get(form_id)
+      expect(update_result).to eq(1)
+      expect(form[:question_section_completed]).to eq true
     end
   end
 

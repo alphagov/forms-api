@@ -24,6 +24,7 @@ class Repositories::FormsRepository
       privacy_policy_url: form[:privacy_policy_url],
       what_happens_next_text: form[:what_happens_next_text],
       declaration_text: form[:declaration_text],
+      question_section_completed: form[:question_section_completed],
       form_slug: form[:name].parameterize,
       support_email: form[:support_email],
       support_phone: form[:support_phone],

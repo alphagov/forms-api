@@ -76,6 +76,7 @@ class APIv1 < Grape::API
         optional :privacy_policy_url, type: String, desc: "Privacy policy URL."
         optional :what_happens_next_text, type: String, desc: "What happens next."
         optional :declaration_text, type: String, desc: "Declaration text."
+        optional :question_section_completed, type: String, desc: "Used to identify whether forms questions section has been completed"
         optional :support_email, type: String, desc: "Support email address"
         optional :support_phone, type: String, desc: "Support phone contact details"
         optional :support_url, type: String, desc: "Support url"

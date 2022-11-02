@@ -21,7 +21,6 @@ describe "migration 16" do
     existing_form = database[:forms].where(id: question_not_completed_form_id).first
 
     expect(existing_form[:question_section_completed]).to eq false
-
   end
 
   it "marks existing live forms question_section_completed to true" do

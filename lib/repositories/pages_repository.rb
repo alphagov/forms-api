@@ -39,6 +39,8 @@ class Repositories::PagesRepository
       next_page: page.next_page,
       is_optional: page.is_optional
     )
+
+    @database[:forms].where(id: page.form_id).update(question_section_completed: false)
   end
 
   def delete(page_id)

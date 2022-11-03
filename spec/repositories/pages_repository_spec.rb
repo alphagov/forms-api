@@ -48,6 +48,15 @@ describe Repositories::PagesRepository do
       expect(created_page[:next_page]).to be_nil
       expect(created_page[:is_optional]).to be_nil
     end
+
+    it "resets forms 'question_section_completed' value" do
+      database[:forms].where(id: form_id).update(question_section_completed: true)
+      subject.create(page)
+
+      repository = Repositories::FormsRepository.new(@database)
+      form = repository.get(form_id)
+      expect(form[:question_section_completed]).to be false
+    end
   end
 
   context "create a second page for the same form" do

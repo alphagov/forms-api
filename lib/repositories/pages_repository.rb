@@ -20,6 +20,8 @@ class Repositories::PagesRepository
 
       @database[:pages].where(form_id: page.form_id, next_page: nil).exclude(id: new_page_id).update(next_page: new_page_id)
 
+      @database[:forms].where(id: page.form_id).update(question_section_completed: false)
+
       new_page_id
     end
   end

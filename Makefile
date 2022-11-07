@@ -4,7 +4,7 @@ setup:
 	bundle install
 
 serve: setup
-	bundle exec rackup
+	bundle exec rackup --server puma
 
 serve-watch: setup
 	bundle exec guard -i --notify false -P rack

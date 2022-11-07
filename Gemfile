@@ -5,7 +5,7 @@ ruby File.read(".ruby-version").chomp
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gem "dotenv", "~> 2.8.1"
-gem "pg", "~> 1.4.3"
+gem "pg", "~> 1.4.4"
 gem "puma", "~> 5.6"
 gem "sentry-ruby", "~> 5.5.0"
 gem "sequel", "~> 5.62"

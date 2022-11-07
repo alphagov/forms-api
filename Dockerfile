@@ -17,4 +17,4 @@ USER ruby
 COPY --chown=ruby:ruby . .
 
 EXPOSE 9292
-CMD ["rackup", "--host", "0.0.0.0", "--port", "9292"]
+CMD ["rackup", "--host", "0.0.0.0", "--port", "9292", "--server", "puma"]

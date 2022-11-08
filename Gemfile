@@ -31,4 +31,4 @@ end
 
 gem "grape", "~> 1.6"
 
-gem "grape-swagger", "~> 1.5"
+gem "grape-swagger", "~> 1.4"

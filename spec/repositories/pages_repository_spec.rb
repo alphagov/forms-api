@@ -67,9 +67,9 @@ describe Repositories::PagesRepository do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
 
-      first_page_result = database[:pages].where(id: first_page_id)
+      first_page_result = subject.get(first_page_id)
 
-      expect(first_page_result.get(:next_page)).to eq(second_page_id)
+      expect(first_page_result.next_page).to eq(second_page_id)
     end
 
     it "should not update another form pages next_page attribute" do
@@ -77,25 +77,59 @@ describe Repositories::PagesRepository do
       first_page_id = subject.create(page)
       second_page_id = subject.create(page)
 
-      first_page_result = database[:pages].where(id: first_page_id)
-      another_form_page_result = database[:pages].where(id: another_form_page_id)
+      first_page_result = subject.get(first_page_id)
+      another_form_page_result = subject.get(another_form_page_id)
 
-      expect(first_page_result.get(:next_page)).to eq(second_page_id)
-      expect(another_form_page_result.get(:next_page)).to be_nil
+      expect(first_page_result.next_page).to eq(second_page_id)
+      expect(another_form_page_result.next_page).to be_nil
     end
   end
 
   context "getting a page" do
-    it "gets a page" do
+    it "gets a single page" do
       page_id = subject.create(page)
       found_page = subject.get(page_id)
       expect(found_page.question_text).to eq("question_text")
       expect(found_page.question_short_name).to eq("question_short_name")
       expect(found_page.hint_text).to eq("hint_text")
+      expect(found_page.next_page).to eq(nil)
       expect(found_page.answer_type).to eq("answer_type")
       expect(found_page.form_id).to eq(form_id)
       expect(found_page.is_optional).to be_nil
       expect(found_page.answer_settings).to be_nil
+    end
+
+    it "gets a single page with correct next_page value" do
+      page_id = subject.create(page)
+      page_id2 = subject.create(page)
+      found_page = subject.get(page_id)
+      expect(found_page.question_text).to eq("question_text")
+      expect(found_page.question_short_name).to eq("question_short_name")
+      expect(found_page.hint_text).to eq("hint_text")
+      expect(found_page.next_page).to eq(page_id2)
+      expect(found_page.answer_type).to eq("answer_type")
+      expect(found_page.form_id).to eq(form_id)
+      expect(found_page.is_optional).to be_nil
+    end
+  end
+
+  describe "#get_pages_in_form" do
+    it "gets a multiple pages with correct next_page values in the correct order" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+      page_id3 = subject.create(page)
+
+      found_pages = subject.get_pages_in_form(form_id)
+
+      expect(found_pages.length).to eq(3)
+      expect(found_pages.map(&:id)).to eq([page_id1, page_id2, page_id3])
+      expect(found_pages[0].question_text).to eq("question_text")
+      expect(found_pages[0].question_short_name).to eq("question_short_name")
+      expect(found_pages[0].hint_text).to eq("hint_text")
+      expect(found_pages[0].next_page).to eq(page_id2)
+      expect(found_pages[0].answer_type).to eq("answer_type")
+      expect(found_pages[0].form_id).to eq(form_id)
+      expect(found_pages[0].is_optional).to be_nil
     end
   end
 
@@ -108,7 +142,6 @@ describe Repositories::PagesRepository do
       page.question_short_name = "question_short_name2"
       page.hint_text = "hint_text2"
       page.answer_type = "answer_type2"
-      page.next_page = 3
       page.is_optional = true
       page.answer_settings = { allow_multiple_answers: true, selection_options: [{ name: "option 1" }] }.to_json
       update_result = subject.update(page)
@@ -119,7 +152,7 @@ describe Repositories::PagesRepository do
       expect(page.question_short_name).to eq("question_short_name2")
       expect(page.hint_text).to eq("hint_text2")
       expect(page.answer_type).to eq("answer_type2")
-      expect(page.next_page).to eq(3)
+      expect(page.next_page).to eq(nil)
       expect(page.form_id).to eq(form_id)
       expect(page.is_optional).to be true
       expect(page.answer_settings).to eq({ "allow_multiple_answers" => true, "selection_options" => [{ "name" => "option 1" }] })
@@ -159,7 +192,7 @@ describe Repositories::PagesRepository do
 
       result = subject.delete(second_page_id)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
+      first_page_next = subject.get(first_page_id).next_page
       expect(first_page_next).to eq(third_page_id)
 
       expect(result).to eq(1)
@@ -172,7 +205,7 @@ describe Repositories::PagesRepository do
 
       result = subject.delete(second_page_id)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
+      first_page_next = subject.get(first_page_id).next_page
       expect(first_page_next).to eq(third_page_id)
       expect(result).to eq(1)
     end
@@ -186,28 +219,9 @@ describe Repositories::PagesRepository do
 
       result = subject.delete(999)
 
-      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
-      second_page_next = database[:pages].where(id: second_page_id).get(:next_page)
-      third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
-
-      expect(result).to eq(0)
-      expect(first_page_next).to eq(second_page_id)
-      expect(second_page_next).to eq(third_page_id)
-      expect(third_page_next).to eq(nil)
-    end
-  end
-
-  context "deleting a page which does not exist" do
-    it "does not update other page next_page values" do
-      first_page_id = subject.create(page)
-      second_page_id = subject.create(page)
-      third_page_id = subject.create(page)
-
-      result = subject.delete(999)
-
-      first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
-      second_page_next = database[:pages].where(id: second_page_id).get(:next_page)
-      third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
+      first_page_next = subject.get(first_page_id).next_page
+      second_page_next = subject.get(second_page_id).next_page
+      third_page_next = subject.get(third_page_id).next_page
 
       expect(result).to eq(0)
       expect(first_page_next).to eq(second_page_id)
@@ -224,6 +238,147 @@ describe Repositories::PagesRepository do
       expect(pages.length).to eq(2)
       expect(pages[0].id).to eq(page_id1)
       expect(pages[1].id).to eq(page_id2)
+    end
+  end
+
+  describe "#move_page_down" do
+    it "with a single page doesn't change the next_page id" do
+      page_id1 = subject.create(page)
+
+      subject.move_page_down(form_id, page_id1)
+      first_page_next = subject.get(page_id1).next_page
+
+      expect(first_page_next).to eq(nil)
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1])
+    end
+
+    it "with two pages, moving the first changes the next_page id of both pages" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id2])
+
+      subject.move_page_down(form_id, page_id1)
+
+      expect(subject.get(page_id1).next_page).to eq(nil)
+      expect(subject.get(page_id2).next_page).to eq(page_id1)
+
+      pages = subject.get_pages_in_form(form_id)
+      expect(pages.map(&:id)).to eq([page_id2, page_id1])
+    end
+
+    it "with two pages, moving the last does not change order" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      subject.move_page_down(form_id, page_id2)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id2])
+    end
+
+    it "with two pages, moving the last does not change next_page" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      subject.move_page_down(form_id, page_id2)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id2])
+    end
+
+    it "with three pages, moving the first does not change the last page" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+      page_id3 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(page_id3)
+      expect(subject.get(page_id3).next_page).to eq(nil)
+
+      subject.move_page_down(form_id, page_id1)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id3)
+      expect(subject.get(page_id2).next_page).to eq(page_id1)
+      expect(subject.get(page_id3).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id2, page_id1, page_id3])
+    end
+  end
+
+  describe "#move_page_up" do
+    it "with a single page doesn't change the next_page id" do
+      page_id1 = subject.create(page)
+
+      subject.move_page_up(form_id, page_id1)
+      first_page_next = subject.get(page_id1).next_page
+
+      expect(first_page_next).to eq(nil)
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1])
+    end
+
+    it "with two pages, moving the last changes the next_page id of both pages" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id2])
+
+      subject.move_page_up(form_id, page_id2)
+
+      expect(subject.get(page_id1).next_page).to eq(nil)
+      expect(subject.get(page_id2).next_page).to eq(page_id1)
+
+      pages = subject.get_pages_in_form(form_id)
+      expect(pages.map(&:id)).to eq([page_id2, page_id1])
+    end
+
+    it "with two pages, moving the first does not change order" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      subject.move_page_up(form_id, page_id1)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id2])
+    end
+
+    it "with three pages, moving the last does not change the first page" do
+      page_id1 = subject.create(page)
+      page_id2 = subject.create(page)
+      page_id3 = subject.create(page)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id2)
+      expect(subject.get(page_id2).next_page).to eq(page_id3)
+      expect(subject.get(page_id3).next_page).to eq(nil)
+
+      subject.move_page_up(form_id, page_id3)
+
+      expect(subject.get(page_id1).next_page).to eq(page_id3)
+      expect(subject.get(page_id2).next_page).to eq(nil)
+      expect(subject.get(page_id3).next_page).to eq(page_id2)
+
+      expect(subject.get_pages_in_form(form_id).map(&:id)).to eq([page_id1, page_id3, page_id2])
     end
   end
 end

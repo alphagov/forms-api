@@ -62,8 +62,9 @@ class APIv1 < Grape::API
         page_repository = Repositories::PagesRepository.new(@database)
 
         form = repository.get(params[:form_id])
-        pages = page_repository.get_pages_in_form(params[:form_id]).sort_by(&:id)
-        form[:start_page] = (pages.first.id if pages.any?)
+
+        form[:start_page] = page_repository.get_pages_in_form(params[:form_id])&.first&.id
+
         form
       end
 
@@ -106,7 +107,7 @@ class APIv1 < Grape::API
         desc "Return all pages for the form"
         get do
           repository = Repositories::PagesRepository.new(@database)
-          repository.get_pages_in_form(params[:form_id]).sort_by(&:id).map(&:to_h)
+          repository.get_pages_in_form(params[:form_id]).map(&:to_h)
         end
 
         desc "Create a new page."
@@ -149,6 +150,25 @@ class APIv1 < Grape::API
           get do
             repository = Repositories::PagesRepository.new(@database)
             repository.get(params[:page_id]).to_h
+          end
+
+          desc "Move a page later in the form."
+          put "/down" do
+            page_id = params[:page_id].to_i
+            form_id = params[:form_id].to_i
+
+            repository = Repositories::PagesRepository.new(@database)
+            success = repository.move_page_down(form_id, page_id)
+            { success: }
+          end
+
+          put "/up" do
+            page_id = params[:page_id].to_i
+            form_id = params[:form_id].to_i
+
+            repository = Repositories::PagesRepository.new(@database)
+            success = repository.move_page_up(form_id, page_id)
+            { success: }
           end
 
           desc "Update a page."

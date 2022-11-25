@@ -15,7 +15,8 @@ class Repositories::PagesRepository
         question_short_name: page.question_short_name,
         hint_text: page.hint_text,
         answer_type: page.answer_type,
-        is_optional: page.is_optional
+        is_optional: page.is_optional,
+        answer_settings: page.answer_settings
       )
 
       @database[:pages].where(form_id: page.form_id, next_page: nil).exclude(id: new_page_id).update(next_page: new_page_id)
@@ -39,7 +40,8 @@ class Repositories::PagesRepository
       hint_text: page.hint_text,
       answer_type: page.answer_type,
       next_page: page.next_page,
-      is_optional: page.is_optional
+      is_optional: page.is_optional,
+      answer_settings: page.answer_settings
     )
 
     @database[:forms].where(id: page.form_id).update(question_section_completed: false)
@@ -73,6 +75,7 @@ class Repositories::PagesRepository
       page.answer_type = page_data[:answer_type]
       page.next_page = page_data[:next_page]
       page.is_optional = page_data[:is_optional]
+      page.answer_settings = page_data[:answer_settings]
     end
   end
 end

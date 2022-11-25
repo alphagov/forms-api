@@ -115,7 +115,11 @@ class APIv1 < Grape::API
           optional :question_short_name, type: String, desc: "Question short name."
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
-                                 values: %w[single_line address date email national_insurance_number phone_number long_text number], desc: "Answer type"
+                                 values: %w[single_line address date email national_insurance_number phone_number long_text number selection], desc: "Answer type"
+          optional :answer_settings, type: JSON do
+            optional :allow_multiple_answers, type: String, desc: "Allow multiple answers"
+            optional :selection_options, type: Array[JSON], desc: "Selection options"
+          end
           optional :is_optional, type: String, desc: "Optional question?"
         end
         post do
@@ -128,6 +132,7 @@ class APIv1 < Grape::API
           page.hint_text = params[:hint_text]
           page.answer_type = params[:answer_type]
           page.is_optional = params[:is_optional]
+          page.answer_settings = params[:answer_settings].to_json
 
           id = repository.create(page)
           { id: }
@@ -152,7 +157,12 @@ class APIv1 < Grape::API
             optional :question_short_name, type: String, desc: "Question short name."
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
-                                   values: %w[single_line address date email national_insurance_number phone_number long_text number], desc: "Answer type"
+                                   values: %w[single_line address date email national_insurance_number phone_number long_text number selection], desc: "Answer type"
+
+            optional :answer_settings, type: JSON do
+              optional :allow_multiple_answers, type: String, desc: "Allow multiple answers"
+              optional :selection_options, type: Array[JSON], desc: "Selection options"
+            end
             optional :next_page, type: String, desc: "The ID of the next page"
             optional :is_optional, type: String, desc: "Optional question?"
           end
@@ -167,6 +177,7 @@ class APIv1 < Grape::API
               p.answer_type = params[:answer_type]
               p.next_page = params[:next_page]
               p.is_optional = params[:is_optional]
+              p.answer_settings = params[:answer_settings].to_json
             end
 
             repository.update(page)

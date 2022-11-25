@@ -6,7 +6,8 @@ class Domain::Page
                 :hint_text,
                 :answer_type,
                 :next_page,
-                :is_optional
+                :is_optional,
+                :answer_settings
 
   def to_h
     {
@@ -17,7 +18,8 @@ class Domain::Page
       hint_text:,
       answer_type:,
       next_page:,
-      is_optional:
+      is_optional:,
+      answer_settings:
     }
   end
 end

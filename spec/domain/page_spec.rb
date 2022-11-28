@@ -8,6 +8,7 @@ describe Domain::Page do
       page.hint_text = "hint_text"
       page.answer_type = "answer_type"
       page.next_page = "next"
+      page.answer_settings = { allow_multiple_answers: true }.to_json
     end
     hashed_page = test_page.to_h
     expect(hashed_page[:question_text]).to eq("question_text")
@@ -17,5 +18,6 @@ describe Domain::Page do
     expect(hashed_page[:next_page]).to eq("next")
     expect(hashed_page[:form_id]).to eq("5678")
     expect(hashed_page[:id]).to eq("1234")
+    expect(hashed_page[:answer_settings]).to eq('{"allow_multiple_answers":true}')
   end
 end

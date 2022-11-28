@@ -16,6 +16,9 @@ class Repositories::PagesRepository
         answer_settings: page.answer_settings
       )
 
+      # Keep updating the old next_page in case we need to roll back
+      @database[:pages].where(form_id: page.form_id, next_page: nil).exclude(id: new_page_id).update(next_page: new_page_id)
+
       @database[:forms].where(id: page.form_id).update(page_order: @database["SELECT array_append(page_order,?) from forms where id=?", new_page_id, page.form_id])
       @database[:forms].where(id: page.form_id).update(question_section_completed: false)
 
@@ -47,7 +50,6 @@ class Repositories::PagesRepository
       answer_type: page.answer_type,
       is_optional: page.is_optional,
       answer_settings: page.answer_settings
-      is_optional: page.is_optional
     )
 
     @database[:forms].where(id: page.form_id).update(question_section_completed: false)
@@ -61,6 +63,8 @@ class Repositories::PagesRepository
       @database[:pages].returning(:form_id).where(id: page_id).delete do |page_hash|
         delete_count += 1
         @database[:forms].where(id: page_hash[:form_id]).update(page_order: @database["SELECT array_remove(page_order,?) FROM forms WHERE id=?", page_id, page_hash[:form_id]])
+        # Keep updating the old next_page in case we need to roll back
+        @database[:pages].where(next_page: page_id).update(next_page: page_hash[:next_page])
       end
     end
     delete_count

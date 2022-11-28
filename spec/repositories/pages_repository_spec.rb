@@ -70,6 +70,9 @@ describe Repositories::PagesRepository do
       first_page_result = subject.get(first_page_id)
 
       expect(first_page_result.next_page).to eq(second_page_id)
+
+      # Check legacy page ordering code
+      expect(first_page_result.next_page).to eq(second_page_id)
     end
 
     it "should not update another form pages next_page attribute" do
@@ -80,6 +83,10 @@ describe Repositories::PagesRepository do
       first_page_result = subject.get(first_page_id)
       another_form_page_result = subject.get(another_form_page_id)
 
+      expect(first_page_result.next_page).to eq(second_page_id)
+      expect(another_form_page_result.next_page).to be_nil
+
+      # Check legacy page ordering code
       expect(first_page_result.next_page).to eq(second_page_id)
       expect(another_form_page_result.next_page).to be_nil
     end
@@ -133,7 +140,6 @@ describe Repositories::PagesRepository do
     end
   end
 
-  # rubocop:disable Metrics/BlockLength
   context "updating a page" do
     it "updates a page" do
       page_id = subject.create(page)
@@ -163,8 +169,6 @@ describe Repositories::PagesRepository do
       expect(form[:updated_at].to_i).to be_within(0).of(Time.now.to_i)
     end
   end
-  # rubocop:enable Metrics/BlockLength
-
   context "updating a page, resets form attributes" do
     it "resets forms 'question_section_completed' value" do
       database[:forms].where(id: form_id).update(question_section_completed: true)
@@ -227,6 +231,15 @@ describe Repositories::PagesRepository do
       expect(first_page_next).to eq(second_page_id)
       expect(second_page_next).to eq(third_page_id)
       expect(third_page_next).to eq(nil)
+
+      # Expect legacy next_page to still be updated and working
+      legacy_first_page_next = database[:pages].where(id: first_page_id).get(:next_page)
+      legacy_second_page_next = database[:pages].where(id: second_page_id).get(:next_page)
+      legacy_third_page_next = database[:pages].where(id: third_page_id).get(:next_page)
+
+      expect(legacy_first_page_next).to eq(second_page_id)
+      expect(legacy_second_page_next).to eq(third_page_id)
+      expect(legacy_third_page_next).to eq(nil)
     end
   end
 

@@ -99,6 +99,7 @@ describe Repositories::PagesRepository do
     end
   end
 
+  # rubocop:disable Metrics/BlockLength
   context "updating a page" do
     it "updates a page" do
       page_id = subject.create(page)
@@ -129,6 +130,7 @@ describe Repositories::PagesRepository do
       expect(form[:updated_at].to_i).to be_within(0).of(Time.now.to_i)
     end
   end
+  # rubocop:enable Metrics/BlockLength
 
   context "updating a page, resets form attributes" do
     it "resets forms 'question_section_completed' value" do

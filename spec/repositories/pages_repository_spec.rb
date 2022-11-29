@@ -110,7 +110,7 @@ describe Repositories::PagesRepository do
       page.answer_type = "answer_type2"
       page.next_page = 3
       page.is_optional = true
-      page.answer_settings = { allow_multiple_answers: true }.to_json
+      page.answer_settings = { allow_multiple_answers: true, selection_options: [{ name: "option 1" }] }.to_json
       update_result = subject.update(page)
 
       page = subject.get(page_id)
@@ -122,7 +122,7 @@ describe Repositories::PagesRepository do
       expect(page.next_page).to eq(3)
       expect(page.form_id).to eq(form_id)
       expect(page.is_optional).to be true
-      expect(page.answer_settings).to eq({ "allow_multiple_answers" => true })
+      expect(page.answer_settings).to eq({ "allow_multiple_answers" => true, "selection_options" => [{ "name" => "option 1" }] })
 
       repository = Repositories::FormsRepository.new(@database)
       form = repository.get(form_id)

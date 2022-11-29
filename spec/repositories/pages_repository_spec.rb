@@ -19,6 +19,7 @@ describe Repositories::PagesRepository do
       page.answer_type = "answer_type"
       page.next_page = nil
       page.is_optional = nil
+      page.answer_settings = nil
     end
   end
 
@@ -31,6 +32,7 @@ describe Repositories::PagesRepository do
       page.answer_type = "answer_type"
       page.next_page = nil
       page.is_optional = nil
+      page.answer_settings = nil
     end
   end
 
@@ -47,6 +49,7 @@ describe Repositories::PagesRepository do
       expect(created_page[:form_id]).to eq(form_id)
       expect(created_page[:next_page]).to be_nil
       expect(created_page[:is_optional]).to be_nil
+      expect(created_page[:answer_settings]).to be_nil
     end
 
     it "resets forms 'question_section_completed' value" do
@@ -92,9 +95,11 @@ describe Repositories::PagesRepository do
       expect(found_page.answer_type).to eq("answer_type")
       expect(found_page.form_id).to eq(form_id)
       expect(found_page.is_optional).to be_nil
+      expect(found_page.answer_settings).to be_nil
     end
   end
 
+  # rubocop:disable Metrics/BlockLength
   context "updating a page" do
     it "updates a page" do
       page_id = subject.create(page)
@@ -105,6 +110,7 @@ describe Repositories::PagesRepository do
       page.answer_type = "answer_type2"
       page.next_page = 3
       page.is_optional = true
+      page.answer_settings = { allow_multiple_answers: true, selection_options: [{ name: "option 1" }] }.to_json
       update_result = subject.update(page)
 
       page = subject.get(page_id)
@@ -116,6 +122,7 @@ describe Repositories::PagesRepository do
       expect(page.next_page).to eq(3)
       expect(page.form_id).to eq(form_id)
       expect(page.is_optional).to be true
+      expect(page.answer_settings).to eq({ "allow_multiple_answers" => true, "selection_options" => [{ "name" => "option 1" }] })
 
       repository = Repositories::FormsRepository.new(@database)
       form = repository.get(form_id)
@@ -123,6 +130,7 @@ describe Repositories::PagesRepository do
       expect(form[:updated_at].to_i).to be_within(0).of(Time.now.to_i)
     end
   end
+  # rubocop:enable Metrics/BlockLength
 
   context "updating a page, resets form attributes" do
     it "resets forms 'question_section_completed' value" do

@@ -4,7 +4,7 @@ setup:
 	bundle install
 
 serve: setup
-	bundle exec rackup
+	bundle exec rackup -o 0.0.0.0
 
 serve-watch: setup
 	bundle exec guard -i --notify false -P rack

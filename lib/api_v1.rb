@@ -117,9 +117,9 @@ class APIv1 < Grape::API
           optional :hint_text, type: String, desc: "Hint text"
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number long_text number selection], desc: "Answer type"
-          optional :answer_settings, type: JSON do
+          optional :answer_settings, type: Hash do
             optional :allow_multiple_answers, type: String, desc: "Allow multiple answers"
-            optional :selection_options, type: Array[JSON], desc: "Selection options"
+            optional :selection_options, type: Array[Hash], desc: "Selection options"
           end
           optional :is_optional, type: String, desc: "Optional question?"
         end
@@ -178,10 +178,9 @@ class APIv1 < Grape::API
             optional :hint_text, type: String, desc: "Hint text"
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number long_text number selection], desc: "Answer type"
-
-            optional :answer_settings, type: JSON do
+            optional :answer_settings, type: Hash do
               optional :allow_multiple_answers, type: String, desc: "Allow multiple answers"
-              optional :selection_options, type: Array[JSON], desc: "Selection options"
+              optional :selection_options, type: Array[Hash], desc: "Selection options"
             end
             optional :next_page, type: String, desc: "The ID of the next page"
             optional :is_optional, type: String, desc: "Optional question?"

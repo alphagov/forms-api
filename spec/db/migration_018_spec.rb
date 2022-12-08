@@ -13,7 +13,7 @@ describe "migration 18" do
 
     migrator.migrate_to(database, 18)
 
-    answer_settings = { allow_multiple_answers: true }.to_json
+    answer_settings = { only_one_option: true }.to_json
     database[:pages].where(id: page1_id).update(answer_settings:)
 
     page1 = database[:pages].where(id: page1_id).first

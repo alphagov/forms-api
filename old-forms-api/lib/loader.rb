@@ -3,8 +3,8 @@ RACK_ENV = ENV["RACK_ENV"] ||= "development" unless defined?(RACK_ENV)
 require "dotenv"
 require "zeitwerk"
 require_relative "server"
-require_relative "../db/database"
-require_relative "../db/migrator"
+require_relative "../old-forms-api/db/database"
+require_relative "../old-forms-api/db/migrator"
 
 Dotenv.load(".env", ".env.#{RACK_ENV}")
 

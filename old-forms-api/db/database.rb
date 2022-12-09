@@ -1,6 +1,6 @@
 require "sequel"
 require "uri"
-require_relative "./migrator"
+require_relative "./grator"
 
 class Database
   @database = nil

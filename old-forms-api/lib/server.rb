@@ -1,6 +1,6 @@
 require "grape"
 require "grape-swagger"
-require_relative "./api_v1"
+require_relative "./i_v1"
 
 class Server < Grape::API
   # Public endpoint to check if app is online

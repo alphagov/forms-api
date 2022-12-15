@@ -1,6 +1,4 @@
-# NOTE: Before using in production we must consider the need to pin
-# images to a SHA
-FROM ruby:3.1.2-alpine3.16
+FROM ruby:3.1.2-alpine3.16@sha256:05b990dbaa3a118f96e9ddbf046f388b3c4953d5ef3d18908af96f42c0e138d9
 
 RUN apk update
 RUN apk upgrade --available

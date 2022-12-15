@@ -118,6 +118,8 @@ class APIv1 < Grape::API
           requires :answer_type, type: String,
                                  values: %w[single_line address date email national_insurance_number phone_number long_text number selection organisation_name], desc: "Answer type"
           optional :answer_settings, type: Hash do
+            optional :title_needed, type: String, desc: "Title needed"
+            optional :input_type, type: String, desc: "Input type"
             optional :only_one_option, type: String, desc: "Allow multiple answers"
             optional :selection_options, type: Array[Hash], desc: "Selection options"
           end
@@ -179,6 +181,8 @@ class APIv1 < Grape::API
             requires :answer_type, type: String,
                                    values: %w[single_line address date email national_insurance_number phone_number long_text number selection organisation_name], desc: "Answer type"
             optional :answer_settings, type: Hash do
+              optional :title_needed, type: String, desc: "Title needed"
+              optional :input_type, type: String, desc: "Input type"
               optional :only_one_option, type: String, desc: "Allow multiple answers"
               optional :selection_options, type: Array[Hash], desc: "Selection options"
             end

@@ -23,7 +23,7 @@ default: &default
 
 development:
   <<: *default
-  database: forms_api_development
+  database: forms_api
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

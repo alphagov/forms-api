@@ -8,7 +8,7 @@ describe Domain::Page do
       page.hint_text = "hint_text"
       page.answer_type = "answer_type"
       page.next_page = "next"
-      page.answer_settings = { title_needed: false, input_type: "some_input",only_one_option: true, selection_options: [{ name: "option 1" }] }.to_json
+      page.answer_settings = { title_needed: false, input_type: "some_input", only_one_option: true, selection_options: [{ name: "option 1" }] }.to_json
     end
     hashed_page = test_page.to_h
     expect(hashed_page[:question_text]).to eq("question_text")

@@ -12,7 +12,7 @@ RUN adduser -D ruby
 USER ruby
 
 # Consider whittling this down to just what we need to run the app
-COPY --chown=ruby:ruby . .
+COPY --chown=ruby:ruby .. .
 
 EXPOSE 9292
 CMD ["rackup", "--host", "0.0.0.0", "--port", "9292"]

@@ -9,9 +9,9 @@ name: Ruby
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, rails-api ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, rails-api ]
 
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13-alpine
+        image: postgres:11-alpine
         ports:
           - "5432:5432"
         env:

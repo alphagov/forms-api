@@ -1,6 +1,6 @@
 class CreateForms < ActiveRecord::Migration[7.0]
   def change
-    create_table :forms, if_not_exists: true do |t|
+    create_table :forms, id: :bigint, default: nil, if_not_exists: true do |t|
       t.text :name
       t.text :submission_email
       t.text :org
@@ -10,6 +10,7 @@ class CreateForms < ActiveRecord::Migration[7.0]
       t.text :what_happens_next_text
       t.text :support_email
       t.text :support_phone
+      t.text :support_url
       t.text :support_url_text
       t.text :declaration_text
       t.boolean :question_section_completed, default: false

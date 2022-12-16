@@ -9,4 +9,21 @@ class Api::V1::FormsController < ApplicationController
     org = params.require(:org)
     render json: Form.where(org:).to_json
   end
+
+  def create
+    @form = Form.new(form_params)
+    if @form.save
+      render json: { id: @form.id }, status: :created # Fixup - just returning id here, could we return whole object?
+    else
+      render json: @form.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def form_params
+    # FIXUP -  how to best list all params which form can take? List explicitly or take from model?
+    # params.permit(:org, :name, :submission_email)
+    params.permit(Form.attribute_names) # how to best list all params which form can take?
+  end
 end

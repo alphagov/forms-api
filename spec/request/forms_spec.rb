@@ -1,33 +1,26 @@
-require "rack/test"
+require 'rails_helper'
 
-describe "/api/v1/forms" do
-  include Rack::Test::Methods
-  include_context "with database"
-
-  def app
-    Server::Server
-  end
+describe "/api/v1/forms", type: :request do
 
   let(:json_body) { JSON.parse(last_response.body, symbolize_names: true) }
 
-  before(:each) do
-    stub_const("ENV", ENV.to_hash.merge("API_KEY" => "an-api-key"))
-    allow(Database).to receive(:existing_database).and_return(@database)
-    header "X-Api-Token", ENV["API_KEY"]
+  before do
+    create_list :form, 2, org:"gds"
+    create :form, org: "not-gds"
   end
 
-  around(:each) do |example|
-    @database.transaction(rollback: :always) do
-      @database[:forms].insert(name: "test form 1", submission_email: "", org: "gds")
-      @database[:forms].insert(name: "test form 2", submission_email: "", org: "gds")
-      @database[:forms].insert(name: "test form 3", submission_email: "", org: "not-gds")
-      example.run
-    end
-  end
+  # around(:each) do |example|
+  #   @database.transaction(rollback: :always) do
+  #     @database[:forms].insert(name: "test form 1", submission_email: "", org: "gds")
+  #     @database[:forms].insert(name: "test form 2", submission_email: "", org: "gds")
+  #     @database[:forms].insert(name: "test form 3", submission_email: "", org: "not-gds")
+  #     example.run
+  #   end
+  # end
 
   describe "get all forms" do
     it "when no forms exist for an org, returns 200 and an empty json array" do
-      get "/api/v1/forms", { org: "unknown-org" }
+      get "/api/v1/forms?org=unknown-org"
       expect(last_response.status).to eq(200)
       expect(last_response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])

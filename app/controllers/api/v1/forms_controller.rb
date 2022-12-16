@@ -19,7 +19,18 @@ class Api::V1::FormsController < ApplicationController
     end
   end
 
-  private
+  def destroy
+    @form = Form.find_by_id(params[:id])
+
+    if @form
+      @form.destroy!
+      render json: { success: true }.to_json, status: :ok
+    else
+      render json: { error: "not_found" }.to_json, status: :not_found
+    end
+  end
+
+private
 
   def form_params
     # FIXUP -  how to best list all params which form can take? List explicitly or take from model?

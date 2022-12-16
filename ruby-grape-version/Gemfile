@@ -19,12 +19,10 @@ group :development do
   gem "guard"
   gem "guard-rack"
   gem "rack-test"
-  gem "rubocop"
 end
 
 group :test do
   gem "guard-rspec"
-  gem "rspec"
   # Code coverage reporter
   gem "simplecov", "~> 0.21.2", require: false
 end

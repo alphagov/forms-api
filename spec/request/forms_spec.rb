@@ -200,19 +200,19 @@ describe "/api/v1/forms", type: :request do
     end
   end
 
-  describe "delete a form" do
+  describe "#destroy" do
     it "when no forms exists for an id, returns 404 an error" do
-      delete "/api/v1/forms/123", {}
-      expect(last_response.status).to eq(404)
-      expect(last_response.headers["Content-Type"]).to eq("application/json")
+      delete "/api/v1/forms/123"
+      expect(response.status).to eq(404)
+      expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
     end
 
     it "when given an existing id, returns 200 and deletes the form from DB" do
-      form1_id = @database[:forms].where(name: "test form 1").get(:id)
-      delete "/api/v1/forms/#{form1_id}", {}
-      expect(last_response.status).to eq(200)
-      expect(last_response.headers["Content-Type"]).to eq("application/json")
+      form_to_be_deleted = create :form
+      delete "/api/v1/forms/#{form_to_be_deleted.id}"
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ success: true })
     end
   end

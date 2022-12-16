@@ -40,7 +40,6 @@ describe "/api/v1/forms", type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(2)
       expect(response).to be_successful
-      expect(json_body.size).to eq(2) # new expectation for rails
       # FIXUP could be stronger?
       # changed from grape version
       json_body.each do |form|
@@ -68,7 +67,7 @@ describe "/api/v1/forms", type: :request do
   end
 
   describe "creating a form" do
-    let(:created_form) { database[:forms].where(name: "test form one").all.last }
+    let(:created_form) { Form.find_by(name: "test form one")}
     let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
@@ -89,12 +88,11 @@ describe "/api/v1/forms", type: :request do
       end
     end
 
-    context "with no org" do
-      let(:new_form_params) { { name: "test form one", submission_email: "test@example.gov.uk" } }
+    context "with invalid form params" do
+      let(:new_form_params) {  }
       it "returns a status code 400" do
-        expect(last_response.status).to eq(400)
-        expect(last_response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq([{ messages: ["is missing"], params: ["org"] }])
+        expect(response.status).to eq(400)
+        expect(response.headers["Content-Type"]).to eq("application/json")
       end
     end
 

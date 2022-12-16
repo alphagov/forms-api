@@ -21,8 +21,8 @@ describe "/api/v1/forms", type: :request do
   describe "get all forms" do
     it "when no forms exist for an org, returns 200 and an empty json array" do
       get "/api/v1/forms?org=unknown-org"
-      expect(last_response.status).to eq(200)
-      expect(last_response.headers["Content-Type"]).to eq("application/json")
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
     end
 

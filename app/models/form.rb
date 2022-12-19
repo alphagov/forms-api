@@ -1,4 +1,6 @@
 class Form < ApplicationRecord
+  has_many :pages
+
   validates :org, :name, presence: true
 
   def created_at

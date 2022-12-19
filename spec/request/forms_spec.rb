@@ -8,7 +8,7 @@ describe "/api/v1/forms", type: :request do
     create :form, org: "not-gds"
   end
 
-  describe "get all forms" do
+  describe "#index" do
     it "when no forms exist for an org, returns 200 and an empty json array" do
       get "/api/v1/forms", params: { org: "unknown-org" }
       expect(response.status).to eq(200)
@@ -55,7 +55,7 @@ describe "/api/v1/forms", type: :request do
     end
   end
 
-  describe "creating a form" do
+  describe "#create" do
     let(:created_form) { Form.find_by(name: "test form one") }
     let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk" } }
 
@@ -106,7 +106,7 @@ describe "/api/v1/forms", type: :request do
     end
   end
 
-  describe "get single form" do
+  describe "#show" do
     it "when no forms exists for an id, returns 404 and an empty json array" do
       get "/api/v1/forms/987"
       expect(response.status).to eq(404)
@@ -151,7 +151,7 @@ describe "/api/v1/forms", type: :request do
     end
   end
 
-  describe "update single form" do
+  describe "#update" do
     it "when no forms exists for an id, returns 404 an error" do
       put "/api/v1/forms/123"
       expect(response.status).to eq(404)

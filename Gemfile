@@ -42,6 +42,8 @@ group :development, :test do
 
   gem "factory_bot_rails"
 
+  gem "faker"
+
   gem "rubocop-govuk", require: false
 
   gem "rspec-rails"

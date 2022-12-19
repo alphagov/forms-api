@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_16_112945) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_19_153156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,8 +34,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_16_112945) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "schema_info", id: false, force: :cascade do |t|
-    t.integer "version", default: 0, null: false
+  create_table "pages", force: :cascade do |t|
+    t.text "question_text"
+    t.text "question_short_name"
+    t.text "hint_text"
+    t.text "answer_type"
+    t.integer "next_page"
+    t.boolean "is_optional"
+    t.jsonb "answer_settings"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "form_id"
+    t.index ["form_id"], name: "index_pages_on_form_id"
   end
 
+  add_foreign_key "pages", "forms"
 end

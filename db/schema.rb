@@ -14,13 +14,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_16_112945) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "forms", id: :bigint, default: nil, force: :cascade do |t|
+  create_table "forms", force: :cascade do |t|
     t.text "name"
     t.text "submission_email"
     t.text "org"
-    t.datetime "created_at", precision: nil
-    t.datetime "live_at", precision: nil
-    t.datetime "updated_at", precision: nil
+    t.datetime "live_at"
     t.text "privacy_policy_url"
     t.text "form_slug"
     t.text "what_happens_next_text"
@@ -32,9 +30,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_16_112945) do
     t.boolean "question_section_completed", default: false
     t.boolean "declaration_section_completed", default: false
     t.integer "page_order", array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "schema_info", id: false, force: :cascade do |t|
     t.integer "version", default: 0, null: false
   end
+
 end

@@ -15,7 +15,31 @@ class Api::V1::FormsController < ApplicationController
     if @form.save
       render json: { id: @form.id }, status: :created # Fixup - just returning id here, could we return whole object?
     else
-      render json: @form.errors, status: :unprocessable_entity
+      render json: @form.errors.to_json, status: :bad_request
+    end
+  end
+
+  def update
+    @form = Form.find_by_id(params[:id])
+
+    if @form
+      if @form.update(form_params)
+        render json: { success: true }.to_json, status: :ok
+      else
+        render json: @form.errors.to_json, status: :bad_request
+      end
+    else
+      render json: { error: "not_found" }.to_json, status: :not_found
+    end
+  end
+
+  def show
+    @form = Form.find_by_id(params[:id])
+
+    if @form
+      render json: @form.to_json, status: :ok
+    else
+      render json: { error: "not_found" }.to_json, status: :not_found
     end
   end
 

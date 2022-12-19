@@ -22,6 +22,18 @@ FactoryBot.define do
       pages { [] }
     end
 
+    trait :with_pages do
+      transient do
+        pages_count { 5 }
+      end
+
+      pages do
+        Array.new(pages_count) { build(:page) }
+      end
+
+      question_section_completed { true }
+    end
+
     trait :ready_for_live do
       support_email { Faker::Internet.email(domain: "example.gov.uk") }
       what_happens_next_text { "We usually respond to applications within 10 working days." }

@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   scope "api/v1" do
-    resources :forms, controller: "api/v1/forms"
+    resources :forms, controller: "api/v1/forms" do
+      resources :pages, controller: "api/v1/pages"
+    end
   end
 end

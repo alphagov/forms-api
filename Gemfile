@@ -29,6 +29,6 @@ group :test do
   gem "simplecov", "~> 0.21.2", require: false
 end
 
-gem "grape", "~> 1.6"
+gem "grape", "~> 1.7"
 
 gem "grape-swagger", "~> 1.4"

@@ -28,11 +28,6 @@ describe Server::Server do
       get "/api/v1/forms", { org: "gds" }
       expect(last_response.status).to eq(200)
     end
-
-    it "returns a status code 200 for public endpoint when correct API key supplied" do
-      get "/ping", "PONG"
-      expect(last_response.status).to eq(200)
-    end
   end
 
   context "when no API_KEY set in ENV" do
@@ -49,11 +44,6 @@ describe Server::Server do
     it "returns a status code 401 when supplied with no api key" do
       get "/api/v1/forms", { org: "gds" }
       expect(last_response.status).to eq(401)
-    end
-
-    it "returns a status code 200 for public endpoint when correct API key supplied" do
-      get "/ping", "PONG"
-      expect(last_response.status).to eq(200)
     end
   end
 end

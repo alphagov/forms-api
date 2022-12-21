@@ -12,6 +12,7 @@ describe ApplicationController, type: :request do
 
     context "when valid header and token passed" do
       it "returns 200" do
+        Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { org: "gds" }, headers: req_headers
         expect(response.status).to eq(200)
       end
@@ -34,6 +35,7 @@ describe ApplicationController, type: :request do
       let(:token) { "incorrect-auth-key" }
 
       it "returns 200" do
+        Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { org: "gds" }, headers: req_headers
         expect(response.status).to eq(401)
       end

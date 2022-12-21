@@ -3,11 +3,7 @@ require "grape-swagger"
 require_relative "./i_v1"
 
 class Server < Grape::API
-  # Public endpoint to check if app is online
-  get :ping do
-    content_type "text/plain"
-    body "PONG"
-  end
+
   # Private API version 1 endpoints
   mount APIv1
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_19_153156) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_22_115429) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,6 +45,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_19_153156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "form_id"
+    t.integer "position"
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 

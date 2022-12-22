@@ -5,6 +5,7 @@ FactoryBot.define do
     is_optional { nil }
     answer_settings { nil }
     form { build :form }
+    sequence(:position)
 
     trait :with_hints do
       hint_text { Faker::Quote.yoda }

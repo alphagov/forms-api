@@ -33,4 +33,5 @@ jobs:
             --var PAAS_ENVIRONMENT=dev \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
             --var INSTANCES=2 \
-            --var API_KEY=${{ secrets.API_KEY }}
+            --var API_KEY=${{ secrets.API_KEY }} \
+            --var SETTINGS__FORMS_API__AUTHENTICATION_KEY=${{ secrets.API_KEY }}

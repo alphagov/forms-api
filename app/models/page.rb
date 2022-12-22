@@ -5,4 +5,12 @@ class Page < ApplicationRecord
 
   validates :question_text, presence: true
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
+
+  def created_at
+    attributes["created_at"].to_time.iso8601
+  end
+
+  def updated_at
+    attributes["updated_at"].to_time.iso8601
+  end
 end

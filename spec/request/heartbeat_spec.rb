@@ -10,7 +10,7 @@ describe "heartbeat requests", type: :request do
 
     context "when api auth token is set" do
       before do
-        Settings.forms_api.authentication_key = 123456
+        Settings.forms_api.authentication_key = 123_456
       end
 
       it "returns PONG" do

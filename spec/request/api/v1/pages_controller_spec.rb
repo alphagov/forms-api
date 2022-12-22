@@ -18,7 +18,7 @@ describe Api::V1::PagesController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(form.pages.count)
       form.pages.each_with_index do |p, i|
-        expect(json_body[i]).to eq(p.attributes.transform_keys(&:to_sym))
+        expect(json_body[i]).to eq(JSON.parse(p.to_json).symbolize_keys)
       end
     end
   end
@@ -39,7 +39,10 @@ describe Api::V1::PagesController, type: :request do
     let(:new_page) { form.pages.first }
 
     before do
-      post "/api/v1/forms/#{form.id}/pages", params: new_page_params, as: :json
+      # fix the time here so we can test created_at and updated_at explicitly
+      travel_to Time.zone.local(2023, 1, 1, 12, 0, 0) do
+        post "/api/v1/forms/#{form.id}/pages", params: new_page_params, as: :json
+      end
     end
 
     it "returns page id, status code 201 when new page created" do
@@ -49,7 +52,13 @@ describe Api::V1::PagesController, type: :request do
     end
 
     it "creates DB row with new_page_params, fresh id, form_id set and next_page: nil" do
-      expect(new_page.attributes.transform_keys(&:to_sym)).to eq(new_page_params.merge(id: new_page[:id], form_id: form[:id], next_page: nil))
+      expect(JSON.parse(new_page.to_json).symbolize_keys).to eq(new_page_params.merge(
+                                                                  id: new_page[:id],
+                                                                  form_id: form[:id],
+                                                                  next_page: nil,
+                                                                  created_at: "2023-01-01T12:00:00+00:00",
+                                                                  updated_at: "2023-01-01T12:00:00+00:00",
+                                                                ))
     end
 
     context "with params missing required keys" do
@@ -86,7 +95,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns page, status code 200" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(page1.attributes.transform_keys(&:to_sym))
+        expect(json_body).to eq(JSON.parse(page1.to_json).symbolize_keys)
       end
     end
 

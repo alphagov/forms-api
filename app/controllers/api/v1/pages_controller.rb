@@ -34,6 +34,18 @@ class Api::V1::PagesController < ApplicationController
     render json: { success: true }.to_json, status: :ok
   end
 
+  def move_down
+    page = Page.find(params.require(:page_id))
+    page.move_lower
+    render json: { success: 1 }.to_json, status: :ok
+  end
+
+  def move_up
+    page = Page.find(params.require(:page_id))
+    page.move_higher
+    render json: { success: 1 }.to_json, status: :ok
+  end
+
 private
 
   def form

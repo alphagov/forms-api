@@ -56,6 +56,7 @@ describe Api::V1::PagesController, type: :request do
                                                                   id: new_page[:id],
                                                                   form_id: form[:id],
                                                                   next_page: nil,
+                                                                  position: 1,
                                                                   created_at: "2023-01-01T12:00:00+00:00",
                                                                   updated_at: "2023-01-01T12:00:00+00:00",
                                                                 ))
@@ -213,6 +214,92 @@ describe Api::V1::PagesController, type: :request do
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq({ error: "not_found" })
         expect(form.pages.count).to eq(2)
+      end
+    end
+  end
+
+  describe "#move_down" do
+    let(:form_with_pages) { create :form, :with_pages }
+
+    let(:page_to_move) { form_with_pages.pages.first }
+    let(:first_page) { form_with_pages.pages.first }
+    let(:second_page) { form_with_pages.pages.second }
+    let(:third_page) { form_with_pages.pages.third }
+    let(:fourth_page) { form_with_pages.pages.fourth }
+    let(:last_page) { form_with_pages.pages.last }
+
+    before do
+      put "/api/v1/forms/#{form_with_pages.id}/pages/#{page_to_move.id}/down"
+    end
+
+    context "with valid page" do
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: 1 })
+      end
+
+      it "changes order of pages returned" do
+        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        expect(json_body.map { |p| p[:id] }).to eq([second_page.id, page_to_move.id, third_page.id, fourth_page.id, last_page.id])
+      end
+    end
+
+    context "with page already at the end of the list" do
+      let(:page_to_move) { last_page }
+
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: 1 })
+      end
+
+      it "does not change order of pages" do
+        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        expect(json_body.map { |p| p[:id] }).to eq([first_page.id, second_page.id, third_page.id, fourth_page.id, page_to_move.id])
+      end
+    end
+  end
+
+  describe "#move_up" do
+    let(:form_with_pages) { create :form, :with_pages }
+
+    let(:page_to_move) { second_page }
+    let(:first_page) { form_with_pages.pages.first }
+    let(:second_page) { form_with_pages.pages.second }
+    let(:third_page) { form_with_pages.pages.third }
+    let(:fourth_page) { form_with_pages.pages.fourth }
+    let(:last_page) { form_with_pages.pages.last }
+
+    before do
+      put "/api/v1/forms/#{form_with_pages.id}/pages/#{page_to_move.id}/up"
+    end
+
+    context "with valid page" do
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: 1 })
+      end
+
+      it "changes order of pages returned" do
+        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, first_page.id, third_page.id, fourth_page.id, last_page.id])
+      end
+    end
+
+    context "with page already at the start of the list" do
+      let(:page_to_move) { first_page }
+
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: 1 })
+      end
+
+      it "does not change order of pages" do
+        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, second_page.id, third_page.id, fourth_page.id, last_page.id])
       end
     end
   end

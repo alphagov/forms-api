@@ -7,7 +7,10 @@ Rails.application.routes.draw do
   # root "articles#index"
   scope "api/v1" do
     resources :forms, controller: "api/v1/forms" do
-      resources :pages, controller: "api/v1/pages"
+      resources :pages, controller: "api/v1/pages" do
+        put "/down", to: "api/v1/pages#move_down"
+        put "/up", to: "api/v1/pages#move_up"
+      end
     end
   end
 end

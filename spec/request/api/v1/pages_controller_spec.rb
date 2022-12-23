@@ -52,14 +52,12 @@ describe Api::V1::PagesController, type: :request do
     end
 
     it "creates DB row with new_page_params, fresh id, form_id set and next_page: nil" do
-      expect(JSON.parse(new_page.to_json).symbolize_keys).to eq(new_page_params.merge(
-                                                                  id: new_page[:id],
-                                                                  form_id: form[:id],
-                                                                  next_page: nil,
-                                                                  position: 1,
-                                                                  created_at: "2023-01-01T12:00:00+00:00",
-                                                                  updated_at: "2023-01-01T12:00:00+00:00",
-                                                                ))
+      expect(new_page.as_json).to eq(new_page_params.merge(id: new_page[:id],
+                                                           form_id: form[:id],
+                                                           next_page: nil,
+                                                           position: 1,
+                                                           created_at: "2023-01-01T12:00:00.000Z",
+                                                           updated_at: "2023-01-01T12:00:00.000Z").as_json)
     end
 
     context "with params missing required keys" do

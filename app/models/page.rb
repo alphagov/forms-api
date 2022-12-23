@@ -7,11 +7,13 @@ class Page < ApplicationRecord
   validates :question_text, presence: true
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
 
-  def created_at
-    attributes["created_at"].to_time.iso8601
+  def next_page
+    lower_item&.id
   end
 
-  def updated_at
-    attributes["updated_at"].to_time.iso8601
+  def as_json(options = {})
+    options[:except] ||= [:next_page]
+    options[:methods] ||= [:next_page]
+    super(options)
   end
 end

@@ -4,7 +4,7 @@ headers = {
   "ACCEPT" => "application/json",
 }
 
-describe "/api/v1/forms", type: :request do
+describe Api::V1::FormsController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
 
   before do
@@ -24,7 +24,7 @@ describe "/api/v1/forms", type: :request do
       get "/api/v1/forms", headers: headers
       expect(response.status).to eq(400)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq([{ messages: ["is missing"], params: %w[org] }])
+      expect(json_body).to eq({ error: "param is missing or the value is empty: org" })
     end
 
     it "when given an org with forms, returns a json array of forms" do
@@ -87,8 +87,7 @@ describe "/api/v1/forms", type: :request do
       it "returns a status code 400 and validation messages" do
         expect(response.status).to eq(400)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ name: ["can't be blank"],
-                                  org: ["can't be blank"] })
+        expect(json_body).to eq({ error: "param is missing or the value is empty: form" })
       end
     end
 

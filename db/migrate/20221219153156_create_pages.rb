@@ -13,6 +13,6 @@ class CreatePages < ActiveRecord::Migration[7.0]
     end
 
     add_reference :pages, :form, foreign_key: true, if_not_exists: true
-    add_timestamps(:pages, if_not_exists: true)
+    add_timestamps(:pages, default: Time.zone.now, if_not_exists: true)
   end
 end

@@ -1,5 +1,5 @@
 class Form < ApplicationRecord
-  has_many :pages, -> { order(position: :asc) }
+  has_many :pages, -> { order(position: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true
 

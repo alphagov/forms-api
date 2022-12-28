@@ -189,5 +189,13 @@ describe Api::V1::FormsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ success: true })
     end
+
+    it "when given an existing id, returns 200 and deletes the form and any existing pages from DB" do
+      form_to_be_deleted = create :form, :with_pages
+      delete "/api/v1/forms/#{form_to_be_deleted.id}", as: :json
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq({ success: true })
+    end
   end
 end

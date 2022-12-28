@@ -9,7 +9,9 @@ applications:
       - forms-api-((PAAS_ENVIRONMENT))-splunk
     env:
       RACK_ENV: production
-      SENTRY_DSN: ((SENTRY_DSN))
+      RAILS_ENV: production
       API_KEY: ((API_KEY))
       SETTINGS__FORMS_API__AUTHENTICATION_KEY: ((API_KEY))
+      SETTINGS__SENTRY__DSN: ((SETTINGS__SENTRY__DSN))
+      SETTINGS__SENTRY__ENVIRONMENT: ((SETTINGS__SENTRY__ENVIRONMENT))
       PAAS_ENVIRONMENT: ((PAAS_ENVIRONMENT))

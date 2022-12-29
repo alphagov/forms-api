@@ -38,23 +38,25 @@ jobs:
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@ee2113536afb7f793eed4ce60e8d3b26db912da4
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
+        # change this to (see https://github.com/ruby/setup-ruby#versioning):
+        # uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@ee2113536afb7f793eed4ce60e8d3b26db912da4
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-    # Add or replace database setup steps here
-    - name: Create db
-      run: bin/rails db:migrate
-    - name: Set up database schema
-      run: bin/rails db:schema:load
-    # Add or replace test runners here
-    - name: Run lint
-      run: bundle exec rubocop
-    - name: Run tests
-      run: bundle exec rspec
+      # Add or replace database setup steps here
+      - name: Create db
+        run: bin/rails db:migrate
+      - name: Set up database schema
+        run: bin/rails db:schema:load
+      # Add or replace test runners here
+      - name: Security audit dependencies
+        run: bundle exec bundle-audit check --update
+      - name: Run lint
+        run: bundle exec rubocop
+      - name: Run tests
+        run: bundle exec rspec

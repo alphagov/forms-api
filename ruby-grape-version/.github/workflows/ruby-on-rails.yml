@@ -56,6 +56,10 @@ jobs:
       # Add or replace test runners here
       - name: Security audit dependencies
         run: bundle exec bundle-audit check --update
+      - name: Security audit application code
+        uses: artplan1/brakeman-action@v1.2.1
+        with:
+          flags: "--color"
       - name: Run lint
         run: bundle exec rubocop
       - name: Run tests

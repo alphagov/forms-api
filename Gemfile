@@ -6,6 +6,9 @@ ruby "3.1.2"
 # Security audit our Gemfile.lock file for any vulnerable dependencies
 gem "bundler-audit"
 
+# A static analysis security vulnerability scanner for Ruby on Rails applications
+gem "brakeman"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4"
 

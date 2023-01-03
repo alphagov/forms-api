@@ -2,7 +2,8 @@ name: Deploy to GOV.UK PaaS
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:

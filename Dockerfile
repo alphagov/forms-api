@@ -47,6 +47,6 @@ RUN chmod 0755 bin/*
 COPY --chown=ruby:ruby --from=build /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=build /app /app
 
-EXPOSE 3000
+EXPOSE 9292
 
-CMD ["/bin/sh", "-c", "rake db:migrate && rails s -b 0.0.0.0"]
+CMD ["/bin/sh", "-c", "rake db:migrate && rails s -b 0.0.0.0 -p 9292"]

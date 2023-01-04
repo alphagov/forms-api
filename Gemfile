@@ -47,6 +47,9 @@ gem "bootsnap", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem "rack-cors"
 
+# For structured logging
+gem "lograge"
+
 gem "sentry-rails"
 gem "sentry-ruby"
 

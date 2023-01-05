@@ -76,6 +76,14 @@ describe Api::V1::PagesController, type: :request do
         expect(page_count).to eq(0)
       end
     end
+
+    context "with a form with question_section_completed = true" do
+      let(:form) { create :form, question_section_completed: true }
+
+      it "marks sets the form's question_section_completed as false" do
+        expect(form.reload.question_section_completed).to be false
+      end
+    end
   end
 
   describe "#show" do
@@ -136,8 +144,8 @@ describe Api::V1::PagesController, type: :request do
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ success: true })
-      page1.reload
-      expect(page1.question_text).to eq("updated page title")
+      expect(page1.reload.question_text).to eq("updated page title")
+      expect(form.reload.question_section_completed).to be false
     end
 
     it "fields not in the params are cleared" do
@@ -189,6 +197,7 @@ describe Api::V1::PagesController, type: :request do
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq({ success: true })
         expect(form.pages.count).to eq(1)
+        expect(form.reload.question_section_completed).to be false
       end
     end
 

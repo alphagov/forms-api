@@ -161,7 +161,6 @@ describe Api::V1::PagesController, type: :request do
         let(:answer_settings) { settings }
 
         it "returns correct response" do
-          # require 'pry'; binding.pry
           expect(response.status).to eq(200)
           expect(response.headers["Content-Type"]).to eq("application/json")
           expect(json_body).to eq({ success: true })

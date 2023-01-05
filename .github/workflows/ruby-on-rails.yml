@@ -9,9 +9,9 @@ name: Ruby on Rails (API)
 
 on:
   push:
-    branches: [ rails-api ]
+    branches: [ main, rails-api ]
   pull_request:
-    branches: [ rails-api ]
+    branches: [ main, rails-api ]
 
 permissions:
   contents: read

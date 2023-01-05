@@ -3,12 +3,14 @@ applications:
   - name: forms-api-((PAAS_ENVIRONMENT))
     memory: 256M
     instances: ((INSTANCES))
-    command: bundle exec rackup -o 0.0.0.0 -p $PORT
+    command: rake db:migrate && bin/rails server
     services:
       - forms-api-((PAAS_ENVIRONMENT))-db
       - forms-api-((PAAS_ENVIRONMENT))-splunk
     env:
       RACK_ENV: production
-      SENTRY_DSN: ((SENTRY_DSN))
-      API_KEY: ((API_KEY))
+      RAILS_ENV: production
+      SETTINGS__FORMS_API__AUTHENTICATION_KEY: ((SETTINGS__FORMS_API__AUTHENTICATION_KEY))
+      SETTINGS__SENTRY__DSN: ((SETTINGS__SENTRY__DSN))
+      SETTINGS__SENTRY__ENVIRONMENT: ((SETTINGS__SENTRY__ENVIRONMENT))
       PAAS_ENVIRONMENT: ((PAAS_ENVIRONMENT))

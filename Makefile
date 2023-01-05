@@ -1,26 +1,17 @@
-.PHONY: setup serve serve-watch test test watch lint lint-fix install db db-down
+.PHONY: setup serve test lint lint-fix
 
 setup:
-	bundle install
+	bin/setup
 
 serve: setup
-	bundle exec rackup
-
-serve-watch: setup
-	bundle exec guard -i --notify false -P rack
+	bin/rails server
 
 test: setup
 	bundle exec rspec
 
-test-watch: setup
-	bundle exec guard -i --notify false -P rspec
-
 lint:
 	bundle exec rubocop
+	bundle exec bundle-audit check
 
 lint-fix:
 	bundle exec rubocop -A
-db:
-	docker-compose up -d
-clean:
-	docker-compose down

@@ -1,23 +1,6 @@
-require './lib/loader'
+# This file is used by Rack-based servers to start the application.
 
-unless ENV['SENTRY_DSN'].nil?
-  require 'sentry-ruby'
+require_relative "config/environment"
 
-  Sentry.init do |config|
-    config.dsn = ENV['SENTRY_DSN']
-    config.breadcrumbs_logger = [:sentry_logger, :http_logger]
-    config.traces_sample_rate = 0.5
-    config.environment = ENV["PAAS_ENVIRONMENT"] || "local"
-  end
-
-  use Sentry::Rack::CaptureExceptions
-end
-
-$stdout.sync = true
-
-database = Database.existing_database
-migrator = Migrator.new
-migrator.migrate(database)
-database.disconnect
-
-run Server
+run Rails.application
+Rails.application.load_server

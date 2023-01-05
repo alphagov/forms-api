@@ -1,0 +1,10 @@
+forms_api:
+  # Empty key bypasses authentication process all together (mostly used by tests so we dont need to authenticate
+  # every request spec
+  authentication_key: changeme
+
+# Configuration for Sentry
+# Sentry will only initialise if dsn is set to some other value
+sentry:
+  dsn:
+  environment: local

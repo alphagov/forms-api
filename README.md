@@ -3,21 +3,20 @@
 
 # GOV.UK Forms - API
 
-`forms-api` is the API for the GOV.UK Forms platform. It is a Ruby application that is built using Sinatra, currently using a Postgresql database for data storage and is used for storing/serving the form configurations that are created by form creators.
-
-Dev server url: https://forms-api-dev.london.cloudapps.digital/api/v1/forms/
+`forms-api` is the API for the GOV.UK Forms platform. It is a Ruby on Rails api app, currently using a Postgresql database for data storage and is used for storing/serving the form configurations that are created by form creators in [forms-admin](https://github.com/alphagov/forms-admin).
 
 ## Before you start
 
 To run the project you will need to install:
 
-- [Ruby](https://www.ruby-lang.org/en/) - we use version 3 of Ruby. Before running the project, double check the [.ruby-version] file to see the exact version.
+- [Ruby](https://www.ruby-lang.org/en/) - we use version 3.1 of Ruby. Before running the project, double check the [.ruby-version] file to see the exact version.
 - a running [PostgreSQL](https://www.postgresql.org/) database
 
 We recommend using a version manager to install and manage these, such as:
 
-- [RVM](https://rvm.io/) or [rbenv](https://github.com/rbenv/rbenv) for Ruby
 - [asdf](https://github.com/asdf-vm/asdf) for Ruby (and many other languages)
+- [RVM](https://rvm.io/) or [rbenv](https://github.com/rbenv/rbenv) for Ruby
+
 
 ## Getting started
 
@@ -32,45 +31,30 @@ cd forms-api
 make setup
 ```
 
+`make setup` runs `bin/setup` which is idempotent, so you can also run it whenever you pull new changes.
+
 ### Running the app
 
-You can run the server via `make serve` or `make serve-watch` to re-run on changes:
+You can run the server via `make serve`
 
 ```bash
 # Running the server without watching for changes
 make serve
-
-# Running the server watching for changes
-make serve-watch
 ```
+
+`make serve` runs `bin/setup`which is idempotent, followed by `bin/rails server`
 
 This will start the server on `localhost:9292`
 
-## Configuration and deployment
 
-### Environment variables
-
-Environment variables can be set using `.env` and `.env.development`/`env.test` for environment specific variables.
-
-| Name | Purpose |
-| ------------- | ------------- |
-| `DATABASE_URL` | The URL to the postgres database|
-| `SENTRY_DSN` | The DSN provided by Sentry |
-| `API_KEY` | The API key for authentication |
-
-TODO: Add these details once we've got our deployment running.
-
-## Explain how to test the project
+### Testing the project
 
 ```bash
 # Run the Ruby test suite
 make test
-
-# Run the Ruby test re-running on changes
-make test-watch
 ```
 
-## To run the linter
+### To run the linter
 
 ```bash
 # Run rubocop and display errors
@@ -80,11 +64,36 @@ make lint
 make lint-fix
 ```
 
+## Secrets vs Settings
+
+Refer to the [the config gem](https://github.com/railsconfig/config#accessing-the-settings-object) to understand the `file based settings` loading order.
+
+To override file based via `Machine based env variables settings`
+
+```bash
+cat config/settings.yml
+file
+  based
+    settings
+      env1: 'foo'
+```
+
+```bash
+export SETTINGS__FILE__BASED__SETTINGS__ENV1="bar"
+```
+
+```ruby
+puts Settings.file.based.setting.env1
+bar
+```
+
+Refer to the [settings file](config/settings.yml) for all the settings required to run this app
+
 ## Support
 
 Raise a Github issue if you need support.
 
-## Explain how users can contribute
+## How to contribute
 
 We welcome contributions - please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [alphagov Code of Conduct](https://github.com/alphagov/.github/blob/main/CODE_OF_CONDUCT.md) before contributing.
 

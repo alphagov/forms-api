@@ -9,11 +9,11 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def create
-    @form = Form.new(form_params)
-    if @form.save
-      render json: { id: @form.id }, status: :created # Fixup - just returning id here, could we return whole object?
+    new_form = Form.new(form_params)
+    if new_form.save
+      render json: { id: new_form.id }, status: :created # Fixup - just returning id here, could we return whole object?
     else
-      render json: @form.errors.to_json, status: :bad_request
+      render json: new_form.errors.to_json, status: :bad_request
     end
   end
 

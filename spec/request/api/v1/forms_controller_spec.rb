@@ -14,21 +14,21 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#index" do
     it "when no forms exist for an org, returns 200 and an empty json array" do
-      get "/api/v1/forms", params: { org: "unknown-org" }, headers: headers
+      get forms_path, params: { org: "unknown-org" }, headers: headers
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
     end
 
     it "when not given an org, returns 200 and an empty json array" do
-      get "/api/v1/forms", headers: headers
+      get forms_path, headers: headers
       expect(response.status).to eq(400)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ error: "param is missing or the value is empty: org" })
     end
 
     it "when given an org with forms, returns a json array of forms" do
-      get "/api/v1/forms", params: { org: "gds" }, headers: headers
+      get forms_path, params: { org: "gds" }, headers: headers
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(2)
       expect(response).to be_successful
@@ -65,7 +65,7 @@ describe Api::V1::FormsController, type: :request do
     let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
-      post "/api/v1/forms", params: new_form_params, as: :json
+      post forms_path, params: new_form_params, as: :json
     end
 
     context "with valid params" do
@@ -112,7 +112,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#show" do
     it "when no forms exists for an id, returns 404 and an empty json array" do
-      get "/api/v1/forms/987", as: :json
+      get form_path(id: 987), as: :json
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
@@ -120,7 +120,7 @@ describe Api::V1::FormsController, type: :request do
 
     # This test is for documenting Grape API only
     it "when given an invalid id, returns 500 and an empty json array" do
-      get "/api/v1/forms/invalid_id", as: :json
+      get form_path(id: "invalid_id"), as: :json
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
@@ -128,7 +128,7 @@ describe Api::V1::FormsController, type: :request do
 
     it "when given an existing id, returns 200 and form data" do
       form1 = Form.create!(name: "test form 1", org: "gds")
-      get "/api/v1/forms/#{form1.id}", as: :json
+      get form_path(form1), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
@@ -158,7 +158,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#update" do
     it "when no forms exists for an id, returns 404 an error" do
-      put "/api/v1/forms/123", as: :json
+      put form_path(123), as: :json
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
@@ -166,7 +166,7 @@ describe Api::V1::FormsController, type: :request do
 
     it "when given an valid id and params, updates DB and returns 200" do
       form1 = create :form
-      put "/api/v1/forms/#{form1.id}", params: { submission_email: "test@example.gov.uk" }, as: :json
+      put form_path(form1), params: { submission_email: "test@example.gov.uk" }, as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(success: true)
@@ -176,7 +176,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#destroy" do
     it "when no forms exists for an id, returns 404 an error" do
-      delete "/api/v1/forms/123", as: :json
+      delete form_path(123), as: :json
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
@@ -184,7 +184,7 @@ describe Api::V1::FormsController, type: :request do
 
     it "when given an existing id, returns 200 and deletes the form from DB" do
       form_to_be_deleted = create :form
-      delete "/api/v1/forms/#{form_to_be_deleted.id}", as: :json
+      delete form_path(form_to_be_deleted), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ success: true })
@@ -192,7 +192,7 @@ describe Api::V1::FormsController, type: :request do
 
     it "when given an existing id, returns 200 and deletes the form and any existing pages from DB" do
       form_to_be_deleted = create :form, :with_pages
-      delete "/api/v1/forms/#{form_to_be_deleted.id}", as: :json
+      delete form_path(form_to_be_deleted), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq({ success: true })

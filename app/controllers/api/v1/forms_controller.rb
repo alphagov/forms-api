@@ -1,4 +1,5 @@
 class Api::V1::FormsController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::ParameterMissing do |exception|
     render json: { error: exception.message }, status: :bad_request
   end
@@ -18,45 +19,35 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def update
-    @form = Form.find_by_id(params[:id])
-
-    if @form
-      if @form.update(form_params)
-        render json: { success: true }.to_json, status: :ok
-      else
-        render json: @form.errors.to_json, status: :bad_request
-      end
+    if form.update(form_params)
+      render json: { success: true }.to_json, status: :ok
     else
-      render json: { error: "not_found" }.to_json, status: :not_found
+      render json: form.errors.to_json, status: :bad_request
     end
   end
 
   def show
-    @form = Form.find_by_id(params[:id])
-
-    if @form
-      render json: @form.to_json, status: :ok
-    else
-      render json: { error: "not_found" }.to_json, status: :not_found
-    end
+    render json: form.to_json, status: :ok
   end
 
   def destroy
-    @form = Form.find_by_id(params[:id])
-
-    if @form
-      @form.destroy!
-      render json: { success: true }.to_json, status: :ok
-    else
-      render json: { error: "not_found" }.to_json, status: :not_found
-    end
+    form.destroy!
+    render json: { success: true }.to_json, status: :ok
   end
 
 private
+
+  def form
+    @form ||= Form.find(params.require(:id))
+  end
 
   def form_params
     # FIXUP -  how to best list all params which form can take? List explicitly or take from model?
     # params.permit(:org, :name, :submission_email)
     params.require(:form).permit(Form.attribute_names) # how to best list all params which form can take?
+  end
+
+  def not_found
+    render json: { error: "not_found" }.to_json, status: :not_found
   end
 end

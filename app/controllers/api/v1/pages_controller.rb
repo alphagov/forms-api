@@ -58,13 +58,22 @@ private
 
   def answer_settings_hash?
     # these answer_types have an answer_settings value which is a hash
-    %w[selection text].include? params[:answer_type]
+    %w[selection text date address].include? params[:answer_type]
+  end
+
+  def input_type_hash?
+    # these answer_types have an input_type value which is a hash
+    %w[address].include? params[:answer_type]
   end
 
   def answer_setting_params
     if answer_settings_hash?
       # answer_types with answer_settings must be whitelisted to pass strong params
-      { answer_settings: [:input_type, :only_one_option, { selection_options: [:name] }] }
+      if input_type_hash?
+        { answer_settings: [:only_one_option, { selection_options: [:name] }, { input_type: %i[uk_address international_address] }] }
+      else
+        { answer_settings: [:input_type, :only_one_option, { selection_options: [:name] }] }
+      end
     else
       # answer_types with answer_settings will be passed nil, so we just whitelist that
       :answer_settings

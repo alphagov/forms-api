@@ -7,18 +7,17 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def create
-    page = form.pages.new(page_params)
+    new_page = form.pages.new(page_params)
 
-    if page.save
+    if new_page.save
       form.update!(question_section_completed: false)
-      render json: { id: page.id }, status: :created
+      render json: { id: new_page.id }, status: :created
     else
-      render json: page.errors.to_json, status: :bad_request
+      render json: new_page.errors.to_json, status: :bad_request
     end
   end
 
   def show
-    page = form.pages.find(params.require(:id))
     render json: page.to_json, status: :ok
   end
 
@@ -38,13 +37,11 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def move_down
-    page = Page.find(params.require(:page_id))
     page.move_lower
     render json: { success: 1 }.to_json, status: :ok
   end
 
   def move_up
-    page = Page.find(params.require(:page_id))
     page.move_higher
     render json: { success: 1 }.to_json, status: :ok
   end
@@ -56,7 +53,7 @@ private
   end
 
   def page
-    @page ||= form.pages.find(params.require(:id))
+    @page ||= form.pages.find(params.require(:page_id))
   end
 
   def answer_settings_hash?

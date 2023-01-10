@@ -70,7 +70,7 @@ private
     if answer_settings_hash?
       # answer_types with answer_settings must be whitelisted to pass strong params
       if input_type_hash?
-        { answer_settings: [:only_one_option, { selection_options: [:name] }, { input_type: %i[uk_address international_address] }] }
+        { answer_settings: [:only_one_option, { selection_options: [:name] }, { input_type: {} }] }
       else
         { answer_settings: [:input_type, :only_one_option, { selection_options: [:name] }] }
       end

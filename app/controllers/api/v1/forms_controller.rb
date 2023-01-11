@@ -44,7 +44,7 @@ private
   def form_params
     # FIXUP -  how to best list all params which form can take? List explicitly or take from model?
     # params.permit(:org, :name, :submission_email)
-    params.require(:form).permit(Form.attribute_names) # how to best list all params which form can take?
+    params.require(:form).permit(Form.attribute_names).except(:created_at, :updated_at) # how to best list all params which form can take?
   end
 
   def not_found

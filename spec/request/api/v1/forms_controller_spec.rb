@@ -65,7 +65,12 @@ describe Api::V1::FormsController, type: :request do
     let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
+      freeze_time
       post forms_path, params: new_form_params, as: :json
+    end
+
+    after do
+      unfreeze_time
     end
 
     context "with valid params" do
@@ -106,6 +111,16 @@ describe Api::V1::FormsController, type: :request do
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
         expect(created_form[:org]).to eq("gds")
         expect(created_form[:support_url]).to eq("http://example.org")
+      end
+    end
+
+    context "with created_at and updated_at params" do
+      let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
+
+      it "does not use the provided created_at or updated_at values" do
+        expect(response.status).to eq(201)
+        expect(created_form[:created_at]).to eq(Time.current)
+        expect(created_form[:updated_at]).to eq(Time.current)
       end
     end
   end
@@ -150,8 +165,8 @@ describe Api::V1::FormsController, type: :request do
         question_section_completed: false,
         declaration_section_completed: false,
         page_order: nil,
-        created_at: form1.created_at.to_s,
-        updated_at: form1.updated_at.to_s,
+        created_at: form1.created_at.as_json,
+        updated_at: form1.updated_at.as_json,
       )
     end
   end
@@ -171,6 +186,16 @@ describe Api::V1::FormsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(success: true)
       expect(form1.reload.submission_email).to eq("test@example.gov.uk")
+    end
+
+    it "ignores created_at" do
+      form1 = create :form
+      expect { put form_path(form1), params: { created_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form1.reload.created_at })
+    end
+
+    it "ignores updated_at" do
+      form1 = create :form
+      expect { put form_path(form1), params: { updated_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form1.reload.updated_at })
     end
   end
 

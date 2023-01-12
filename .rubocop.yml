@@ -17,6 +17,10 @@ Style/NumericLiterals:
   Exclude:
     - spec/migrations/**/*
 
+Rails/CreateTableWithTimestamps:
+  Exclude:
+    - db/migrate/20230112140812_create_version_associations.rb
+
 # **************************************************************
 # TRY NOT TO ADD OVERRIDES IN THIS FILE
 #

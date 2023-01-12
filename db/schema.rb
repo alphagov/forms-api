@@ -48,6 +48,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_115617) do
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 
+  create_table "version_associations", force: :cascade do |t|
+    t.integer "version_id"
+    t.string "foreign_key_name", null: false
+    t.integer "foreign_key_id"
+    t.string "foreign_type"
+    t.index ["foreign_key_name", "foreign_key_id", "foreign_type"], name: "index_version_associations_on_foreign_key"
+    t.index ["version_id"], name: "index_version_associations_on_version_id"
+  end
+
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -56,7 +65,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_115617) do
     t.jsonb "object"
     t.datetime "created_at"
     t.jsonb "object_changes"
+    t.integer "transaction_id"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["transaction_id"], name: "index_versions_on_transaction_id"
   end
 
   add_foreign_key "pages", "forms"

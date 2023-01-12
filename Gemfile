@@ -16,6 +16,7 @@ gem "config"
 
 # Auditing model changes and logging versions
 gem "paper_trail"
+gem "paper_trail-association_tracking"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"

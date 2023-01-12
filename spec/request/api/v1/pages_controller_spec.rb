@@ -177,6 +177,26 @@ describe Api::V1::PagesController, type: :request do
         end
       end
     end
+
+    context "with nested answer_settings and input_type" do
+      let(:answer_type) { "address" }
+      let(:answer_settings) do
+        {
+          input_type: {
+            uk_address: "true",
+            international_address: "true",
+          },
+        }
+      end
+
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: true })
+        page1.reload
+        expect(page1.answer_settings&.deep_symbolize_keys).to eq(answer_settings)
+      end
+    end
   end
 
   describe "#destroy" do

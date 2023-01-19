@@ -63,6 +63,7 @@ Returned from API
 
 Must select at least one of UK and International address.
 
+#### Both set
 Sent from admin:
 ```json
 {
@@ -106,10 +107,26 @@ Returned from API:
 Sent from admin:
 ```json
 {
-  "id": 2,
-  "question_text": "Address",
+  "question_text": "International address only",
+  "hint_text": "",
+  "answer_type": "address",
+  "is_optional": null,
+  "answer_settings": {
+    "input_type": {
+      "uk_address": "false",
+      "international_address": "true"
+    }
+  }
+}
+```
+
+Returned from API:
+```json
+{
+  "id": 17,
+  "question_text": "International address only",
   "question_short_name": null,
-  "hint_text": "address hint",
+  "hint_text": "",
   "answer_type": "address",
   "is_optional": null,
   "answer_settings": {
@@ -118,31 +135,50 @@ Sent from admin:
       "international_address": "true"
     }
   },
-  "created_at": "2023-01-19T10:58:31.120Z",
-  "updated_at": "2023-01-19T10:58:31.120Z",
-  "position": 2,
+  "created_at": "2023-01-19T15:39:45.557Z",
+  "updated_at": "2023-01-19T15:39:45.557Z",
+  "form_id": 1,
+  "position": 17,
   "next_page": null
 }
 ```
 
 #### UK address only
+Sent from admin:
 ```json
 {
-  "id": 2,
-  "question_text": "Address",
-  "question_short_name": null,
-  "hint_text": "address hint",
+  "question_text": "uk address only",
+  "hint_text": "",
   "answer_type": "address",
   "is_optional": null,
   "answer_settings": {
     "input_type": {
-      "uk_address": "false",
-      "international_address": "true"
+      "uk_address": "true",
+      "international_address": "false"
+    }
+  }
+}
+```
+
+Returned from API:
+```json
+{
+  "id": 16,
+  "question_text": "uk address only",
+  "question_short_name": null,
+  "hint_text": "",
+  "answer_type": "address",
+  "is_optional": null,
+  "answer_settings": {
+    "input_type": {
+      "uk_address": "true",
+      "international_address": "false"
     }
   },
-  "created_at": "2023-01-19T10:58:31.120Z",
-  "updated_at": "2023-01-19T10:58:31.120Z",
-  "position": 2,
+  "created_at": "2023-01-19T15:37:26.851Z",
+  "updated_at": "2023-01-19T15:37:26.851Z",
+  "form_id": 1,
+  "position": 16,
   "next_page": null
 }
 ```

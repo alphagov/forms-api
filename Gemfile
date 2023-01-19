@@ -64,8 +64,6 @@ group :development, :test do
   gem "rubocop-govuk", require: false
 
   gem "rspec-rails"
-
-  gem "pry"
 end
 
 group :development do

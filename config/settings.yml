@@ -9,6 +9,6 @@ sentry:
   dsn:
   environment: local
 
-# The feature service needs at least one feature in order to establish the pattern for features, this can be replaced with a real feature when we have one
 features:
-  example_feature: false
+  # accept_legacy_answer_types should be set to false when the autocomplete_answer_types flag in admin is set to true
+  accept_legacy_answer_types: true

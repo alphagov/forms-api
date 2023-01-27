@@ -31,9 +31,9 @@ describe Api::V1::PagesController, type: :request do
         question_text: "What is your first name?",
         question_short_name: "",
         hint_text: "Should be first/last name",
-        answer_type: "single_line",
+        answer_type: "text",
         is_optional: false,
-        answer_settings: nil,
+        answer_settings: { "input_type" => "single_line" },
       }
     end
     let(:new_page) { form.pages.first }

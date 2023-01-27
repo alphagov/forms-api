@@ -9,6 +9,10 @@ class Api::V1::PagesController < ApplicationController
   def create
     new_page = form.pages.new(page_params)
 
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      convert_old_answer_types_to_new_format(new_page)
+    end
+
     if new_page.save
       form.update!(question_section_completed: false)
       render json: { id: new_page.id }, status: :created
@@ -18,11 +22,21 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def show
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      display_new_answer_types_in_old_format(page)
+    end
+
     render json: page.to_json, status: :ok
   end
 
   def update
-    if page.update(page_params)
+    page.assign_attributes(page_params)
+
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      convert_old_answer_types_to_new_format(page)
+    end
+
+    if page.save
       form.update!(question_section_completed: false)
       render json: { success: true }.to_json, status: :ok
     else
@@ -99,5 +113,30 @@ private
 
   def missing_parameter(exception)
     render json: { error: exception.message }, status: :bad_request
+  end
+
+  def convert_old_answer_types_to_new_format(page)
+    case page.answer_type
+    when "single_line"
+      page.answer_settings = { input_type: "single_line" }
+      page.answer_type = "text"
+    when "long_text"
+      page.answer_settings = { input_type: "long_text" }
+      page.answer_type = "text"
+    when "address"
+      page.answer_settings ||= { input_type: { uk_address: "true", international_address: "false" } }
+    when "date"
+      page.answer_settings ||= { input_type: "other_date" }
+    end
+  end
+
+  def display_new_answer_types_in_old_format(page)
+    case page.answer_type
+    when "text"
+      page.answer_type = page.answer_settings["input_type"]
+      page.answer_settings = nil
+    when "date", "address"
+      page.answer_settings = nil
+    end
   end
 end

@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe FeatureService do
   describe ".enabled?" do
-    context "when eature is enabled" do
+    context "when feature is enabled" do
       before do
         Settings.features[:some_feature] = true
       end

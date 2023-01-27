@@ -8,3 +8,7 @@ forms_api:
 sentry:
   dsn:
   environment: local
+
+# The feature service needs at least one feature in order to establish the pattern for features, this can be replaced with a real feature when we have one
+features:
+  example_feature: false

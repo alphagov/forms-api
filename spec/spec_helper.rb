@@ -1,5 +1,6 @@
 require "active_support/testing/time_helpers"
 require "simplecov"
+require_relative "support/features"
 
 SimpleCov.start "rails" do
   coverage_dir("coverage/backend")

@@ -123,19 +123,12 @@ private
     when "long_text"
       page.answer_settings = { input_type: "long_text" }
       page.answer_type = "text"
-    when "address"
-      page.answer_settings ||= { input_type: { uk_address: "true", international_address: "false" } }
-    when "date"
-      page.answer_settings ||= { input_type: "other_date" }
     end
   end
 
   def display_new_answer_types_in_old_format(page)
-    case page.answer_type
-    when "text"
+    if page.answer_type == "text"
       page.answer_type = page.answer_settings["input_type"]
-      page.answer_settings = nil
-    when "date", "address"
       page.answer_settings = nil
     end
   end

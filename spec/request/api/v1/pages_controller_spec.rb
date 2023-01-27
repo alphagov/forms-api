@@ -31,6 +31,7 @@ describe Api::V1::PagesController, type: :request do
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq({ id: new_page.id })
       end
+
       it "creates DB row with the legacy answer type converted to a new one" do
         expect(new_page.as_json).to eq(new_page_params.merge(id: new_page[:id],
                                                              form_id: form[:id],

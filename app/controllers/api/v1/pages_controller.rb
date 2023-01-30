@@ -115,21 +115,21 @@ private
     render json: { error: exception.message }, status: :bad_request
   end
 
-  def convert_old_answer_types_to_new_format(page)
-    case page.answer_type
+  def convert_old_answer_types_to_new_format(page_object)
+    case page_object.answer_type
     when "single_line"
-      page.answer_settings = { input_type: "single_line" }
-      page.answer_type = "text"
+      page_object.answer_settings = { input_type: "single_line" }
+      page_object.answer_type = "text"
     when "long_text"
-      page.answer_settings = { input_type: "long_text" }
-      page.answer_type = "text"
+      page_object.answer_settings = { input_type: "long_text" }
+      page_object.answer_type = "text"
     end
   end
 
-  def display_new_answer_types_in_old_format(page)
-    if page.answer_type == "text"
-      page.answer_type = page.answer_settings["input_type"]
-      page.answer_settings = nil
+  def display_new_answer_types_in_old_format(page_object)
+    if page_object.answer_type == "text"
+      page_object.answer_type = page_object.answer_settings["input_type"]
+      page_object.answer_settings = nil
     end
   end
 end

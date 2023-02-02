@@ -1,19 +1,14 @@
 require "rails_helper"
-require Rails.root.join('db/migrate/20230126135721_convert_address_to_uk_address.rb')
+require Rails.root.join("db/migrate/20230126135721_convert_address_to_uk_address.rb")
 
 describe ConvertAddressToUkAddress do
-  let(:migrations_paths) { ActiveRecord::Migrator.migrations_paths }
-  let(:migrations) { ActiveRecord::MigrationContext.new(migrations_paths).migrations }
-  let(:schema_migration) { ActiveRecord::SchemaMigration }
+  include MigrationHelpers
+
   let(:current_version) { 20230126135721 }
   let(:previous_version) { 20230126133557 }
 
   describe "#up" do
-    before do
-      ActiveRecord::Migration.suppress_messages do
-        ActiveRecord::Migrator.new(:down, migrations, schema_migration, previous_version).migrate
-      end
-    end
+    before { migrate_to(previous_version) }
 
     it "converts existing ‘address‘ answer types to ‘uk_address‘ input types when nil" do
       page = create(:page, answer_type: "address")
@@ -25,11 +20,7 @@ describe ConvertAddressToUkAddress do
   end
 
   describe "#down" do
-    before do
-      ActiveRecord::Migration.suppress_messages do
-        ActiveRecord::Migrator.new(:up, migrations, schema_migration, current_version).migrate
-      end
-    end
+    before { migrate_to(current_version) }
 
     it "does not remove answer settings for ‘international_address‘ input types" do
       page_with_both = create(:page, answer_type: "address", answer_settings: { input_type: { uk_address: "true", international_address: "true" } })

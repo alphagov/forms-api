@@ -5,7 +5,7 @@ module MigrationHelpers
     schema_migration = ActiveRecord::SchemaMigration
 
     ActiveRecord::Migration.suppress_messages do
-      ActiveRecord::Migrator.new(:up, migrations, schema_migration, version).migrate
+      ActiveRecord::Migrator.new(:down, migrations, schema_migration, version).migrate
     end
   end
 end

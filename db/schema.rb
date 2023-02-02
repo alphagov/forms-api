@@ -49,9 +49,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_26_141136) do
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 
-  create_table "schema_info", id: false, force: :cascade do |t|
-    t.integer "version", default: 0, null: false
-  end
-
   add_foreign_key "pages", "forms"
 end

@@ -13,6 +13,9 @@ inherit_mode:
   merge:
     - Exclude
 
+Style/NumericLiterals:
+  Exclude:
+    - spec/migrations/**/*
 
 # **************************************************************
 # TRY NOT TO ADD OVERRIDES IN THIS FILE

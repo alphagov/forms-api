@@ -9,6 +9,10 @@ class Api::V1::PagesController < ApplicationController
   def create
     new_page = form.pages.new(page_params)
 
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      convert_old_answer_types_to_new_format(new_page)
+    end
+
     if new_page.save
       form.update!(question_section_completed: false)
       render json: { id: new_page.id }, status: :created
@@ -18,11 +22,21 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def show
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      display_new_answer_types_in_old_format(page)
+    end
+
     render json: page.to_json, status: :ok
   end
 
   def update
-    if page.update(page_params)
+    page.assign_attributes(page_params)
+
+    if FeatureService.enabled?(:accept_legacy_answer_types)
+      convert_old_answer_types_to_new_format(page)
+    end
+
+    if page.save
       form.update!(question_section_completed: false)
       render json: { success: true }.to_json, status: :ok
     else
@@ -99,5 +113,23 @@ private
 
   def missing_parameter(exception)
     render json: { error: exception.message }, status: :bad_request
+  end
+
+  def convert_old_answer_types_to_new_format(page_object)
+    case page_object.answer_type
+    when "single_line"
+      page_object.answer_settings = { input_type: "single_line" }
+      page_object.answer_type = "text"
+    when "long_text"
+      page_object.answer_settings = { input_type: "long_text" }
+      page_object.answer_type = "text"
+    end
+  end
+
+  def display_new_answer_types_in_old_format(page_object)
+    if page_object.answer_type == "text"
+      page_object.answer_type = page_object.answer_settings["input_type"]
+      page_object.answer_settings = nil
+    end
   end
 end

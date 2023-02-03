@@ -3,6 +3,89 @@ require "rails_helper"
 describe Api::V1::PagesController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
 
+  context "when accepting legacy answer types", feature_accept_legacy_answer_types: true do
+    describe "#create" do
+      let(:form) { create :form }
+      let(:new_page_params) do
+        {
+          form_id: form.id,
+          question_text: "What is your first name?",
+          question_short_name: "",
+          hint_text: "Should be first/last name",
+          answer_type: %w[single_line long_text].sample,
+          is_optional: false,
+          answer_settings: nil,
+        }
+      end
+      let(:new_page) { form.pages.first }
+
+      before do
+        # fix the time here so we can test created_at and updated_at explicitly
+        travel_to Time.zone.local(2023, 1, 1, 12, 0, 0) do
+          post "/api/v1/forms/#{form.id}/pages", params: new_page_params, as: :json
+        end
+      end
+
+      it "returns page id, status code 201 when new page created" do
+        expect(response.status).to eq(201)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ id: new_page.id })
+      end
+
+      it "creates DB row with the legacy answer type converted to a new one" do
+        expect(new_page.as_json).to eq(new_page_params.merge(id: new_page[:id],
+                                                             form_id: form[:id],
+                                                             next_page: nil,
+                                                             position: 1,
+                                                             answer_type: "text",
+                                                             answer_settings: { "input_type" => new_page_params[:answer_type] },
+                                                             created_at: "2023-01-01T12:00:00.000Z",
+                                                             updated_at: "2023-01-01T12:00:00.000Z").as_json)
+      end
+    end
+
+    describe "#show" do
+      let(:form) { create :form, :with_text_page }
+      let(:page1) { form.pages.first }
+
+      let(:form_id) { form.id }
+      let(:page_id) { page1.id }
+
+      before do
+        get "/api/v1/forms/#{form_id}/pages/#{page_id}", as: :json
+      end
+
+      it "returns page, with new answer type displayed in legacy format" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body[:answer_type]).to eq(page1.answer_settings["input_type"])
+        expect(json_body[:answer_settings]).to eq(nil)
+      end
+    end
+
+    describe "#update" do
+      let(:form) { create :form, :with_pages, pages_count: 2 }
+      let(:page1) { form.pages.first }
+      let(:page2) { form.pages[1] }
+
+      let(:answer_type) { "single_line" }
+      let(:answer_settings) { nil }
+      let(:params) { { question_text: "updated page title", answer_type:, answer_settings: } }
+
+      before do
+        put "/api/v1/forms/#{form.id}/pages/#{page1.id}", params:, as: :json
+      end
+
+      it "returns correct response" do
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: true })
+        expect(page1.reload.answer_type).to eq("text")
+        expect(page1.reload.answer_settings).to eq({ "input_type" => "single_line" })
+      end
+    end
+  end
+
   describe "#index" do
     it "when no pages exist for a form, returns 200 and an empty json array" do
       form = create :form
@@ -23,7 +106,7 @@ describe Api::V1::PagesController, type: :request do
     end
   end
 
-  describe "#create" do
+  describe "#create", feature_accept_legacy_answer_types: false do
     let(:form) { create :form }
     let(:new_page_params) do
       {
@@ -31,9 +114,9 @@ describe Api::V1::PagesController, type: :request do
         question_text: "What is your first name?",
         question_short_name: "",
         hint_text: "Should be first/last name",
-        answer_type: "single_line",
+        answer_type: "text",
         is_optional: false,
-        answer_settings: nil,
+        answer_settings: { "input_type" => "single_line" },
       }
     end
     let(:new_page) { form.pages.first }
@@ -86,7 +169,7 @@ describe Api::V1::PagesController, type: :request do
     end
   end
 
-  describe "#show" do
+  describe "#show", feature_accept_legacy_answer_types: false do
     let(:form) { create :form, :with_pages, pages_count: 2 }
     let(:page1) { form.pages.first }
     let(:page2) { form.pages[1] }
@@ -127,12 +210,12 @@ describe Api::V1::PagesController, type: :request do
     end
   end
 
-  describe "#update" do
+  describe "#update", feature_accept_legacy_answer_types: false do
     let(:form) { create :form, :with_pages, pages_count: 2 }
     let(:page1) { form.pages.first }
     let(:page2) { form.pages[1] }
 
-    let(:answer_type) { "single_line" }
+    let(:answer_type) { "national_insurance_number" }
     let(:answer_settings) { nil }
     let(:params) { { question_text: "updated page title", answer_type:, answer_settings: } }
 

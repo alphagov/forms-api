@@ -34,6 +34,14 @@ FactoryBot.define do
       question_section_completed { true }
     end
 
+    trait :with_text_page do
+      pages do
+        Array.new(1) { build(:page, answer_type: "text", answer_settings: { input_type: %w[single_line long_text].sample }) }
+      end
+
+      question_section_completed { true }
+    end
+
     trait :ready_for_live do
       support_email { Faker::Internet.email(domain: "example.gov.uk") }
       what_happens_next_text { "We usually respond to applications within 10 working days." }

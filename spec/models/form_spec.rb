@@ -26,6 +26,12 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "versioning", versioning: true do
+    it "enables paper trail" do
+      expect(form).to be_versioned
+    end
+  end
+
   describe "form_slug" do
     it "updates when name is changed" do
       form.name = "Apply for a license to test forms"

@@ -1,4 +1,8 @@
 class Form < ApplicationRecord
+  if FeatureService.enabled?(:draft_live_versioning)
+    has_paper_trail
+  end
+
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true

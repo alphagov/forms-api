@@ -48,5 +48,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_115617) do
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.jsonb "object"
+    t.datetime "created_at"
+    t.jsonb "object_changes"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   add_foreign_key "pages", "forms"
 end

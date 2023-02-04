@@ -1,3 +1,7 @@
+features:
+  # Enable papertrail versioning and any api changes that need versioning
+  draft_live_versioning: false
+
 forms_api:
   # Empty key bypasses authentication process all together (mostly used by tests so we dont need to authenticate
   # every request spec
@@ -8,5 +12,3 @@ forms_api:
 sentry:
   dsn:
   environment: local
-
-features: {}

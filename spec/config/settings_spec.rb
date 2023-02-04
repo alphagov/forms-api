@@ -31,4 +31,10 @@ describe "Settings" do
 
     include_examples expected_value_test, :environment, sentry, "local"
   end
+
+  describe ".features" do
+    features = settings[:features]
+
+    include_examples expected_value_test, :draft_live_versioning, features, false
+  end
 end

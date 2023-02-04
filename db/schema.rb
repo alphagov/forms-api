@@ -36,7 +36,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_06_115617) do
 
   create_table "pages", force: :cascade do |t|
     t.text "question_text"
-    t.text "question_short_name"
     t.text "hint_text"
     t.text "answer_type"
     t.integer "next_page"

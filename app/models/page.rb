@@ -1,4 +1,8 @@
 class Page < ApplicationRecord
+  if FeatureService.enabled?(:draft_live_versioning)
+    has_paper_trail
+  end
+
   belongs_to :form
   acts_as_list scope: :form
 

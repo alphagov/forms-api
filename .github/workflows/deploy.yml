@@ -34,4 +34,5 @@ jobs:
             --var INSTANCES=2 \
             --var SETTINGS__FORMS_API__AUTHENTICATION_KEY=${{ secrets.API_KEY }} \
             --var SETTINGS__SENTRY__DSN=${{ secrets.SENTRY_DSN }} \
-            --var SETTINGS__SENTRY__ENVIRONMENT=dev
+            --var SETTINGS__SENTRY__ENVIRONMENT=dev \
+            --var SETTINGS__FEATURES__ACCEPT_LEGACY_ANSWER_TYPES=false

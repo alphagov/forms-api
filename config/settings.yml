@@ -9,6 +9,4 @@ sentry:
   dsn:
   environment: local
 
-features:
-  # accept_legacy_answer_types should be set to false when the autocomplete_answer_types flag in admin is set to true
-  accept_legacy_answer_types: true
+features: {}

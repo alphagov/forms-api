@@ -10,7 +10,8 @@ describe ConvertOldTextFieldsToNewTextFields do
     before { migrate_to(previous_version) }
 
     it "converts existing ‘single_line‘ answer types to ‘text‘ answer types with ‘single_line‘ input types" do
-      page = create(:page, answer_type: "single_line")
+      page = build(:page, answer_type: "single_line")
+      page.save!(validate: false)
 
       described_class.new.up
 
@@ -19,7 +20,8 @@ describe ConvertOldTextFieldsToNewTextFields do
     end
 
     it "converts existing ‘long_text‘ answer types to ‘text‘ answer types with ‘long_text‘ input types" do
-      page = create(:page, answer_type: "long_text")
+      page = build(:page, answer_type: "long_text")
+      page.save!(validate: false)
 
       described_class.new.up
 

@@ -13,7 +13,7 @@ RSpec.describe Page, type: :model do
       form = create :form
       page.form_id = form.id
       page.question_text = "Example question"
-      page.answer_type = "single_line"
+      page.answer_type = "national_insurance_number"
       expect(page).to be_valid
     end
 

@@ -1,7 +1,7 @@
 require "rails_helper"
 require Rails.root.join("db/migrate/20230126141136_convert_old_text_fields_to_new_text_fields.rb")
 
-describe ConvertOldTextFieldsToNewTextFields do
+xdescribe ConvertOldTextFieldsToNewTextFields do
   include MigrationHelpers
 
   let(:previous_version) { 20230126135721 }

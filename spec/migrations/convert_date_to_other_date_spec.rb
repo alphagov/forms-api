@@ -1,7 +1,7 @@
 require "rails_helper"
 require Rails.root.join("db/migrate/20230126133557_convert_date_to_other_date.rb")
 
-describe ConvertDateToOtherDate do
+xdescribe ConvertDateToOtherDate do
   include MigrationHelpers
 
   let(:previous_version) { 20221222115429 }

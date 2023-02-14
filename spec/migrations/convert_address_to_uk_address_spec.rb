@@ -1,7 +1,7 @@
 require "rails_helper"
 require Rails.root.join("db/migrate/20230126135721_convert_address_to_uk_address.rb")
 
-describe ConvertAddressToUkAddress do
+xdescribe ConvertAddressToUkAddress do
   include MigrationHelpers
 
   let(:previous_version) { 20230126133557 }

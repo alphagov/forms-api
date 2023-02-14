@@ -29,7 +29,6 @@ describe Api::V1::PagesController, type: :request do
       {
         form_id: form.id,
         question_text: "What is your first name?",
-        question_short_name: "",
         hint_text: "Should be first/last name",
         answer_type: "text",
         is_optional: false,

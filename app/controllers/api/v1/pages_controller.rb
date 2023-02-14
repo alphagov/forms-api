@@ -86,7 +86,6 @@ private
     params.require(:page).permit(
       :id,
       :question_text,
-      :question_short_name,
       :hint_text,
       :answer_type,
       :next_page,

@@ -212,6 +212,49 @@ describe Api::V1::FormsController, type: :request do
       form1 = create :form
       expect { put form_path(form1), params: { updated_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form1.reload.updated_at })
     end
+
+    context "when a form creator makes their form live" do
+      context "when feature_draft_live_versioning is not enabled", feature_draft_live_versioning: false do
+        it "sets live_at for a form when draft_live_versioning is not enabled" do
+          travel_to Time.zone.local(2023, 1, 1, 12, 0, 0) do
+            form1 = create :form, :ready_for_live
+            live_at = Time.zone.now
+
+            put form_path(form1), params: { live_at: live_at }, as: :json
+            expect(form1.reload.live_at).to eq live_at
+          end
+        end
+      end
+
+      context "when feature_draft_live_versioning is enabled", feature_draft_live_versioning: true, versioning: true do
+
+        let(:live_at) { Time.zone.local(2023, 1, 1, 12, 0, 0) }
+
+        it "does not create a version if live_at is set" do
+          travel_to live_at do
+            form1 = create :form, :ready_for_live
+
+            put form_path(form1), params: { live_at: live_at }, as: :json
+            expect(form1.reload.versions.where(event: :update).length).to eq 0
+          end
+        end
+
+        it "sets live_at for a form when draft_live_versioning is enabled" do
+          travel_to live_at do
+            form1 = create :form, :ready_for_live
+
+            put form_path(form1), params: { live_at: live_at }, as: :json
+            expect(form1.reload.live_at).to eq live_at
+          end
+        end
+
+        it "created a published version of the form" do
+          form1 = create :form, :ready_for_live
+          put form_path(form1), params: { live_at: Time.zone.now }, as: :json
+          expect(form1.versions.where(event: :published).length).to eq 1
+        end
+      end
+    end
   end
 
   describe "#destroy" do

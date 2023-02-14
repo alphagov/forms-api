@@ -1,6 +1,6 @@
 class Form < ApplicationRecord
   if FeatureService.enabled?(:draft_live_versioning)
-    has_paper_trail
+    has_paper_trail ignore: :live_at
   end
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
@@ -12,6 +12,11 @@ class Form < ApplicationRecord
 
   def make_live!
     update!(live_at: Time.zone.now)
+
+    if FeatureService.enabled?(:draft_live_versioning)
+      form.paper_trail_event = :published
+      form.touch
+    end
   end
 
   def live_version

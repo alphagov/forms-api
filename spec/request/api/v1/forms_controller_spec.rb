@@ -223,4 +223,17 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body).to eq({ success: true })
     end
   end
+
+  describe "#make_live" do
+    it "when given a form, sets live_at to current time" do
+      freeze_time do
+        form_to_be_made_live = create :form
+        post make_live_form_path(form_to_be_made_live), as: :json
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq({ success: true })
+        expect(form_to_be_made_live.reload.live_at).to eq(Time.zone.now)
+      end
+    end
+  end
 end

@@ -32,6 +32,44 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "live_version" do
+    context "when draft_live_versioning is enabled", versioning: true, feature_draft_live_versioning: true do
+      it "has a live version" do
+        form.name = "test"
+        form.org = "test"
+        form.make_live!
+
+        expect(form.live_version).to be_truthy
+      end
+
+      it "does not include changes after making form live in live version" do
+        form.name = "test"
+        form.org = "test"
+        form.make_live!
+        form.name = "not test"
+
+        expect(form.live_version.name).to eq "test"
+      end
+
+      it "does not inclde changes to pages made after making form live" do
+        form = build :form, :with_pages
+        form.pages.first.question_text = "Test question"
+        form.make_live!
+
+        form.pages.first.question_text = "Not test question"
+        form.pages.first.save! # this is needed to break the test
+
+        expect(form.live_version.pages.first.question_text).to eq "Test question"
+      end
+    end
+
+    context "when draft_live_versioning is not enabled", feature_draft_live_versioning: false do
+      it "does not have a live version" do
+        expect(form.live_version).to eq nil
+      end
+    end
+  end
+
   describe "form_slug" do
     it "updates when name is changed" do
       form.name = "Apply for a license to test forms"

@@ -186,6 +186,21 @@ describe Api::V1::FormsController, type: :request do
     end
   end
 
+  describe "#show_live", versioning: true do
+    it "when given an existing id, returns 200 and form data for current live version" do
+      form1 = Form.create!(name: "test form 1", org: "gds")
+      form1.make_live!
+      get live_form_path(form1), as: :json
+      expect(response.status).to eq(200)
+    end
+
+    it "when given an existing id, returns 404 if form does not have live version" do
+      form1 = Form.create!(name: "test form 1", org: "gds")
+      get live_form_path(form1), as: :json
+      expect(response.status).to eq(404)
+    end
+  end
+
   describe "#update" do
     it "when no forms exists for an id, returns 404 an error" do
       put form_path(123), as: :json

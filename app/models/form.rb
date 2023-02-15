@@ -15,6 +15,18 @@ class Form < ApplicationRecord
       self.touch
     end
   end
+
+  def live_version
+    if FeatureService.enabled?(:draft_live_versioning)
+      live_form = self.versions.where(event: :published).last
+      if live_form
+        live_form.reify(has_many: true)
+      else
+        raise ActiveRecord::RecordNotFound
+      end
+    end
+  end
+
   def start_page
     pages&.first&.id
   end

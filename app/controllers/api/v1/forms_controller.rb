@@ -30,6 +30,14 @@ class Api::V1::FormsController < ApplicationController
     render json: form.to_json, status: :ok
   end
 
+  def show_draft
+    render json: form.to_json, status: :ok
+  end
+
+  def show_live
+    render json: form.live_version.to_json, status: :ok
+  end
+
   def destroy
     form.destroy!
     render json: { success: true }.to_json, status: :ok

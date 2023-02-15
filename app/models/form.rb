@@ -6,6 +6,15 @@ class Form < ApplicationRecord
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true
+
+  def make_live!
+    self.update!(live_at: Time.zone.now)
+
+    if FeatureService.enabled?(:draft_live_versioning)
+      self.paper_trail_event = :published
+      self.touch
+    end
+  end
   def start_page
     pages&.first&.id
   end

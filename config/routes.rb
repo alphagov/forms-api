@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   # root "articles#index"
   scope "api/v1" do
     resources :forms, controller: "api/v1/forms" do
+      post "/make-live", on: :member, to: "api/v1/forms#make_live"
       resources :pages, controller: "api/v1/pages", param: :page_id do
       end
       put "/pages/:page_id/down", to: "api/v1/pages#move_down"

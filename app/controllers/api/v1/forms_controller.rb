@@ -35,6 +35,11 @@ class Api::V1::FormsController < ApplicationController
     render json: { success: true }.to_json, status: :ok
   end
 
+  def make_live
+    form.update!(live_at: Time.zone.now)
+    render json: { success: true }.to_json, status: :ok
+  end
+
 private
 
   def form

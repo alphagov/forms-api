@@ -3,7 +3,7 @@ class Form < ApplicationRecord
     has_paper_trail ignore: :live_at
   end
 
-  has_many :pages, -> { order(position: :asc) }, dependent: :destroy
+  has_many :pages, -> { order(position: :asc) }, dependent: :destroy, autosave: true
 
   validates :org, :name, presence: true
 

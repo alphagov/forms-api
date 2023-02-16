@@ -47,11 +47,12 @@ RSpec.describe Form, type: :model do
         form.org = "test"
         form.make_live!
         form.name = "not test"
+        form.save!
 
         expect(form.live_version.name).to eq "test"
       end
 
-      it "does not inclde changes to pages made after making form live" do
+      it "does not include changes to pages made after making form live" do
         form = build :form, :with_pages
         form.pages.first.question_text = "Test question"
         form.make_live!
@@ -60,6 +61,35 @@ RSpec.describe Form, type: :model do
         form.pages.first.save! # this is needed to break the test
 
         expect(form.live_version.pages.first.question_text).to eq "Test question"
+      end
+
+      it "still includes pages that have been deleted in latest draft" do
+        form = create :form, :with_pages
+        form.pages.first.update(question_text: "First question")
+        form.pages.second.update(question_text: "Second question")
+        # form.save!
+        form.make_live!
+
+        form.pages.first.destroy!
+        form.save!
+
+        expect(form.live_version.pages.count).to eq 5
+        expect(form.live_version.pages.first.question_text).to eq "First question"
+      end
+
+      it "preserves order of pages that have been reorderd in latest draft" do
+        form = create :form, :with_pages
+        form.pages.first.update(question_text: "First question")
+        form.pages.second.update(question_text: "Second question")
+        form.pages.second.move_higher
+        form.save!
+        form.make_live!
+
+        form.pages.first.destroy!
+        form.save!
+
+        expect(form.live_version.pages.count).to eq 5
+        expect(form.live_version.pages.first.question_text).to eq "First question"
       end
     end
 

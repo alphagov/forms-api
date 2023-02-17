@@ -40,6 +40,10 @@ class Api::V1::FormsController < ApplicationController
     render json: { success: true }.to_json, status: :ok
   end
 
+  def show_live
+    render json: form.to_json(include: [:pages]), status: :ok
+  end
+
 private
 
   def form

@@ -236,4 +236,24 @@ describe Api::V1::FormsController, type: :request do
       end
     end
   end
+
+  describe "#show_live" do
+    it "returns a form with all its pages" do
+      form = create :form, :with_pages, :live
+
+      get live_form_path(form), as: :json
+
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+
+      expect(json_body[:pages].pluck(:question_text)).to match form.pages.select(:question_text).pluck(:question_text)
+    end
+
+    it "returns 404 if live form doesn't exist" do
+      get live_form_path(1), as: :json
+
+      expect(response.status).to eq(404)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+    end
+  end
 end

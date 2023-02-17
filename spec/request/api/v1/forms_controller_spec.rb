@@ -6,9 +6,15 @@ headers = {
 
 describe Api::V1::FormsController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
+  let(:gds_forms) do
+    [
+      create(:form, name: "Fill me in", org: "gds"),
+      create(:form, name: "Can you answer my questions?", org: "gds"),
+    ]
+  end
 
   before do
-    create_list :form, 2, org: "gds"
+    gds_forms
     create :form, org: "not-gds"
   end
 
@@ -56,6 +62,15 @@ describe Api::V1::FormsController, type: :request do
           :declaration_section_completed,
           :page_order,
         )
+      end
+    end
+
+    describe "ordering of forms" do
+      it "returns a list of forms sorted in alphabetical order" do
+        get forms_path, params: { org: "gds" }, headers: headers
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body.pluck(:name)).to eq(gds_forms.sort_by(&:name).pluck(:name))
       end
     end
   end

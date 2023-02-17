@@ -6,7 +6,7 @@ class Api::V1::FormsController < ApplicationController
 
   def index
     org = params.require(:org)
-    render json: Form.where(org:).to_json
+    render json: Form.where(org:).order(:name).to_json
   end
 
   def create

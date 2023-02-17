@@ -50,11 +50,8 @@ FactoryBot.define do
     end
 
     trait :live do
+      ready_for_live
       live_at { Time.zone.now }
-      support_email { Faker::Internet.email(domain: "example.gov.uk") }
-      what_happens_next_text { "We usually respond to applications within 10 working days." }
-      question_section_completed { true }
-      declaration_section_completed { true }
     end
 
     trait :with_support do

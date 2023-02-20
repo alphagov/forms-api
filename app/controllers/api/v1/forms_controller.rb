@@ -41,7 +41,7 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def show_live
-    render json: form.to_json(include: [:pages]), status: :ok
+    render json: form.live_version, status: :ok
   end
 
 private

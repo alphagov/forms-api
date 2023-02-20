@@ -61,4 +61,11 @@ RSpec.describe Form, type: :model do
       expect(form.pages).to eq([page_b, page_a])
     end
   end
+
+  describe "#live_version" do
+    it "returns json version of the LIVE form and includes pages" do
+      form = create :form, :with_pages
+      expect(form.live_version).to eq(form.to_json(include: [:pages]))
+    end
+  end
 end

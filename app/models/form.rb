@@ -6,6 +6,10 @@ class Form < ApplicationRecord
     pages&.first&.id
   end
 
+  def make_live!
+    update!(live_at: Time.zone.now)
+  end
+
   def live_version
     snapshot
   end

@@ -36,7 +36,7 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def make_live
-    form.update!(live_at: Time.zone.now)
+    form.make_live!
     render json: { success: true }.to_json, status: :ok
   end
 

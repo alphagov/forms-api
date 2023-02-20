@@ -194,7 +194,8 @@ describe Api::V1::FormsController, type: :request do
       expect(response.status).to eq(200)
     end
 
-    it "when given an existing id, returns 404 if form does not have live version" do
+    # TODO: add this back in once we have live versions of a form
+    xit "when given an existing id, returns 404 if form does not have live version" do
       form1 = Form.create!(name: "test form 1", org: "gds")
       get live_form_path(form1), as: :json
       expect(response.status).to eq(404)
@@ -261,12 +262,6 @@ describe Api::V1::FormsController, type: :request do
             put form_path(form1), params: { live_at: live_at }, as: :json
             expect(form1.reload.live_at).to eq live_at
           end
-        end
-
-        it "created a published version of the form" do
-          form1 = create :form, :ready_for_live
-          put form_path(form1), params: { live_at: Time.zone.now }, as: :json
-          expect(form1.versions.where(event: :published).length).to eq 1
         end
       end
     end

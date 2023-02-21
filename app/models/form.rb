@@ -6,6 +6,18 @@ class Form < ApplicationRecord
     pages&.first&.id
   end
 
+  def make_live!
+    update!(live_at: Time.zone.now)
+  end
+
+  def live_version
+    snapshot
+  end
+
+  def snapshot
+    to_json(include: [:pages])
+  end
+
   def name=(val)
     super(val)
     self[:form_slug] = name.parameterize

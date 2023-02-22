@@ -90,8 +90,49 @@ Question 1 Condition
 
 In the backend this would look alright, as the condition attached to the question would be `{question_id: 1, match_answer: "Yes", destination_id: 3}`. you know what nevermind!
 
-
 ## Option 3
+
+The `next_page` field could simply be the single source of information for where to calculate the next page. This has the advantage of making it straightforward to identify what the next page should be from a single field. The main issue would be the possibility of overcomplicating a single field, as it would potentially have to store quite a wide range of data (as it would need to effectively implement one of the two previous options *within* the `next_page` field)
+
+### api
+
+```json
+  {
+    id: 1,
+    next_page: {default: 2, conditions: []},
+  }
+```
+
+```json
+  {
+    id: 1,
+    next_page: {
+      default: 2, 
+      conditions: [{question_id: 1, match_answer: "first option", destination_id: 3}]
+    },
+  }
+```
+
+This does turn next page into a good place to store all the information about where the runner should take the user
+
+### runner
+
+The runner could implement a method in the page model that works out the next page in context. 
+
+This way, page objects can have their `next_page` queried, which can return the id for the next page.
+
+```ruby
+  def next_page
+    next_page.conditions.each do |condition|
+      given_answer = session[condition.question_id].answer
+      return condition.destination_id if given_answer == condition.match_answer
+    end
+
+    return next_page.default
+  end
+```
+
+## Option 4
 
 I'm not a fan of this, I think routing should be connected to the question now. I used to think it would be good to have clear branch points which weren't attached to specific questions, but I don't think this is the simplest way of doing that.
 

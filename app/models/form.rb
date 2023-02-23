@@ -11,10 +11,14 @@ class Form < ApplicationRecord
 
   def make_live!
     update!(live_at: Time.zone.now)
+
+    made_live_forms.create!(json_form_blob: to_json(include: [:pages])) if FeatureService.enabled?(:draft_live_versioning)
   end
 
   def live_version
-    snapshot
+    return snapshot unless FeatureService.enabled?(:draft_live_versioning)
+
+    made_live_forms.last.json_form_blob
   end
 
   def snapshot

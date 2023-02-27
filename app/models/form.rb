@@ -1,4 +1,6 @@
 class Form < ApplicationRecord
+  has_paper_trail
+
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true

@@ -1,4 +1,6 @@
 class Page < ApplicationRecord
+  has_paper_trail
+
   belongs_to :form
   acts_as_list scope: :form
 

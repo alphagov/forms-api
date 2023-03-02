@@ -2,6 +2,7 @@ class Form < ApplicationRecord
   has_paper_trail
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
+  has_many :made_live_forms
 
   validates :org, :name, presence: true
   def start_page

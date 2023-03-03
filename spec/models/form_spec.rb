@@ -79,41 +79,20 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context "when draft/live feature disabled", feature_draft_live_versioning: false do
-      it "sets a forms live_at to make the form live" do
-        expect(form_to_be_made_live.live_at).to eq(time_now)
-      end
-
-      it "does not create a made live version" do
-        expect(form_to_be_made_live.made_live_forms).to be_empty
-      end
+    it "sets a forms live_at to make the form live" do
+      expect(form_to_be_made_live.live_at).to eq(time_now)
     end
 
-    context "when draft/live feature enabled", feature_draft_live_versioning: true do
-      it "sets a forms live_at to make the form live" do
-        expect(form_to_be_made_live.live_at).to eq(time_now)
-      end
-
-      it "does create a made live version" do
-        expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.to_json(include: [:pages])
-      end
+    it "does create a made live version" do
+      expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.to_json(include: [:pages])
     end
   end
 
   describe "#live_version" do
-    let(:form) { create :form, :with_pages }
+    let(:made_live_form) { create :made_live_form }
 
     it "returns json version of the LIVE form and includes pages" do
-      expect(form.live_version).to eq(form.to_json(include: [:pages]))
-    end
-
-    context "when draft/live feature enabled", feature_draft_live_versioning: true do
-      it "returns json version of the LIVE form" do
-        made_live_form = create :made_live_form
-        made_live_form.form.update!(name: "Updated form")
-
-        expect(made_live_form.form.live_version).to eq(made_live_form.json_form_blob)
-      end
+      expect(made_live_form.form.live_version).to eq(made_live_form.form.to_json(include: [:pages]))
     end
   end
 end

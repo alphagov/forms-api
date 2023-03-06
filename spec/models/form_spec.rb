@@ -18,8 +18,8 @@ RSpec.describe Form, type: :model do
     let(:made_live_form) { create :made_live_form }
     let(:form) { made_live_form.form }
 
-    it "does not allow form creators to delete a live form" do
-      expect { form.destroy! }.to raise_error(ActiveRecord::DeleteRestrictionError)
+    it "does delete a live form" do
+      expect { form.destroy }.to change { MadeLiveForm.exists?(made_live_form.id) }.to(false)
     end
   end
 

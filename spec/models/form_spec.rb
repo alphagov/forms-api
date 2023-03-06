@@ -14,6 +14,15 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "made_live_form" do
+    let(:made_live_form) { create :made_live_form }
+    let(:form) { made_live_form.form }
+
+    it "does not allow form creators to delete a live form" do
+      expect { form.destroy! }.to raise_error(ActiveRecord::DeleteRestrictionError)
+    end
+  end
+
   describe "validations" do
     it "validates" do
       form.name = "test"

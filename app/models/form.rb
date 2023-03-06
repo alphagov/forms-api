@@ -2,6 +2,7 @@ class Form < ApplicationRecord
   has_paper_trail
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
+  has_many :made_live_forms, dependent: :restrict_with_exception
 
   validates :org, :name, presence: true
   def start_page
@@ -10,14 +11,12 @@ class Form < ApplicationRecord
 
   def make_live!
     update!(live_at: Time.zone.now)
+
+    made_live_forms.create!(json_form_blob: to_json(include: [:pages]))
   end
 
   def live_version
-    snapshot
-  end
-
-  def snapshot
-    to_json(include: [:pages])
+    made_live_forms.last.json_form_blob
   end
 
   def name=(val)

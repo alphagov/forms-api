@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_27_143428) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_03_132811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,6 +32,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_143428) do
     t.integer "page_order", array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "made_live_forms", force: :cascade do |t|
+    t.bigint "form_id"
+    t.json "json_form_blob"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["form_id"], name: "index_made_live_forms_on_form_id"
   end
 
   create_table "pages", force: :cascade do |t|
@@ -59,5 +67,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_143428) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "made_live_forms", "forms"
   add_foreign_key "pages", "forms"
 end

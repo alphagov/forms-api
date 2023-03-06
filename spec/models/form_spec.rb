@@ -14,6 +14,15 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "made_live_form" do
+    let(:made_live_form) { create :made_live_form }
+    let(:form) { made_live_form.form }
+
+    it "does not allow form creators to delete a live form" do
+      expect { form.destroy! }.to raise_error(ActiveRecord::DeleteRestrictionError)
+    end
+  end
+
   describe "validations" do
     it "validates" do
       form.name = "test"
@@ -69,19 +78,30 @@ RSpec.describe Form, type: :model do
   end
 
   describe "#make_live!" do
-    it "sets a forms live_at to make the form live" do
+    let(:form_to_be_made_live) { build :form }
+    let(:time_now) { Time.zone.now }
+
+    before do
       freeze_time do
-        form_to_be_made_live = build :form
+        time_now
         form_to_be_made_live.make_live!
-        expect(form_to_be_made_live.live_at).to eq(Time.zone.now)
       end
+    end
+
+    it "sets a forms live_at to make the form live" do
+      expect(form_to_be_made_live.live_at).to eq(time_now)
+    end
+
+    it "does create a made live version" do
+      expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.to_json(include: [:pages])
     end
   end
 
   describe "#live_version" do
+    let(:made_live_form) { create :made_live_form }
+
     it "returns json version of the LIVE form and includes pages" do
-      form = create :form, :with_pages
-      expect(form.live_version).to eq(form.to_json(include: [:pages]))
+      expect(made_live_form.form.live_version).to eq(made_live_form.form.to_json(include: [:pages]))
     end
   end
 end

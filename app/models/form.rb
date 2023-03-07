@@ -16,7 +16,13 @@ class Form < ApplicationRecord
   end
 
   def live_version
+    return draft_version if made_live_forms.blank?
+
     made_live_forms.last.json_form_blob
+  end
+
+  def draft_version
+    to_json(include: [:pages])
   end
 
   def name=(val)

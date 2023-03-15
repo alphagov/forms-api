@@ -14,6 +14,6 @@ private
   end
 
   def set_token
-    self.token = Digest::SHA2.new(256).hexdigest(users_token)
+    self.token = Digest::SHA256.hexdigest(users_token)
   end
 end

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include ActionController::HttpAuthentication::Token::ControllerMethods
   before_action :set_content_type
   before_action :authenticate_request
 
@@ -7,7 +8,9 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_request
-    if Settings.forms_api.authentication_key.present? && !authenticate
+    return nil if Settings.forms_api.authentication_key.blank?
+
+    unless authenticate_using_old_env_vars || authenticate_using_access_tokens
       render json: { status: "unauthorised" }, status: :unauthorized
     end
   end
@@ -21,7 +24,13 @@ class ApplicationController < ActionController::API
 
 private
 
-  def authenticate
-    (request.headers["X-Api-Token"] == Settings.forms_api.authentication_key)
+  def authenticate_using_old_env_vars
+    request.headers["X-Api-Token"] == Settings.forms_api.authentication_key
+  end
+
+  def authenticate_using_access_tokens
+    authenticate_with_http_token do |token|
+      @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+    end
   end
 end

@@ -17,6 +17,7 @@ describe Api::V1::AccessTokensController, type: :request do
           :deactivated_at,
           :created_at,
           :updated_at,
+          :last_accessed_at,
         )
       end
     end

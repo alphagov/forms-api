@@ -65,16 +65,24 @@ describe ApplicationController, type: :request do
       end
       let(:access_token) { AccessToken.create!(owner: "test-owner") }
       let(:token) { access_token.users_token }
+      let(:time_now) { Time.zone.now }
 
       before do
         Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 1234
+        token
+        freeze_time do
+          time_now
+          get forms_path, params: { org: "gds" }, headers: req_headers
+        end
       end
 
       it "returns 200" do
-        token
-        get forms_path, params: { org: "gds" }, headers: req_headers
         expect(response.status).to eq(200)
+      end
+
+      it "updates the tokens 'last_accessed_at' attribute" do
+        expect(access_token.reload.last_accessed_at).to eq time_now
       end
 
       context "when token has been deactivated" do

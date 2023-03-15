@@ -25,12 +25,15 @@ class ApplicationController < ActionController::API
 private
 
   def authenticate_using_old_env_vars
+    return false if request.headers["X-Api-Token"].blank? || Settings.forms_api.authentication_key.blank?
+
     request.headers["X-Api-Token"] == Settings.forms_api.authentication_key
   end
 
   def authenticate_using_access_tokens
     authenticate_with_http_token do |token|
       @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+      @user.update!(last_accessed_at: Time.zone.now) if @user.present?
     end
   end
 end

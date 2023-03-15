@@ -19,6 +19,7 @@ class ApplicationController < ActionController::API
     super
     payload[:host] = request.host
     payload[:request_id] = request.request_id
+    payload[:requested_by] = "#{@access_token.owner}-#{@access_token.id}" if @access_token.present?
     payload[:form_id] = params[:form_id] if params[:form_id].present?
   end
 
@@ -33,17 +34,17 @@ private
   def authenticate_using_access_tokens
     if request.headers["X-Api-Token"].present?
       token = request.headers["X-Api-Token"]
-      @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
-      if @user.present?
-        @user.update!(last_accessed_at: Time.zone.now)
+      @access_token = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+      if @access_token.present?
+        @access_token.update!(last_accessed_at: Time.zone.now)
         true
       else
         false
       end
     else
       authenticate_with_http_token do |token|
-        @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
-        @user.update!(last_accessed_at: Time.zone.now) if @user.present?
+        @access_token = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+        @access_token.update!(last_accessed_at: Time.zone.now) if @access_token.present?
       end
     end
   end

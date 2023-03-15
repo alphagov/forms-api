@@ -17,6 +17,6 @@ class Api::V1::AccessTokensController < ApplicationController
 private
 
   def token_params
-    params.permit(:owner)
+    params.permit(:owner, :description)
   end
 end

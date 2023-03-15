@@ -21,7 +21,8 @@ describe "Settings" do
   describe "forms api settings" do
     forms_api = settings[:forms_api]
 
-    include_examples expected_value_test, :authentication_key, forms_api, "changeme"
+    include_examples expected_value_test, :enabled_auth, forms_api, true
+    include_examples expected_value_test, :authentication_key, forms_api, nil
   end
 
   describe "sentry" do

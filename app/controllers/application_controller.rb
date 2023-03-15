@@ -8,7 +8,7 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_request
-    return nil if Settings.forms_api.authentication_key.blank?
+    return nil unless Settings.forms_api.enabled_auth
 
     unless authenticate_using_old_env_vars || authenticate_using_access_tokens
       render json: { status: "unauthorised" }, status: :unauthorized

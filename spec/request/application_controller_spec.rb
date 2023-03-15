@@ -11,8 +11,20 @@ describe ApplicationController, type: :request do
       }
     end
 
+    context "when authentication is turned off" do
+      before do
+        Settings.forms_api.enabled_auth = false
+      end
+
+      it "returns 200" do
+        get forms_path, params: { org: "gds" }, headers: req_headers
+        expect(response.status).to eq(200)
+      end
+    end
+
     context "when valid header and token passed" do
       it "returns 200" do
+        Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { org: "gds" }, headers: req_headers
         expect(response.status).to eq(200)
@@ -27,6 +39,8 @@ describe ApplicationController, type: :request do
       end
 
       it "returns 401" do
+        Settings.forms_api.enabled_auth = true
+        Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { org: "gds" }, headers: req_headers
         expect(response.status).to eq(401)
       end
@@ -53,6 +67,7 @@ describe ApplicationController, type: :request do
       let(:token) { access_token.users_token }
 
       before do
+        Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 1234
       end
 

@@ -56,6 +56,53 @@ describe ApplicationController, type: :request do
       end
     end
 
+    context "when using x-api-token header with access token" do
+      let(:req_headers) do
+        {
+          "X-Api-Token" => token.to_s,
+          "Accept" => "application/json",
+        }
+      end
+      let(:access_token) { AccessToken.create!(owner: "test-owner") }
+      let(:token) { access_token.users_token }
+      let(:time_now) { Time.zone.now }
+
+      before do
+        Settings.forms_api.enabled_auth = true
+        Settings.forms_api.authentication_key = 1234
+        token
+        freeze_time do
+          time_now
+          get forms_path, params: { org: "gds" }, headers: req_headers
+        end
+      end
+
+      it "returns 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "updates the tokens 'last_accessed_at' attribute" do
+        expect(access_token.reload.last_accessed_at).to eq time_now
+      end
+
+      context "when token has been deactivated" do
+        let(:access_token) { AccessToken.create!(owner: "test-owner", deactivated_at: Time.zone.now) }
+
+        before do
+          token
+          get forms_path, params: { org: "gds" }, headers: req_headers
+        end
+
+        it "returns 401" do
+          expect(response.status).to eq(401)
+        end
+
+        it "returns an error message" do
+          expect(json_body[:status]).to eq("unauthorised")
+        end
+      end
+    end
+
     context "when passing in an authorization token" do
       let(:req_headers) do
         {

@@ -31,9 +31,20 @@ private
   end
 
   def authenticate_using_access_tokens
-    authenticate_with_http_token do |token|
+    if request.headers["X-Api-Token"].present?
+      token = request.headers["X-Api-Token"]
       @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
-      @user.update!(last_accessed_at: Time.zone.now) if @user.present?
+      if @user.present?
+        @user.update!(last_accessed_at: Time.zone.now)
+        true
+      else
+        false
+      end
+    else
+      authenticate_with_http_token do |token|
+        @user = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+        @user.update!(last_accessed_at: Time.zone.now) if @user.present?
+      end
     end
   end
 end

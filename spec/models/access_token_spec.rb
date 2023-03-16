@@ -14,14 +14,6 @@ RSpec.describe AccessToken, type: :model do
     expect(results).to be_valid
   end
 
-  it "generates a user token before validation" do
-    expect(new_access_token.users_token).to eq("testing-123")
-  end
-
-  it "generates a sha-256 token before validation" do
-    expect(new_access_token.token).to eq("8d9754db9759ab1785644440dbf19f88ab45ae326e421da6c1cb6e45140d534f")
-  end
-
   describe "validations" do
     it "requires an owner" do
       expect(access_token).to be_invalid
@@ -46,6 +38,19 @@ RSpec.describe AccessToken, type: :model do
       it "does not include deactivated tokens" do
         expect(described_class.active).not_to eq(deactivated_tokens)
       end
+    end
+  end
+
+  describe "#generate_token" do
+    let(:result) { access_token.generate_token }
+
+    it "generates a user token before validation" do
+      expect(result).to eq("testing-123")
+    end
+
+    it "generates a sha-256 token before validation" do
+      result
+      expect(access_token.token).to eq("8d9754db9759ab1785644440dbf19f88ab45ae326e421da6c1cb6e45140d534f")
     end
   end
 end

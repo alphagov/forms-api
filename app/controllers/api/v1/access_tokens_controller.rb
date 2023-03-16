@@ -6,8 +6,9 @@ class Api::V1::AccessTokensController < ApplicationController
 
   def create
     @access_token = AccessToken.new(token_params)
+    users_token = @access_token.generate_token
     if @access_token.save
-      render json: { token: @access_token.users_token }.to_json, status: :created
+      render json: { token: users_token }.to_json, status: :created
     else
       render json: @access_token.errors.to_json, status: :bad_request
     end

@@ -63,14 +63,16 @@ describe ApplicationController, type: :request do
           "Accept" => "application/json",
         }
       end
-      let(:access_token) { AccessToken.create!(owner: "test-owner") }
-      let(:token) { access_token.users_token }
+      let(:access_token) { AccessToken.new(owner: "test-owner") }
+      let(:token) { access_token.generate_token }
       let(:time_now) { Time.zone.now }
 
       before do
         Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 1234
+        access_token
         token
+        access_token.save!
         freeze_time do
           time_now
           get forms_path, params: { org: "gds" }, headers: req_headers
@@ -86,10 +88,12 @@ describe ApplicationController, type: :request do
       end
 
       context "when token has been deactivated" do
-        let(:access_token) { AccessToken.create!(owner: "test-owner", deactivated_at: Time.zone.now) }
+        let(:access_token) { AccessToken.new(owner: "test-owner", deactivated_at: Time.zone.now) }
 
         before do
+          access_token
           token
+          access_token.save!
           get forms_path, params: { org: "gds" }, headers: req_headers
         end
 
@@ -110,14 +114,16 @@ describe ApplicationController, type: :request do
           "Accept" => "application/json",
         }
       end
-      let(:access_token) { AccessToken.create!(owner: "test-owner") }
-      let(:token) { access_token.users_token }
+      let(:access_token) { AccessToken.new(owner: "test-owner") }
+      let(:token) { access_token.generate_token }
       let(:time_now) { Time.zone.now }
 
       before do
         Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 1234
+        access_token
         token
+        access_token.save!
         freeze_time do
           time_now
           get forms_path, params: { org: "gds" }, headers: req_headers
@@ -133,10 +139,12 @@ describe ApplicationController, type: :request do
       end
 
       context "when token has been deactivated" do
-        let(:access_token) { AccessToken.create!(owner: "test-owner", deactivated_at: Time.zone.now) }
+        let(:access_token) { AccessToken.new(owner: "test-owner", deactivated_at: Time.zone.now) }
 
         before do
+          access_token
           token
+          access_token.save!
           get forms_path, params: { org: "gds" }, headers: req_headers
         end
 

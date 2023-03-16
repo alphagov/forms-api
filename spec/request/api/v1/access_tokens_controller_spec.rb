@@ -25,7 +25,7 @@ describe Api::V1::AccessTokensController, type: :request do
 
   describe "#create" do
     before do
-      allow(AccessToken).to receive(:new).and_return(OpenStruct.new(save: true, users_token: "test-token"))
+      allow(AccessToken).to receive(:new).and_return(OpenStruct.new(save: true, generate_token: "test-token"))
       post access_tokens_path, params: { owner: "testing user" }, as: :json
     end
 

@@ -61,4 +61,37 @@ describe Api::V1::AccessTokensController, type: :request do
       end
     end
   end
+
+  describe "#deactivate" do
+    let(:access_token) { create :access_token }
+    let(:time_now) { Time.zone.now }
+
+    before do
+      freeze_time do
+        time_now
+        put deactivate_access_token_path(access_token.id)
+      end
+    end
+
+    it "makes a token as expired with a date/time" do
+      expect(access_token.reload.deactivated_at).to eq time_now
+    end
+
+    it "returns 200" do
+      expect(response.status).to eq(200)
+    end
+
+    it "returns a status message" do
+      expect(json_body).to eq({ status: "`#{access_token.owner}` has been deactivated" })
+    end
+
+    context "when access token is not found" do
+      it "return a 404" do
+        put deactivate_access_token_path(9999)
+        expect(response.status).to eq(404)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq(error: "not_found")
+      end
+    end
+  end
 end

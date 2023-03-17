@@ -16,5 +16,7 @@ Rails.application.routes.draw do
       put "/pages/:page_id/down", to: "api/v1/pages#move_down"
       put "/pages/:page_id/up", to: "api/v1/pages#move_up"
     end
+
+    resources :access_tokens, path: "access-tokens", controller: "api/v1/access_tokens", only: %i[index create]
   end
 end

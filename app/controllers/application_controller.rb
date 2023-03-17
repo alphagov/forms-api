@@ -34,7 +34,7 @@ private
   def authenticate_using_access_tokens
     if request.headers["X-Api-Token"].present?
       token = request.headers["X-Api-Token"]
-      @access_token = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+      @access_token = AccessToken.active.find_by_token_digest(Digest::SHA256.hexdigest(token))
       if @access_token.present?
         @access_token.update!(last_accessed_at: Time.zone.now)
         true
@@ -43,7 +43,7 @@ private
       end
     else
       authenticate_with_http_token do |token|
-        @access_token = AccessToken.active.find_by_token(Digest::SHA256.hexdigest(token))
+        @access_token = AccessToken.active.find_by_token_digest(Digest::SHA256.hexdigest(token))
         @access_token.update!(last_accessed_at: Time.zone.now) if @access_token.present?
       end
     end

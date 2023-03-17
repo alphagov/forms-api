@@ -1,11 +1,11 @@
 class AccessToken < ApplicationRecord
-  validates :token, :owner, presence: true
+  validates :token_digest, :owner, presence: true
 
   scope :active, -> { where(deactivated_at: nil) }
 
   def generate_token
     users_token = SecureRandom.uuid
-    self.token = Digest::SHA256.hexdigest(users_token)
+    self.token_digest = Digest::SHA256.hexdigest(users_token)
     users_token
   end
 end

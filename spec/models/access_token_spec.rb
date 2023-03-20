@@ -19,6 +19,11 @@ RSpec.describe AccessToken, type: :model do
       expect(access_token).to be_invalid
       expect(access_token.errors[:owner]).to include("can't be blank")
     end
+
+    it "requires a token_digest" do
+      expect(access_token).to be_invalid
+      expect(access_token.errors[:token_digest]).to include("can't be blank")
+    end
   end
 
   describe "scopes" do
@@ -50,7 +55,7 @@ RSpec.describe AccessToken, type: :model do
 
     it "generates a sha-256 token before validation" do
       result
-      expect(access_token.token).to eq("8d9754db9759ab1785644440dbf19f88ab45ae326e421da6c1cb6e45140d534f")
+      expect(access_token.token_digest).to eq("8d9754db9759ab1785644440dbf19f88ab45ae326e421da6c1cb6e45140d534f")
     end
   end
 end

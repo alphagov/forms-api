@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       member do
         post "/make-live", to: "api/v1/forms#make_live"
         get "/live", to: "api/v1/forms#show_live"
+        get "/draft", to: "api/v1/forms#show_draft"
       end
 
       resources :pages, controller: "api/v1/pages", param: :page_id

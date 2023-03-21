@@ -50,6 +50,10 @@ class Api::V1::FormsController < ApplicationController
     render json: form.live_version, status: :ok
   end
 
+  def show_draft
+    render json: form.draft_version, status: :ok
+  end
+
 private
 
   def form

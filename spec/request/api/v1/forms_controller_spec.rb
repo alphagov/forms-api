@@ -271,4 +271,24 @@ describe Api::V1::FormsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
   end
+
+  describe "#show_draft" do
+    it "returns the draft version which includes pages" do
+      draft_form = create :form, :ready_for_live
+
+      get draft_form_path(draft_form), as: :json
+
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+
+      expect(json_body.to_json).to eq draft_form.to_json(include: :pages)
+    end
+
+    it "returns 404 if draft form doesn't exist" do
+      get draft_form_path(1), as: :json
+
+      expect(response.status).to eq(404)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+    end
+  end
 end

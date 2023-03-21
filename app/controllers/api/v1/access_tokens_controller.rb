@@ -25,6 +25,14 @@ class Api::V1::AccessTokensController < ApplicationController
     render json: { status: "`#{@access_token.owner}` has been deactivated" }.to_json, status: :ok
   end
 
+  def caller_identity
+    if @access_token
+      render json: @access_token.to_json, status: :ok
+    else
+      render json: { error: "Not found - No token used." }.to_json, status: :not_found
+    end
+  end
+
 private
 
   def token_params

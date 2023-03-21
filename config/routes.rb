@@ -21,6 +21,9 @@ Rails.application.routes.draw do
       member do
         put "/deactivate", to: "api/v1/access_tokens#deactivate"
       end
+      collection do
+        get "/caller-identity", to: "api/v1/access_tokens#caller_identity", as: :show_details_for
+      end
     end
   end
 end

@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe Api::V1::AccessTokensController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
+  let(:time_now) { Time.zone.now }
 
   describe "#index" do
     let(:list_of_access_tokens) { create_list :access_token, 3 }
@@ -64,7 +65,6 @@ describe Api::V1::AccessTokensController, type: :request do
 
   describe "#deactivate" do
     let(:access_token) { create :access_token }
-    let(:time_now) { Time.zone.now }
 
     before do
       freeze_time do
@@ -91,6 +91,44 @@ describe Api::V1::AccessTokensController, type: :request do
         expect(response.status).to eq(404)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq(error: "not_found")
+      end
+    end
+  end
+
+  describe "#caller-identity" do
+    let(:access_token) { build :access_token }
+
+    let(:token) do
+      user_token = access_token.generate_token
+      access_token.save!
+      user_token
+    end
+
+    it "returns the details for the token used" do
+      Settings.forms_api.enabled_auth = true
+      allow(AccessToken.active).to receive(:find_by_token_digest).and_return(access_token)
+
+      get show_details_for_access_tokens_path, params: nil, headers: { "Authorization" => "Token #{token}" }
+      access_token.reload
+
+      expect(json_body).to match(
+        id: access_token.id,
+        owner: access_token.owner,
+        description: nil,
+        deactivated_at: nil,
+        created_at: access_token.created_at.as_json,
+        updated_at: access_token.updated_at.as_json,
+        last_accessed_at: access_token.last_accessed_at.as_json,
+      )
+    end
+
+    context "when authenticated is not enabled" do
+      it "returns not found" do
+        Settings.forms_api.enabled_auth = false
+        get show_details_for_access_tokens_path
+        expect(response.status).to eq(404)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq(error: "Not found - No token used.")
       end
     end
   end

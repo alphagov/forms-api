@@ -113,6 +113,7 @@ describe Api::V1::AccessTokensController, type: :request do
 
       expect(json_body).to match(
         id: access_token.id,
+        token_digest: access_token.token_digest,
         owner: access_token.owner,
         description: nil,
         deactivated_at: nil,

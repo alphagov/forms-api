@@ -27,7 +27,7 @@ class Api::V1::AccessTokensController < ApplicationController
 
   def caller_identity
     if @access_token
-      render json: @access_token.as_json(except: [:token_digest]).to_json, status: :ok
+      render json: @access_token.to_json, status: :ok
     else
       render json: { error: "Not found - No token used." }.to_json, status: :not_found
     end

@@ -12,10 +12,12 @@ describe Api::V1::FormsController, type: :request do
       create(:form, name: "Can you answer my questions?", org: "gds"),
     ]
   end
+  let(:other_forms) { create :form, org: "not-gds" }
+
+  let(:all_forms) { [gds_forms, other_forms] }
 
   before do
-    gds_forms
-    create :form, org: "not-gds"
+    all_forms
   end
 
   describe "#index" do
@@ -26,11 +28,11 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body).to eq([])
     end
 
-    it "when not given an org, returns 200 and an empty json array" do
+    it "when not given an org, returns 200 forms and forms for all orgs." do
       get forms_path, headers: headers
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ error: "param is missing or the value is empty: org" })
+      expect(json_body.length).to eq 3
     end
 
     it "when given an org with forms, returns a json array of forms" do

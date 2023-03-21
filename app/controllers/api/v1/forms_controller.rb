@@ -5,8 +5,14 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def index
-    org = params.require(:org)
-    render json: Form.where(org:).order(:name).to_json
+    org = params[:org]
+    forms = if org.present?
+              Form.where(org:)
+            else
+              Form
+            end
+
+    render json: forms.order(:name).to_json
   end
 
   def create

@@ -16,6 +16,12 @@ class Form < ApplicationRecord
     made_live_forms.create!(json_form_blob: snapshot.to_json, created_at: live_at)
   end
 
+  def has_draft_version
+    return true if made_live_forms.blank?
+
+    updated_at > live_at
+  end
+
   def draft_version
     snapshot.to_json
   end
@@ -40,7 +46,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_live_version]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version]
     super(options)
   end
 

@@ -24,6 +24,10 @@ class Form < ApplicationRecord
     return made_live_forms.last.created_at if made_live_forms.present?
   end
 
+  def has_live_version
+    made_live_forms.present?
+  end
+
   def live_version
     return draft_version if made_live_forms.blank?
 
@@ -36,7 +40,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page]
+    options[:methods] ||= %i[live_at start_page has_live_version]
     super(options)
   end
 

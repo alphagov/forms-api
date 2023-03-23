@@ -118,6 +118,19 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "#has_live_version" do
+    let(:live_form) { create(:made_live_form).form }
+    let(:new_form) { create(:form) }
+
+    it "returns false if form has not been made live before" do
+      expect(new_form.has_live_version).to eq(false)
+    end
+
+    it "returns true if form has been made live" do
+      expect(live_form.has_live_version).to eq(true)
+    end
+  end
+
   describe "#live_version" do
     let(:made_live_form) { create :made_live_form }
 

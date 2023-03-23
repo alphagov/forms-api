@@ -93,7 +93,7 @@ RSpec.describe Form, type: :model do
     end
 
     it "does create a made live version" do
-      expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.to_json(include: [:pages])
+      expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.snapshot.to_json
     end
   end
 
@@ -101,15 +101,44 @@ RSpec.describe Form, type: :model do
     let(:made_live_form) { create :made_live_form }
 
     it "returns json version of the LIVE form and includes pages" do
-      expect(made_live_form.form.live_version).to eq(made_live_form.form.to_json(include: [:pages]))
+      expect(made_live_form.form.live_version).to eq(made_live_form.form.snapshot.to_json)
     end
 
     context "when a form has never been made live before" do
       let(:form) { create :form, :ready_for_live }
 
       it "returns the draft version of the form" do
-        expect(form.live_version).to eq(form.to_json(include: [:pages]))
+        expect(form.live_version).to eq(form.snapshot.to_json)
       end
+    end
+  end
+
+  describe "#snapshot" do
+    let(:snapshot) { create(:form).snapshot }
+
+    it "creates a version of a form with its pages" do
+      expect(snapshot.keys).to contain_exactly(
+        "id",
+        "name",
+        "submission_email",
+        "org",
+        "created_at",
+        "live_at",
+        "updated_at",
+        "privacy_policy_url",
+        "form_slug",
+        "start_page",
+        "what_happens_next_text",
+        "support_email",
+        "support_phone",
+        "support_url",
+        "support_url_text",
+        "declaration_text",
+        "question_section_completed",
+        "declaration_section_completed",
+        "pages",
+        "page_order",
+      )
     end
   end
 end

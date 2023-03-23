@@ -7,7 +7,7 @@ RSpec.describe MadeLiveForm, type: :model do
     expect(made_live_form).to be_valid
   end
 
-  it "contains a version of a form with its pages" do
-    expect(made_live_form.json_form_blob).to eq made_live_form.form.to_json(include: [:pages])
+  it "contains a snapshot of a form" do
+    expect(made_live_form.json_form_blob).to eq made_live_form.form.snapshot.to_json
   end
 end

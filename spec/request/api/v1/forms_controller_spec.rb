@@ -281,7 +281,7 @@ describe Api::V1::FormsController, type: :request do
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
-      expect(json_body.to_json).to eq draft_form.to_json(include: :pages)
+      expect(json_body.to_json).to eq draft_form.snapshot.to_json
     end
 
     it "returns 404 if draft form doesn't exist" do

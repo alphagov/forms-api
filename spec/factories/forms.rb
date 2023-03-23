@@ -28,7 +28,7 @@ FactoryBot.define do
       end
 
       pages do
-        Array.new(pages_count) { build(:page) }
+        Array.new(pages_count) { association(:page) }
       end
 
       question_section_completed { true }
@@ -36,7 +36,7 @@ FactoryBot.define do
 
     trait :with_text_page do
       pages do
-        Array.new(1) { build(:page, answer_type: "text", answer_settings: { input_type: %w[single_line long_text].sample }) }
+        Array.new(1) { association(:page, answer_type: "text", answer_settings: { input_type: %w[single_line long_text].sample }) }
       end
 
       question_section_completed { true }
@@ -51,6 +51,7 @@ FactoryBot.define do
 
     trait :live do
       ready_for_live
+      # TODO: remove live_at
       live_at { Time.zone.now }
     end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_24_113043) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_24_120801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,7 +28,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_113043) do
     t.text "name"
     t.text "submission_email"
     t.text "org"
-    t.datetime "live_at"
     t.text "privacy_policy_url"
     t.text "form_slug"
     t.text "what_happens_next_text"

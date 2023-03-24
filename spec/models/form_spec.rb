@@ -78,7 +78,7 @@ RSpec.describe Form, type: :model do
   end
 
   describe "#make_live!" do
-    let(:form_to_be_made_live) { build :form }
+    let(:form_to_be_made_live) { create :form }
     let(:time_now) { Time.zone.now }
 
     before do
@@ -103,6 +103,18 @@ RSpec.describe Form, type: :model do
 
       expect(form.live_at).to eq(made_live_form.created_at)
       expect(form.updated_at).to eq(made_live_form.created_at)
+    end
+  end
+
+  describe "#live_at" do
+    it "returns nil if form has not been made live" do
+      form = create :form
+      expect(form.live_at).to be_nil
+    end
+
+    it "returns the time when the form was made live" do
+      made_live_form = create :made_live_form
+      expect(made_live_form.form.live_at).to eq made_live_form.created_at
     end
   end
 
@@ -132,7 +144,6 @@ RSpec.describe Form, type: :model do
         "submission_email",
         "org",
         "created_at",
-        "live_at",
         "updated_at",
         "privacy_policy_url",
         "form_slug",

@@ -11,13 +11,17 @@ class Form < ApplicationRecord
 
   def make_live!(live_at = nil)
     live_at ||= Time.zone.now
-    update!(live_at: live_at, updated_at: live_at)
+    touch(time: live_at)
 
     made_live_forms.create!(json_form_blob: snapshot.to_json, created_at: live_at)
   end
 
   def draft_version
     snapshot.to_json
+  end
+
+  def live_at
+    return made_live_forms.last.created_at if made_live_forms.present?
   end
 
   def live_version
@@ -32,7 +36,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= [:start_page]
+    options[:methods] ||= %i[live_at start_page]
     super(options)
   end
 

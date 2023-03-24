@@ -9,10 +9,11 @@ class Form < ApplicationRecord
     pages&.first&.id
   end
 
-  def make_live!
-    update!(live_at: Time.zone.now)
+  def make_live!(live_at = nil)
+    live_at ||= Time.zone.now
+    update!(live_at: live_at, updated_at: live_at)
 
-    made_live_forms.create!(json_form_blob: snapshot.to_json)
+    made_live_forms.create!(json_form_blob: snapshot.to_json, created_at: live_at)
   end
 
   def draft_version

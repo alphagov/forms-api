@@ -95,6 +95,15 @@ RSpec.describe Form, type: :model do
     it "does create a made live version" do
       expect(form_to_be_made_live.made_live_forms.last.json_form_blob).to eq form_to_be_made_live.snapshot.to_json
     end
+
+    it "makes timestamps consistent" do
+      form = create :form
+      form.make_live!
+      made_live_form = form.made_live_forms.last
+
+      expect(form.live_at).to eq(made_live_form.created_at)
+      expect(form.updated_at).to eq(made_live_form.created_at)
+    end
   end
 
   describe "#live_version" do

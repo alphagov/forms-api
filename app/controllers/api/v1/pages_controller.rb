@@ -9,8 +9,7 @@ class Api::V1::PagesController < ApplicationController
   def create
     new_page = form.pages.new(page_params)
 
-    if new_page.save
-      form.update!(question_section_completed: false)
+    if new_page.save_and_update_form
       render json: { id: new_page.id }, status: :created
     else
       render json: new_page.errors.to_json, status: :bad_request
@@ -24,8 +23,7 @@ class Api::V1::PagesController < ApplicationController
   def update
     page.assign_attributes(page_params)
 
-    if page.save
-      form.update!(question_section_completed: false)
+    if page.save_and_update_form
       render json: { success: true }.to_json, status: :ok
     else
       render json: page.errors.to_json, status: :bad_request
@@ -33,8 +31,7 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def destroy
-    page.destroy!
-    form.update!(question_section_completed: false)
+    page.destroy_and_update_form!
     render json: { success: true }.to_json, status: :ok
   end
 

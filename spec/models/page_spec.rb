@@ -44,4 +44,29 @@ RSpec.describe Page, type: :model do
       expect(page.errors[:answer_type]).to include("is not included in the list")
     end
   end
+
+  describe "#destroy_and_update_form!" do
+    let(:page) { create :page }
+    let(:form) { page.form }
+
+    it "sets form.question_section_completed to false" do
+      form.update!(question_section_completed: true)
+
+      page.destroy_and_update_form!
+      expect(form.question_section_completed).to be false
+    end
+  end
+
+  describe "#save_and_update_form" do
+    let(:page) { create :page }
+    let(:form) { page.form }
+
+    it "sets form.question_section_completed to false" do
+      form.update!(question_section_completed: true)
+
+      page.question_text = "Edited question"
+      page.save_and_update_form
+      expect(form.question_section_completed).to be false
+    end
+  end
 end

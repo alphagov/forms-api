@@ -5,7 +5,6 @@ FactoryBot.define do
     submission_email { Faker::Internet.email(domain: "example.gov.uk") }
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
     org { "test-org" }
-    live_at { nil }
     support_email { nil }
     support_phone { nil }
     support_url { nil }
@@ -28,7 +27,7 @@ FactoryBot.define do
       end
 
       pages do
-        Array.new(pages_count) { build(:page) }
+        Array.new(pages_count) { association(:page) }
       end
 
       question_section_completed { true }
@@ -36,7 +35,7 @@ FactoryBot.define do
 
     trait :with_text_page do
       pages do
-        Array.new(1) { build(:page, answer_type: "text", answer_settings: { input_type: %w[single_line long_text].sample }) }
+        Array.new(1) { association(:page, answer_type: "text", answer_settings: { input_type: %w[single_line long_text].sample }) }
       end
 
       question_section_completed { true }
@@ -51,7 +50,6 @@ FactoryBot.define do
 
     trait :live do
       ready_for_live
-      live_at { Time.zone.now }
     end
 
     trait :with_support do

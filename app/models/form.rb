@@ -9,10 +9,19 @@ class Form < ApplicationRecord
     pages&.first&.id
   end
 
-  def make_live!
-    update!(live_at: Time.zone.now)
+  def make_live!(live_at = nil)
+    live_at ||= Time.zone.now
+    touch(time: live_at)
 
-    made_live_forms.create!(json_form_blob: to_json(include: [:pages]))
+    made_live_forms.create!(json_form_blob: snapshot.to_json, created_at: live_at)
+  end
+
+  def draft_version
+    snapshot.to_json
+  end
+
+  def live_at
+    return made_live_forms.last.created_at if made_live_forms.present?
   end
 
   def live_version
@@ -21,18 +30,19 @@ class Form < ApplicationRecord
     made_live_forms.last.json_form_blob
   end
 
-  def draft_version
-    to_json(include: [:pages])
-  end
-
   def name=(val)
     super(val)
     self[:form_slug] = name.parameterize
   end
 
   def as_json(options = {})
-    options[:methods] ||= [:start_page]
+    options[:methods] ||= %i[live_at start_page]
     super(options)
+  end
+
+  def snapshot
+    # override methods so it doesn't include things we don't want
+    as_json(include: [:pages], methods: [:start_page])
   end
 
   # form_slug is always set based on name. This is here to allow Form

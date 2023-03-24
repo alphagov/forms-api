@@ -9,6 +9,15 @@ class Page < ApplicationRecord
   validates :question_text, presence: true
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
 
+  def destroy_and_update_form!
+    form = self.form
+    destroy! && form.update!(question_section_completed: false)
+  end
+
+  def save_and_update_form
+    save && form.update!(question_section_completed: false)
+  end
+
   def next_page
     lower_item&.id
   end

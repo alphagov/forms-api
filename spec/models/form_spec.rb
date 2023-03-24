@@ -106,6 +106,32 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "#has_draft_version" do
+    let(:live_form) { create(:made_live_form).form }
+    let(:new_form) { create(:form) }
+
+    it "returns true if form has not been made live before" do
+      expect(new_form.has_draft_version).to eq(true)
+    end
+
+    it "returns false if form has been made live and not edited" do
+      expect(live_form.has_draft_version).to eq(false)
+    end
+
+    it "returns true if form has been made live and been edited" do
+      live_form.update!(name: "Form (edited)")
+
+      expect(live_form.has_draft_version).to eq(true)
+    end
+
+    it "returns true if form has been made live and one of its pages has been edited" do
+      live_form.pages[0].question_text = "Edited question"
+      live_form.pages[0].save_and_update_form
+
+      expect(live_form.has_draft_version).to eq(true)
+    end
+  end
+
   describe "#live_at" do
     it "returns nil if form has not been made live" do
       form = create :form
@@ -115,6 +141,19 @@ RSpec.describe Form, type: :model do
     it "returns the time when the form was made live" do
       made_live_form = create :made_live_form
       expect(made_live_form.form.live_at).to eq made_live_form.created_at
+    end
+  end
+
+  describe "#has_live_version" do
+    let(:live_form) { create(:made_live_form).form }
+    let(:new_form) { create(:form) }
+
+    it "returns false if form has not been made live before" do
+      expect(new_form.has_live_version).to eq(false)
+    end
+
+    it "returns true if form has been made live" do
+      expect(live_form.has_live_version).to eq(true)
     end
   end
 

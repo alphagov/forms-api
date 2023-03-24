@@ -1,8 +1,4 @@
 # .rubocop.yml
-AllCops:
-  Exclude:
-    - 'ruby-grape-version/**/*'
-
 inherit_gem:
   rubocop-govuk:
     - config/default.yml

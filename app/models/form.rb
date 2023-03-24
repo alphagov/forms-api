@@ -13,7 +13,8 @@ class Form < ApplicationRecord
     live_at ||= Time.zone.now
     touch(time: live_at)
 
-    made_live_forms.create!(json_form_blob: snapshot.to_json, created_at: live_at)
+    form_blob = snapshot(live_at:)
+    made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
   end
 
   def has_draft_version
@@ -50,9 +51,9 @@ class Form < ApplicationRecord
     super(options)
   end
 
-  def snapshot
+  def snapshot(**kwargs)
     # override methods so it doesn't include things we don't want
-    as_json(include: [:pages], methods: [:start_page])
+    as_json(include: [:pages], methods: [:start_page]).merge(kwargs)
   end
 
   # form_slug is always set based on name. This is here to allow Form

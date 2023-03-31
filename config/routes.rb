@@ -13,7 +13,12 @@ Rails.application.routes.draw do
         get "/draft", to: "api/v1/forms#show_draft"
       end
 
-      resources :pages, controller: "api/v1/pages", param: :page_id
+      resources :pages, controller: "api/v1/pages", param: :page_id do
+        member do
+          resources :conditions, controller: "api/v1/conditions", param: :condition_id
+        end
+      end
+
       put "/pages/:page_id/down", to: "api/v1/pages#move_down", as: :move_page_down
       put "/pages/:page_id/up", to: "api/v1/pages#move_up", as: :move_page_up
     end

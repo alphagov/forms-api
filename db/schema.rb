@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_24_120801) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_31_141402) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_120801) do
     t.datetime "updated_at", null: false
     t.datetime "last_accessed_at"
     t.string "description"
+  end
+
+  create_table "conditions", force: :cascade do |t|
+    t.bigint "check_page_id"
+    t.bigint "routing_page_id"
+    t.bigint "goto_page_id"
+    t.string "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "skip_to_end", default: false
+    t.index ["check_page_id"], name: "index_conditions_on_check_page_id"
+    t.index ["goto_page_id"], name: "index_conditions_on_goto_page_id"
+    t.index ["routing_page_id"], name: "index_conditions_on_routing_page_id"
   end
 
   create_table "forms", force: :cascade do |t|

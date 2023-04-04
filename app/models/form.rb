@@ -53,7 +53,7 @@ class Form < ApplicationRecord
 
   def snapshot(**kwargs)
     # override methods so it doesn't include things we don't want
-    as_json(include: [:pages], methods: [:start_page]).merge(kwargs)
+    as_json(include: { pages: { include: :routing_conditions } }, methods: [:start_page]).merge(kwargs)
   end
 
   # form_slug is always set based on name. This is here to allow Form

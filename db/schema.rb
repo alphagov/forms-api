@@ -25,9 +25,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_31_141402) do
   end
 
   create_table "conditions", force: :cascade do |t|
-    t.bigint "check_page_id"
-    t.bigint "routing_page_id"
-    t.bigint "goto_page_id"
+    t.bigint "check_page_id", comment: "The question page this condition looks at to compare answers"
+    t.bigint "routing_page_id", comment: "The question page at which this conditional route takes place"
+    t.bigint "goto_page_id", comment: "The question page which this conditions will skip forwards to"
     t.string "answer_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

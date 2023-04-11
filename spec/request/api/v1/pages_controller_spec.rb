@@ -55,6 +55,7 @@ describe Api::V1::PagesController, type: :request do
                                                            form_id: form[:id],
                                                            next_page: nil,
                                                            position: 1,
+                                                           routing_conditions: [],
                                                            created_at: "2023-01-01T12:00:00.000Z",
                                                            updated_at: "2023-01-01T12:00:00.000Z").as_json)
     end

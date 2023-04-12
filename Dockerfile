@@ -2,8 +2,6 @@ FROM ruby:3.2.0-alpine3.17@sha256:c690d3b45ef65e0098104c272f1736b0595b824908d563
 
 WORKDIR /app
 
-# Edge repo is necessary for openssl 3
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
 RUN apk update
 RUN apk upgrade --available
 RUN apk add libc6-compat openssl-dev build-base libpq-dev

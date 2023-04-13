@@ -1,5 +1,9 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
+
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActionController::ParameterMissing, with: :missing_parameter
+
   before_action :set_content_type
   before_action :authenticate_request
 
@@ -47,5 +51,13 @@ private
         @access_token.update!(last_accessed_at: Time.zone.now) if @access_token.present?
       end
     end
+  end
+
+  def not_found
+    render json: { error: "not_found" }.to_json, status: :not_found
+  end
+
+  def missing_parameter(exception)
+    render json: { error: exception.message }, status: :bad_request
   end
 end

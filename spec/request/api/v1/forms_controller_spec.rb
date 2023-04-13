@@ -194,7 +194,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#update" do
     it "when no forms exists for an id, returns 404 an error" do
-      put form_path(123), as: :json
+      put form_path(id: 999), as: :json
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")

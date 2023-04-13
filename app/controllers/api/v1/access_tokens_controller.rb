@@ -1,9 +1,4 @@
 class Api::V1::AccessTokensController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from ActionController::ParameterMissing do |exception|
-    render json: { error: exception.message }, status: :bad_request
-  end
-
   def index
     @access_tokens = AccessToken.all
     render json: @access_tokens.as_json(except: [:token_digest]).to_json, status: :ok
@@ -41,9 +36,5 @@ private
 
   def token_deactivate_params
     params.require(:id)
-  end
-
-  def not_found
-    render json: { error: "not_found" }.to_json, status: :not_found
   end
 end

@@ -1,9 +1,4 @@
 class Api::V1::FormsController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from ActionController::ParameterMissing do |exception|
-    render json: { error: exception.message }, status: :bad_request
-  end
-
   def index
     org = params[:org]
     forms = if org.present?
@@ -64,9 +59,5 @@ private
     # FIXUP -  how to best list all params which form can take? List explicitly or take from model?
     # params.permit(:org, :name, :submission_email)
     params.require(:form).permit(Form.attribute_names).except(:created_at, :updated_at) # how to best list all params which form can take?
-  end
-
-  def not_found
-    render json: { error: "not_found" }.to_json, status: :not_found
   end
 end

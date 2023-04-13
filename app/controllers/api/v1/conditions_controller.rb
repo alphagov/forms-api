@@ -9,11 +9,30 @@ class Api::V1::ConditionsController < ApplicationController
   def create
     new_condition = page.routing_conditions.new(condition_params)
 
-    if new_condition.save
+    if new_condition.save_and_update_form
       render json: { id: new_condition.id }, status: :created
     else
       render json: new_condition.errors.to_json, status: :bad_request
     end
+  end
+
+  def show
+    render json: condition.to_json, status: :ok
+  end
+
+  def update
+    condition.assign_attributes(condition_params)
+
+    if condition.save_and_update_form
+      render json: { success: true }.to_json, status: :ok
+    else
+      render json: page.errors.to_json, status: :bad_request
+    end
+  end
+
+  def destroy
+    condition.destroy_and_update_form!
+    render json: { success: true }.to_json, status: :ok
   end
 
 private
@@ -24,6 +43,10 @@ private
 
   def page
     @page ||= form.pages.find(params.require(:page_id))
+  end
+
+  def condition
+    @condition ||= page.routing_conditions.find(params.require(:condition_id))
   end
 
   def condition_params

@@ -6,7 +6,7 @@ describe Api::V1::PagesController, type: :request do
   describe "#index" do
     it "when no pages exist for a form, returns 200 and an empty json array" do
       form = create :form
-      get "/api/v1/forms/#{form.id}/pages", as: :json
+      get form_pages_path(form), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
@@ -14,7 +14,7 @@ describe Api::V1::PagesController, type: :request do
 
     it "when given a form, returns a json array of pages" do
       form = create :form, :with_pages
-      get "/api/v1/forms/#{form.id}/pages", as: :json
+      get form_pages_path(form), as: :json
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(form.pages.count)
       form.pages.each_with_index do |p, i|
@@ -40,7 +40,7 @@ describe Api::V1::PagesController, type: :request do
     before do
       # fix the time here so we can test created_at and updated_at explicitly
       travel_to Time.zone.local(2023, 1, 1, 12, 0, 0) do
-        post "/api/v1/forms/#{form.id}/pages", params: new_page_params, as: :json
+        post form_pages_path(form), params: new_page_params, as: :json
       end
     end
 
@@ -95,7 +95,7 @@ describe Api::V1::PagesController, type: :request do
     let(:page_id) { page1.id }
 
     before do
-      get "/api/v1/forms/#{form_id}/pages/#{page_id}", as: :json
+      get form_page_path(form_id, page_id), as: :json
     end
 
     context "when page exists" do
@@ -137,7 +137,7 @@ describe Api::V1::PagesController, type: :request do
     let(:params) { { question_text: "updated page title", answer_type:, answer_settings: } }
 
     before do
-      put "/api/v1/forms/#{form.id}/pages/#{page1.id}", params:, as: :json
+      put form_page_path(form, page1), params:, as: :json
     end
 
     it "returns correct response" do
@@ -208,7 +208,7 @@ describe Api::V1::PagesController, type: :request do
     let(:page_id) { page1.id }
 
     before do
-      delete "/api/v1/forms/#{form_id}/pages/#{page_id}", as: :json
+      delete form_page_path(form_id, page_id), as: :json
     end
 
     context "with exisitng page" do
@@ -255,7 +255,7 @@ describe Api::V1::PagesController, type: :request do
     let(:last_page) { form_with_pages.pages.last }
 
     before do
-      put "/api/v1/forms/#{form_with_pages.id}/pages/#{page_to_move.id}/down"
+      put form_move_page_down_path(form_with_pages, page_to_move)
     end
 
     context "with valid page" do
@@ -266,7 +266,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "changes order of pages returned" do
-        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([second_page.id, page_to_move.id, third_page.id, fourth_page.id, last_page.id])
       end
     end
@@ -281,7 +281,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "does not change order of pages" do
-        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([first_page.id, second_page.id, third_page.id, fourth_page.id, page_to_move.id])
       end
     end
@@ -298,7 +298,7 @@ describe Api::V1::PagesController, type: :request do
     let(:last_page) { form_with_pages.pages.last }
 
     before do
-      put "/api/v1/forms/#{form_with_pages.id}/pages/#{page_to_move.id}/up"
+      put form_move_page_up_path(form_with_pages, page_to_move)
     end
 
     context "with valid page" do
@@ -309,7 +309,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "changes order of pages returned" do
-        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, first_page.id, third_page.id, fourth_page.id, last_page.id])
       end
     end
@@ -324,7 +324,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "does not change order of pages" do
-        get "/api/v1/forms/#{form_with_pages.id}/pages"
+        get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, second_page.id, third_page.id, fourth_page.id, last_page.id])
       end
     end

@@ -13,7 +13,7 @@ describe Api::V1::ConditionsController, type: :request do
       let(:routing_page) { create :page, form: }
 
       it "returns 200 and an empty json array" do
-        get "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions", as: :json
+        get form_conditions_path(form, routing_page), as: :json
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq([])
@@ -21,7 +21,7 @@ describe Api::V1::ConditionsController, type: :request do
     end
 
     it "when given a form and page, returns a json array of conditions" do
-      get "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions", as: :json
+      get form_conditions_path(form, routing_page), as: :json
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(routing_page.routing_conditions.count)
       routing_page.routing_conditions.each_with_index do |p, i|
@@ -83,7 +83,7 @@ describe Api::V1::ConditionsController, type: :request do
 
   describe "#show" do
     before do
-      get "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions/#{condition_id}", as: :json
+      get form_condition_path(form, routing_page, condition_id)
     end
 
     context "when the condition exists" do
@@ -110,7 +110,7 @@ describe Api::V1::ConditionsController, type: :request do
     let(:answer_value) { "goodbye" }
 
     before do
-      put "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions/#{condition_id}", params:, as: :json
+      put form_condition_path(form, routing_page, condition_id), params:, as: :json
     end
 
     it "returns correct response" do

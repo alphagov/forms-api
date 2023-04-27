@@ -14,4 +14,16 @@ class Condition < ApplicationRecord
   def destroy_and_update_form!
     destroy! && form.update!(question_section_completed: false)
   end
+
+  def validation_errors
+    [warning_goto_page_doesnt_exist].compact
+  end
+
+  def warning_goto_page_doesnt_exist
+    page = form.pages.find_by(id: goto_page_id)
+    return nil if page.present?
+
+    { name: "goto_page_doesnt_exist" }
+  end
+
 end

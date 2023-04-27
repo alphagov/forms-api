@@ -5,7 +5,7 @@ describe Api::V1::ConditionsController, type: :request do
   let(:form) { create :form }
   let(:routing_page) { create :page, form:, routing_conditions: [condition] }
   let(:goto_page) { create :page, form: }
-  let(:condition) { create :condition }
+  let(:condition) { create :condition, goto_page_id: goto_page.id }
   let(:condition_id) { condition.id }
 
   describe "#index" do

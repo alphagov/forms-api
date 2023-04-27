@@ -28,7 +28,7 @@ class Page < ApplicationRecord
   def as_json(options = {})
     options[:except] ||= [:next_page]
     options[:methods] ||= [:next_page]
-    options[:include] ||= [:routing_conditions]
+    options[:include] ||= { routing_conditions: { methods: :validation_errors } }
     super(options)
   end
 end

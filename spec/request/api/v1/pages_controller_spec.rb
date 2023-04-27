@@ -21,6 +21,19 @@ describe Api::V1::PagesController, type: :request do
         expect(json_body[i]).to eq(JSON.parse(p.to_json).symbolize_keys)
       end
     end
+
+    context "when a page routing condition is invalid" do
+      let(:form) { create :form, id: 1, pages: [routing_page] }
+      let(:routing_page) { create :page, routing_conditions: [condition] }
+      let(:condition) { create :condition, goto_page_id: nil }
+
+      it "returns validation_errors" do
+        get form_pages_path(form), as: :json
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body.first[:routing_conditions].first[:validation_errors]).to eq([{ name: "goto_page_doesnt_exist" }])
+      end
+    end
   end
 
   describe "#create" do

@@ -26,4 +26,10 @@ class Condition < ApplicationRecord
     { name: "goto_page_doesnt_exist" }
   end
 
+  def as_json(options = {})
+    super(options.reverse_merge(
+      except: [:next_page],
+      methods: [:validation_errors],
+    ))
+  end
 end

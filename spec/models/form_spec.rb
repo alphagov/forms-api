@@ -148,9 +148,13 @@ RSpec.describe Form, type: :model do
       expect(form.live_at).to be_nil
     end
 
-    it "returns the time when the form was made live" do
-      made_live_form = create :made_live_form
-      expect(made_live_form.form.live_at).to eq made_live_form.created_at
+    it "returns the created_at time of the latest live version" do
+      form = create :form
+      _first_live_version = form.make_live!
+      _second_live_version = form.make_live!
+      third_live_version = form.make_live!
+
+      expect(form.live_at).to eq third_live_version.created_at
     end
   end
 

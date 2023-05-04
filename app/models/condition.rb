@@ -16,7 +16,10 @@ class Condition < ApplicationRecord
   end
 
   def validation_errors
-    [warning_goto_page_doesnt_exist].compact
+    [
+      warning_goto_page_doesnt_exist,
+      warning_answer_doesnt_exist,
+    ].compact
   end
 
   def warning_goto_page_doesnt_exist
@@ -24,6 +27,13 @@ class Condition < ApplicationRecord
     return nil if page.present?
 
     { name: "goto_page_doesnt_exist" }
+  end
+
+  def warning_answer_doesnt_exist
+    answer_options = check_page&.answer_settings&.dig("selection_options")&.pluck("name")
+    return nil if answer_options.blank? || answer_options.include?(answer_value)
+
+    { name: "answer_value_doesnt_exist" }
   end
 
   def as_json(options = {})

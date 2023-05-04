@@ -116,7 +116,7 @@ Rspec tests can also be tagged with `feature_{name}: true`. This will turn that 
 
 ## Updating versions
 
-Use the `update_versions.sh` script and follow the instructions within.
+Use the [update_app_versions.sh script in forms-deploy](https://github.com/alphagov/forms-deploy/blob/main/support/update_app_versions.sh)
 
 ## Support
 

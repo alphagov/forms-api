@@ -114,6 +114,10 @@ And check with `FeatureService.enabled?("some.nested_feature")`.
 
 Rspec tests can also be tagged with `feature_{name}: true`. This will turn that feature on just for the duration of that test.
 
+## Updating versions
+
+Use the `update_versions.sh` script and follow the instructions within.
+
 ## Support
 
 Raise a Github issue if you need support.

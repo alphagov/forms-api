@@ -36,7 +36,7 @@ class Form < ApplicationRecord
   end
 
   def live_version
-    return draft_version if made_live_forms.blank?
+    raise ActiveRecord::RecordNotFound if made_live_forms.blank?
 
     made_live_forms.last.json_form_blob
   end

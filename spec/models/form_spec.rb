@@ -177,14 +177,6 @@ RSpec.describe Form, type: :model do
     it "returns json version of the LIVE form and includes pages" do
       expect(made_live_form.form.live_version).to eq(made_live_form.form.snapshot.to_json)
     end
-
-    context "when a form has never been made live before" do
-      let(:form) { create :form, :ready_for_live }
-
-      it "returns the draft version of the form" do
-        expect(form.live_version).to eq(form.snapshot.to_json)
-      end
-    end
   end
 
   describe "#snapshot" do

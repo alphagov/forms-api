@@ -274,6 +274,14 @@ describe Api::V1::FormsController, type: :request do
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
+
+    it "returns 404 if form has never existed" do
+      form = create :form
+      get live_form_path(form.id), as: :json
+
+      expect(response.status).to eq(404)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+    end
   end
 
   describe "#show_draft" do

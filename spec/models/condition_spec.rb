@@ -73,4 +73,33 @@ RSpec.describe Condition, type: :model do
       end
     end
   end
+
+  describe "#warning_answer_doesnt_exist" do
+    let(:form) { create :form }
+    let(:check_page) { create :page, :with_selections_settings, form: }
+    let(:goto_page) { create :page, form: }
+    let(:condition) do
+      new_condition = create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id
+      new_condition.answer_value = check_page.answer_settings["selection_options"].first["name"]
+      new_condition
+    end
+
+    it "returns nil if answer exists" do
+      expect(condition.warning_answer_doesnt_exist).to be_nil
+    end
+
+    context "when answer has been deleted from page" do
+      it "returns object with error short name code " do
+        condition.check_page.answer_settings["selection_options"].shift
+        expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
+      end
+    end
+
+    context "when answer on the page has been updated" do
+      it "returns object with error short name code " do
+        condition.check_page.answer_settings["selection_options"].first["name"] = "Option 1.2"
+        expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
+      end
+    end
+  end
 end

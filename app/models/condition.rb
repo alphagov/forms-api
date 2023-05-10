@@ -20,6 +20,7 @@ class Condition < ApplicationRecord
       warning_goto_page_doesnt_exist,
       warning_answer_doesnt_exist,
       warning_routing_to_next_page,
+      warning_goto_page_before_check_page,
     ].compact
   end
 
@@ -40,10 +41,21 @@ class Condition < ApplicationRecord
   def warning_routing_to_next_page
     return nil if check_page.nil? || goto_page.nil?
 
-    routing_page_position = check_page.position
+    check_page_position = check_page.position
     goto_page_position = goto_page.position
 
-    return { name: "cannot_route_to_next_page" } if goto_page_position == (routing_page_position + 1)
+    return { name: "cannot_route_to_next_page" } if goto_page_position == (check_page_position + 1)
+
+    nil
+  end
+
+  def warning_goto_page_before_check_page
+    return nil if check_page.nil? || goto_page.nil?
+
+    check_page_position = check_page.position
+    goto_page_position = goto_page.position
+
+    return { name: "cannot_have_goto_page_before_routing_page" } if goto_page_position < (check_page_position + 1)
 
     nil
   end

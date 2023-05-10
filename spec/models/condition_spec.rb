@@ -37,6 +37,18 @@ RSpec.describe Condition, type: :model do
       expect(condition.validation_errors).to eq([{ name: "goto_page_doesnt_exist" }])
     end
 
+    it "calls each validation method" do
+      %i[warning_goto_page_doesnt_exist warning_answer_doesnt_exist warning_routing_to_next_page].each do |validation_methods|
+        expect(condition).to receive(validation_methods)
+      end
+      condition.validation_errors
+    end
+
+    it "calls warning_goto_page_doesnt_exist" do
+      expect(condition).to receive(:warning_goto_page_doesnt_exist)
+      condition.validation_errors
+    end
+
     context "when no validation errors" do
       let(:goto_page) { create :page, form: }
       let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: goto_page.id }
@@ -99,6 +111,48 @@ RSpec.describe Condition, type: :model do
       it "returns object with error short name code " do
         condition.check_page.answer_settings["selection_options"].first["name"] = "Option 1.2"
         expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
+      end
+    end
+  end
+
+  describe "#warning_routing_to_next_page" do
+    let(:form) { create :form }
+    let(:current_page) { create :page, form: }
+    let(:next_page) { create :page, form: }
+    let(:last_page) { create :page, form: }
+    let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: last_page.id }
+
+    before do
+      current_page
+      next_page
+      last_page
+    end
+
+    it "returns nil if go to page is not the next page" do
+      expect(condition.warning_routing_to_next_page).to be_nil
+    end
+
+    context "when goto page is the next page" do
+      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: next_page.id }
+
+      it "returns object with error short name code" do
+        expect(condition.warning_routing_to_next_page).to eq({ name: "cannot_route_to_next_page" })
+      end
+    end
+
+    context "when goto page nil" do
+      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil }
+
+      it "returns nil" do
+        expect(condition.warning_routing_to_next_page).to be_nil
+      end
+    end
+
+    context "when check page nil" do
+      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: nil, goto_page_id: next_page.id }
+
+      it "returns nil" do
+        expect(condition.warning_routing_to_next_page).to be_nil
       end
     end
   end

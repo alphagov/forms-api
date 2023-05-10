@@ -19,6 +19,7 @@ class Condition < ApplicationRecord
     [
       warning_goto_page_doesnt_exist,
       warning_answer_doesnt_exist,
+      warning_routing_to_next_page,
     ].compact
   end
 
@@ -34,6 +35,17 @@ class Condition < ApplicationRecord
     return nil if answer_options.blank? || answer_options.include?(answer_value)
 
     { name: "answer_value_doesnt_exist" }
+  end
+
+  def warning_routing_to_next_page
+    return nil if check_page.nil? || goto_page.nil?
+
+    routing_page_position = check_page.position
+    goto_page_position = goto_page.position
+
+    return { name: "cannot_route_to_next_page" } if goto_page_position == (routing_page_position + 1)
+
+    nil
   end
 
   def as_json(options = {})

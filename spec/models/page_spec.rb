@@ -1,7 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Page, type: :model do
-  subject(:page) { described_class.new }
+  subject(:page) { create :page, :with_selections_settings, form:, routing_conditions: }
+
+  let(:form) { create :form }
+  let(:routing_conditions) { [] }
 
   it "has a valid factory" do
     page = create :page
@@ -16,24 +19,25 @@ RSpec.describe Page, type: :model do
 
   describe "validations" do
     it "validates" do
-      form = create :form
-      page.form_id = form.id
       page.question_text = "Example question"
       page.answer_type = "national_insurance_number"
       expect(page).to be_valid
     end
 
     it "requires question_text" do
+      page.question_text = nil
       expect(page).to be_invalid
       expect(page.errors[:question_text]).to include("can't be blank")
     end
 
     it "requires form" do
+      page.form_id = nil
       expect(page).to be_invalid
       expect(page.errors[:form]).to include("must exist")
     end
 
     it "requires answer_type" do
+      page.answer_type = nil
       expect(page).to be_invalid
       expect(page.errors[:answer_type]).to include("can't be blank")
     end
@@ -58,15 +62,27 @@ RSpec.describe Page, type: :model do
   end
 
   describe "#save_and_update_form" do
-    let(:page) { create :page }
-    let(:form) { page.form }
-
     it "sets form.question_section_completed to false" do
-      form.update!(question_section_completed: true)
-
       page.question_text = "Edited question"
       page.save_and_update_form
       expect(form.question_section_completed).to be false
+    end
+
+    context "when page has routing conditions" do
+      let(:routing_conditions) { [(create :condition)] }
+
+      it "does not delete existing conditions" do
+        page.save_and_update_form
+        expect(page.reload.routing_conditions.to_a).to eq(routing_conditions)
+      end
+
+      context "when answer type is updated to one doesn't support routing" do
+        it "deletes any conditions" do
+          page.answer_type = "number"
+          page.save_and_update_form
+          expect(page.reload.routing_conditions).to be_empty
+        end
+      end
     end
   end
 end

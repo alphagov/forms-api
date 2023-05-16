@@ -18,7 +18,13 @@ class Page < ApplicationRecord
   end
 
   def save_and_update_form
-    save && form.update!(question_section_completed: false)
+    return true unless has_changes_to_save?
+
+    save!
+    form.update!(question_section_completed: false)
+    routing_conditions.destroy_all if answer_type_previously_was&.to_sym == :selection
+
+    true
   end
 
   def next_page

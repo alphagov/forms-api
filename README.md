@@ -17,7 +17,6 @@ We recommend using a version manager to install and manage these, such as:
 - [asdf](https://github.com/asdf-vm/asdf) for Ruby (and many other languages)
 - [RVM](https://rvm.io/) or [rbenv](https://github.com/rbenv/rbenv) for Ruby
 
-
 ## Getting started
 
 ### Installing for the first time
@@ -46,7 +45,6 @@ make serve
 
 This will start the server on `localhost:9292`
 
-
 ### Testing the project
 
 ```bash
@@ -62,6 +60,14 @@ make lint
 
 # Run rubocop with fixes and display errors
 make lint-fix
+```
+
+### Running tasks before pushing
+
+Before pushing code changes, it's a good idea to run the tests and use rubocop to format your code. We have a rake task for running all of these commands in parallel:
+
+```bash
+bin/rake run_code_quality_checks
 ```
 
 ## Secrets vs Settings

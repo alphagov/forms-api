@@ -22,7 +22,7 @@ class Page < ApplicationRecord
 
     save!
     form.update!(question_section_completed: false)
-    routing_conditions.destroy_all if answer_type_previously_was&.to_sym == :selection
+    routing_conditions.destroy_all if answer_type_changed_from_selection
 
     true
   end
@@ -36,5 +36,9 @@ class Page < ApplicationRecord
     options[:methods] ||= [:next_page]
     options[:include] ||= { routing_conditions: { methods: :validation_errors } }
     super(options)
+  end
+
+  def answer_type_changed_from_selection
+    answer_type_previously_was&.to_sym == :selection && answer_type&.to_sym != :selection
   end
 end

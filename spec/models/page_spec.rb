@@ -83,6 +83,14 @@ RSpec.describe Page, type: :model do
           expect(page.reload.routing_conditions).to be_empty
         end
       end
+
+      context "when the page is saved without changing the answer type" do
+        it "does not delete the conditions" do
+          page.question_text = "test"
+          page.save_and_update_form
+          expect(page.reload.routing_conditions).not_to be_empty
+        end
+      end
     end
   end
 end

@@ -72,6 +72,14 @@ RSpec.describe Condition, type: :model do
       expect(condition.warning_goto_page_doesnt_exist).to be_nil
     end
 
+    context "when goto page is null and skip_to_end is true" do
+      let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: nil, skip_to_end: true }
+
+      it "returns nil" do
+        expect(condition.warning_goto_page_doesnt_exist).to be_nil
+      end
+    end
+
     context "when goto page has been deleted" do
       let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: 999 }
 

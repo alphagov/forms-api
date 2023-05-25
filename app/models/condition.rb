@@ -25,6 +25,9 @@ class Condition < ApplicationRecord
   end
 
   def warning_goto_page_doesnt_exist
+    # goto_page_id isn't needed if the route is skipping to the end of the form
+    return nil if goto_page_id.nil? && skip_to_end
+
     page = form.pages.find_by(id: goto_page_id)
     return nil if page.present?
 

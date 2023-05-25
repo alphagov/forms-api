@@ -166,6 +166,24 @@ RSpec.describe Condition, type: :model do
         expect(condition.warning_routing_to_next_page).to be_nil
       end
     end
+
+    context "when goto page is nil and skip_to_end is true" do
+      context "when the routing_page is at the end of the form" do
+        let(:condition) { create :condition, routing_page_id: last_page.id, check_page_id: last_page.id, goto_page_id: nil, skip_to_end: true }
+
+        it "returns object with error short name code" do
+          expect(condition.warning_routing_to_next_page).to eq({ name: "cannot_route_to_next_page" })
+        end
+      end
+
+      context "when the routing_page is not at the end of the form" do
+        let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil, skip_to_end: false }
+
+        it "returns nil" do
+          expect(condition.warning_routing_to_next_page).to be_nil
+        end
+      end
+    end
   end
 
   describe "#warning_goto_page_before_check_page" do
@@ -195,7 +213,7 @@ RSpec.describe Condition, type: :model do
       end
     end
 
-    context "when goto page nil and skip_to_end is false" do
+    context "when goto page is nil and skip_to_end is false" do
       let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil, skip_to_end: false }
 
       it "returns nil" do
@@ -203,7 +221,7 @@ RSpec.describe Condition, type: :model do
       end
     end
 
-    context "when goto page nil and skip_to_end is true" do
+    context "when goto page is nil and skip_to_end is true" do
       let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil, skip_to_end: true }
 
       it "returns nil" do
@@ -216,6 +234,44 @@ RSpec.describe Condition, type: :model do
 
       it "returns nil" do
         expect(condition.warning_goto_page_before_check_page).to be_nil
+      end
+    end
+  end
+
+  describe "#is_check_your_answers?" do
+    let(:form) { create :form }
+    let(:check_page) { create :page, :with_selections_settings, form: }
+    let(:goto_page) { create :page, form: }
+
+    context "when goto page is nil and skip_to_end is false" do
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: nil, skip_to_end: false }
+
+      it "returns nil" do
+        expect(condition.is_check_your_answers?).to be false
+      end
+    end
+
+    context "when goto page is nil and skip_to_end is true" do
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: nil, skip_to_end: true }
+
+      it "returns nil" do
+        expect(condition.is_check_your_answers?).to be true
+      end
+    end
+
+    context "when goto page has a value and skip_to_end is false" do
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id, skip_to_end: false }
+
+      it "returns nil" do
+        expect(condition.is_check_your_answers?).to be false
+      end
+    end
+
+    context "when goto page has a value and skip_to_end is true" do
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id, skip_to_end: true }
+
+      it "returns nil" do
+        expect(condition.is_check_your_answers?).to be false
       end
     end
   end

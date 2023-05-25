@@ -26,7 +26,7 @@ class Condition < ApplicationRecord
 
   def warning_goto_page_doesnt_exist
     # goto_page_id isn't needed if the route is skipping to the end of the form
-    return nil if goto_page_id.nil? && skip_to_end
+    return nil if is_check_your_answers?
 
     page = form.pages.find_by(id: goto_page_id)
     return nil if page.present?
@@ -42,10 +42,10 @@ class Condition < ApplicationRecord
   end
 
   def warning_routing_to_next_page
-    return nil if check_page.nil? || goto_page.nil?
+    return nil if check_page.nil? || goto_page.nil? && !is_check_your_answers?
 
     check_page_position = check_page.position
-    goto_page_position = goto_page.position
+    goto_page_position = is_check_your_answers? ? form.pages.last.position + 1 : goto_page.position
 
     return { name: "cannot_route_to_next_page" } if goto_page_position == (check_page_position + 1)
 
@@ -61,6 +61,10 @@ class Condition < ApplicationRecord
     return { name: "cannot_have_goto_page_before_routing_page" } if goto_page_position < (check_page_position + 1)
 
     nil
+  end
+
+  def is_check_your_answers?
+    goto_page.nil? && skip_to_end
   end
 
   def as_json(options = {})

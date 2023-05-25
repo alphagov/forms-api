@@ -195,8 +195,16 @@ RSpec.describe Condition, type: :model do
       end
     end
 
-    context "when goto page nil" do
-      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil }
+    context "when goto page nil and skip_to_end is false" do
+      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil, skip_to_end: false }
+
+      it "returns nil" do
+        expect(condition.warning_goto_page_before_check_page).to be_nil
+      end
+    end
+
+    context "when goto page nil and skip_to_end is true" do
+      let(:condition) { create :condition, routing_page_id: current_page.id, check_page_id: current_page.id, goto_page_id: nil, skip_to_end: true }
 
       it "returns nil" do
         expect(condition.warning_goto_page_before_check_page).to be_nil

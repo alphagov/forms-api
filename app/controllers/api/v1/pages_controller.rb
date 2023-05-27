@@ -41,7 +41,10 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def move_up
-    page.move_higher
+    unless page.first?
+      page.move_higher
+      form.update!(question_section_completed: false)
+    end
     render json: { success: 1 }.to_json, status: :ok
   end
 

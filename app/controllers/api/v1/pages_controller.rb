@@ -33,7 +33,10 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def move_down
-    page.move_lower
+    unless page.last?
+      page.move_lower
+      form.update!(question_section_completed: false)
+    end
     render json: { success: 1 }.to_json, status: :ok
   end
 

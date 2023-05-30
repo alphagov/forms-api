@@ -224,7 +224,7 @@ describe Api::V1::PagesController, type: :request do
       delete form_page_path(form_id, page_id), as: :json
     end
 
-    context "with exisitng page" do
+    context "with existing page" do
       it "removes page and returns correct response" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
@@ -258,7 +258,7 @@ describe Api::V1::PagesController, type: :request do
   end
 
   describe "#move_down" do
-    let(:form_with_pages) { create :form, :with_pages }
+    let(:form_with_pages) { create :form, :with_pages, question_section_completed: true }
 
     let(:page_to_move) { form_with_pages.pages.first }
     let(:first_page) { form_with_pages.pages.first }
@@ -282,6 +282,10 @@ describe Api::V1::PagesController, type: :request do
         get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([second_page.id, page_to_move.id, third_page.id, fourth_page.id, last_page.id])
       end
+
+      it "marks a forms question section as incomplete" do
+        expect(form_with_pages.reload.question_section_completed).to eq false
+      end
     end
 
     context "with page already at the end of the list" do
@@ -297,11 +301,15 @@ describe Api::V1::PagesController, type: :request do
         get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([first_page.id, second_page.id, third_page.id, fourth_page.id, page_to_move.id])
       end
+
+      it "does not mark a forms question section as incomplete" do
+        expect(form_with_pages.reload.question_section_completed).to eq true
+      end
     end
   end
 
   describe "#move_up" do
-    let(:form_with_pages) { create :form, :with_pages }
+    let(:form_with_pages) { create :form, :with_pages, question_section_completed: true }
 
     let(:page_to_move) { second_page }
     let(:first_page) { form_with_pages.pages.first }
@@ -325,6 +333,10 @@ describe Api::V1::PagesController, type: :request do
         get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, first_page.id, third_page.id, fourth_page.id, last_page.id])
       end
+
+      it "marks a forms question section as incomplete" do
+        expect(form_with_pages.reload.question_section_completed).to eq false
+      end
     end
 
     context "with page already at the start of the list" do
@@ -339,6 +351,10 @@ describe Api::V1::PagesController, type: :request do
       it "does not change order of pages" do
         get form_pages_path(form_with_pages)
         expect(json_body.map { |p| p[:id] }).to eq([page_to_move.id, second_page.id, third_page.id, fourth_page.id, last_page.id])
+      end
+
+      it "does not mark a forms question section as incomplete" do
+        expect(form_with_pages.reload.question_section_completed).to eq true
       end
     end
   end

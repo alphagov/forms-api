@@ -21,7 +21,7 @@ gem "paper_trail"
 gem "pg", "~> 1.5"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.2"
+gem "puma", "~> 6.3"
 
 # Used for sorting/ordering of pages object
 gem "acts_as_list"

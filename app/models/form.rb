@@ -5,6 +5,8 @@ class Form < ApplicationRecord
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true
+  validate :marking_complete_with_errors
+
   def start_page
     pages&.first&.id
   end
@@ -70,4 +72,7 @@ class Form < ApplicationRecord
     pages.filter(&:has_routing_errors).any?
   end
 
+  def marking_complete_with_errors
+    errors.add(:base, :has_validation_errors, message: "Form has routing validation errors") if question_section_completed && has_routing_errors
+  end
 end

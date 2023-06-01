@@ -69,6 +69,7 @@ describe Api::V1::PagesController, type: :request do
                                                            next_page: nil,
                                                            position: 1,
                                                            routing_conditions: [],
+                                                           has_routing_errors: false,
                                                            created_at: "2023-01-01T12:00:00.000Z",
                                                            updated_at: "2023-01-01T12:00:00.000Z").as_json)
     end

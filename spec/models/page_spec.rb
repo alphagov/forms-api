@@ -93,4 +93,26 @@ RSpec.describe Page, type: :model do
       end
     end
   end
+
+  describe "#has_routing_errors" do
+    let(:routing_page) { create :page, form: }
+    let(:goto_page) { create :page, form: }
+    let(:goto_page_id) { goto_page.id }
+    let(:routing_conditions) { [condition] }
+    let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: }
+
+    context "when there are no validation errors" do
+      it "returns false" do
+        expect(page.has_routing_errors).to be false
+      end
+    end
+
+    context "when there are validation errors" do
+      let(:goto_page_id) { nil }
+
+      it "returns true" do
+        expect(page.has_routing_errors).to be true
+      end
+    end
+  end
 end

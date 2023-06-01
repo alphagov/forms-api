@@ -47,7 +47,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors]
     super(options)
   end
 
@@ -65,4 +65,9 @@ class Form < ApplicationRecord
   # form_slug is always set based on name. This is here to allow Form
   # attributes to be updated easily based on json, without changning the value in the DB
   def form_slug=(slug); end
+
+  def has_routing_errors
+    pages.filter(&:has_routing_errors).any?
+  end
+
 end

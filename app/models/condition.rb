@@ -70,7 +70,11 @@ class Condition < ApplicationRecord
   def as_json(options = {})
     super(options.reverse_merge(
       except: [:next_page],
-      methods: [:validation_errors],
+      methods: %i[validation_errors has_routing_errors],
     ))
+  end
+
+  def has_routing_errors
+    validation_errors.any?
   end
 end

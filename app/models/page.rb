@@ -33,12 +33,16 @@ class Page < ApplicationRecord
 
   def as_json(options = {})
     options[:except] ||= [:next_page]
-    options[:methods] ||= [:next_page]
-    options[:include] ||= { routing_conditions: { methods: :validation_errors } }
+    options[:methods] ||= %i[next_page has_routing_errors]
+    options[:include] ||= { routing_conditions: { methods: %i[validation_errors has_routing_errors] } }
     super(options)
   end
 
   def answer_type_changed_from_selection
     answer_type_previously_was&.to_sym == :selection && answer_type&.to_sym != :selection
+  end
+
+  def has_routing_errors
+    routing_conditions.filter(&:has_routing_errors).any?
   end
 end

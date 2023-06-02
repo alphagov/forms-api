@@ -1,10 +1,11 @@
 require "rails_helper"
 
 RSpec.describe Page, type: :model do
-  subject(:page) { create :page, :with_selections_settings, form:, routing_conditions: }
+  subject(:page) { create :page, :with_selections_settings, form:, routing_conditions:, check_conditions: }
 
   let(:form) { create :form }
   let(:routing_conditions) { [] }
+  let(:check_conditions) { [] }
 
   it "has a valid factory" do
     page = create :page
@@ -70,17 +71,19 @@ RSpec.describe Page, type: :model do
 
     context "when page has routing conditions" do
       let(:routing_conditions) { [(create :condition)] }
+      let(:check_conditions) { routing_conditions }
 
       it "does not delete existing conditions" do
         page.save_and_update_form
         expect(page.reload.routing_conditions.to_a).to eq(routing_conditions)
+        expect(page.reload.check_conditions.to_a).to eq(check_conditions)
       end
 
       context "when answer type is updated to one doesn't support routing" do
         it "deletes any conditions" do
           page.answer_type = "number"
           page.save_and_update_form
-          expect(page.reload.routing_conditions).to be_empty
+          expect(page.reload.check_conditions).to be_empty
         end
       end
 
@@ -88,7 +91,23 @@ RSpec.describe Page, type: :model do
         it "does not delete the conditions" do
           page.question_text = "test"
           page.save_and_update_form
-          expect(page.reload.routing_conditions).not_to be_empty
+          expect(page.reload.check_conditions).not_to be_empty
+        end
+      end
+
+      context "when the answer settings no longer restrict to only one option" do
+        it "deletes any conditions" do
+          page.answer_settings["only_one_option"] = "0"
+          page.save_and_update_form
+          expect(page.reload.check_conditions).to be_empty
+        end
+      end
+
+      context "when the answer settings change while still restricting to only one option" do
+        it "does not delete any conditions" do
+          page.answer_settings["selection_options"].first["name"] = "New option name"
+          page.save_and_update_form
+          expect(page.reload.check_conditions).not_to be_empty
         end
       end
     end

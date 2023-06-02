@@ -22,7 +22,8 @@ class Page < ApplicationRecord
 
     save!
     form.update!(question_section_completed: false)
-    routing_conditions.destroy_all if answer_type_changed_from_selection
+    check_conditions.destroy_all if answer_type_changed_from_selection
+    check_conditions.destroy_all if answer_settings_changed_from_only_one_option
 
     true
   end
@@ -40,6 +41,13 @@ class Page < ApplicationRecord
 
   def answer_type_changed_from_selection
     answer_type_previously_was&.to_sym == :selection && answer_type&.to_sym != :selection
+  end
+
+  def answer_settings_changed_from_only_one_option
+    from_only_one_option = ActiveModel::Type::Boolean.new.cast(answer_settings_previously_was.try(:[], "only_one_option"))
+    to_multiple_options = !ActiveModel::Type::Boolean.new.cast(answer_settings.try(:[], "only_one_option"))
+
+    from_only_one_option && to_multiple_options
   end
 
   def has_routing_errors

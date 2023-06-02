@@ -7,6 +7,9 @@ class Form < ApplicationRecord
   validates :org, :name, presence: true
   validate :marking_complete_with_errors
 
+  scope :filter_by_org, ->(org) { where org: org }
+  scope :filter_by_creator_id, ->(creator_id) { where creator_id: creator_id }
+
   def start_page
     pages&.first&.id
   end

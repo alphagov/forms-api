@@ -5,6 +5,8 @@ class Form < ApplicationRecord
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
   validates :org, :name, presence: true
+  validate :marking_complete_with_errors
+
   def start_page
     pages&.first&.id
   end
@@ -47,7 +49,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors]
     super(options)
   end
 
@@ -65,4 +67,12 @@ class Form < ApplicationRecord
   # form_slug is always set based on name. This is here to allow Form
   # attributes to be updated easily based on json, without changning the value in the DB
   def form_slug=(slug); end
+
+  def has_routing_errors
+    pages.filter(&:has_routing_errors).any?
+  end
+
+  def marking_complete_with_errors
+    errors.add(:base, :has_validation_errors, message: "Form has routing validation errors") if question_section_completed && has_routing_errors
+  end
 end

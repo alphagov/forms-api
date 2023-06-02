@@ -39,6 +39,33 @@ RSpec.describe Form, type: :model do
       expect(form).to be_invalid
       expect(form.errors[:org]).to include("can't be blank")
     end
+
+    context "when the form has validation errors" do
+      let(:form) { create :form, pages: [routing_page, goto_page] }
+      let(:routing_page) do
+        new_routing_page = create :page
+        new_routing_page.routing_conditions = [(create :condition, routing_page_id: new_routing_page.id, goto_page_id: nil)]
+        new_routing_page
+      end
+      let(:goto_page) { create :page }
+      let(:goto_page_id) { goto_page.id }
+
+      context "when the form is marked complete" do
+        it "returns invalid" do
+          form.question_section_completed = true
+
+          expect(form).to be_invalid
+          expect(form.errors[:base]).to include("Form has routing validation errors")
+        end
+      end
+
+      context "when the form is not marked complete" do
+        it "returns valid" do
+          form.question_section_completed = false
+          expect(form).to be_valid
+        end
+      end
+    end
   end
 
   describe "form_slug" do
@@ -204,6 +231,31 @@ RSpec.describe Form, type: :model do
         "pages",
         "page_order",
       )
+    end
+  end
+
+  describe "#has_routing_errors" do
+    let(:form) { create :form, pages: [routing_page, goto_page] }
+    let(:routing_page) do
+      new_routing_page = create :page
+      new_routing_page.routing_conditions = [(create :condition, routing_page_id: new_routing_page.id, goto_page_id:)]
+      new_routing_page
+    end
+    let(:goto_page) { create :page }
+    let(:goto_page_id) { goto_page.id }
+
+    context "when there are no validation errors" do
+      it "returns false" do
+        expect(form.has_routing_errors).to be false
+      end
+    end
+
+    context "when there are validation errors" do
+      let(:goto_page_id) { nil }
+
+      it "returns true" do
+        expect(form.has_routing_errors).to be true
+      end
     end
   end
 end

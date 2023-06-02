@@ -215,6 +215,7 @@ RSpec.describe Form, type: :model do
         "name",
         "submission_email",
         "org",
+        "creator_id",
         "created_at",
         "updated_at",
         "privacy_policy_url",

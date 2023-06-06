@@ -1,11 +1,11 @@
 class Api::V1::FormsController < ApplicationController
   def index
     org = params[:org]
-    forms = if org.present?
-              Form.where(org:)
-            else
-              Form
-            end
+    creator_id = params[:creator_id]
+
+    forms = Form.all
+    forms = forms.filter_by_org(org) if org.present?
+    forms = forms.filter_by_creator_id(creator_id) if creator_id.present?
 
     render json: forms.order(:name).to_json
   end

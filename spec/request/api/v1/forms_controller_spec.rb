@@ -12,9 +12,11 @@ describe Api::V1::FormsController, type: :request do
       create(:form, name: "Can you answer my questions?", org: "gds"),
     ]
   end
-  let(:other_forms) { create :form, org: "not-gds" }
+  let(:other_org_forms) { create :form, creator_id: 123, org: "not-gds" }
+  let(:user_form) { create :form, creator_id: 123 }
+  let(:other_user_form) { create :form, creator_id: 1234 }
 
-  let(:all_forms) { [gds_forms, other_forms] }
+  let(:all_forms) { [gds_forms, other_org_forms, user_form, other_user_form] }
 
   before do
     all_forms
@@ -22,57 +24,55 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#index" do
     it "when no forms exist for an org, returns 200 and an empty json array" do
-      get forms_path, params: { org: "unknown-org" }, headers: headers
+      get(forms_path, params: { org: "unknown-org" }, headers:)
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
     end
 
     it "when not given an org, returns 200 forms and forms for all orgs." do
-      get forms_path, headers: headers
+      get(forms_path, headers:)
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.length).to eq 3
+      expect(json_body.length).to eq 5
     end
 
     it "when given an org with forms, returns a json array of forms" do
-      get forms_path, params: { org: "gds" }, headers: headers
+      get(forms_path, params: { org: "gds" }, headers:)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(2)
       expect(response).to be_successful
-      # FIXUP could be stronger?
-      # changed from grape version
+
+      expect(json_body[0]).to include(name: "Can you answer my questions?")
+      expect(json_body[1]).to include(name: "Fill me in")
+    end
+
+    it "when given a creator with forms, returns a json array of forms" do
+      get(forms_path, params: { creator_id: 123 }, headers:)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body.count).to eq(2)
+      expect(response).to be_successful
+
       json_body.each do |form|
-        expect(form.keys).to contain_exactly(
-          :id,
-          :name,
-          :submission_email,
-          :org,
-          :has_draft_version,
-          :has_live_version,
-          :created_at,
-          :live_at,
-          :updated_at,
-          :privacy_policy_url,
-          :form_slug,
-          :start_page,
-          :what_happens_next_text,
-          :support_email,
-          :support_phone,
-          :support_url,
-          :support_url_text,
-          :declaration_text,
-          :question_section_completed,
-          :declaration_section_completed,
-          :page_order,
-          :has_routing_errors,
-        )
+        expect(form[:creator_id]).to eq(123)
+      end
+    end
+
+    it "when given an org and a creator with forms, returns a json array of forms" do
+      get(forms_path, params: { creator_id: 123, org: "not-gds" }, headers:)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body.count).to eq(1)
+      expect(response).to be_successful
+
+      json_body.each do |form|
+        expect(form[:creator_id]).to eq(123)
+        expect(form[:org]).to eq("not-gds")
       end
     end
 
     describe "ordering of forms" do
       it "returns a list of forms sorted in alphabetical order" do
-        get forms_path, params: { org: "gds" }, headers: headers
+        get(forms_path, params: { org: "gds" }, headers:)
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body.pluck(:name)).to eq(gds_forms.sort_by(&:name).pluck(:name))
@@ -162,7 +162,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     it "when given an existing id, returns 200 and form data" do
-      form1 = Form.create!(name: "test form 1", org: "gds")
+      form1 = Form.create!(name: "test form 1", org: "gds", creator_id: 123)
       get form_path(form1), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
@@ -172,6 +172,7 @@ describe Api::V1::FormsController, type: :request do
         name: "test form 1",
         submission_email: nil,
         org: "gds",
+        creator_id: 123,
         has_draft_version: true,
         has_live_version: false,
         live_at: nil,

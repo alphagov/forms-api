@@ -104,6 +104,26 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "scopes" do
+    let(:form_a) { create :form, org: "some-org" }
+    let(:form_b) { create :form, creator_id: 123, org: "some-org" }
+    let(:form_c) { create :form, creator_id: 1234 }
+
+    it "return forms with matching creator ID" do
+      expect(described_class.filter_by_creator_id(1234)).to eq([form_c])
+    end
+
+    it "return forms with matching org" do
+      expect(described_class.filter_by_org("some-org")).to eq([form_a, form_b])
+    end
+
+    it "return forms with matching org and creator ID" do
+      described_class.filter_by_org("some-org")
+      forms = described_class.filter_by_creator_id(123)
+      expect(forms).to eq([form_b])
+    end
+  end
+
   describe "#make_live!" do
     let(:form_to_be_made_live) { create :form }
     let(:time_now) { Time.zone.now }
@@ -215,6 +235,7 @@ RSpec.describe Form, type: :model do
         "name",
         "submission_email",
         "org",
+        "creator_id",
         "created_at",
         "updated_at",
         "privacy_policy_url",

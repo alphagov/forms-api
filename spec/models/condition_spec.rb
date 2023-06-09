@@ -124,6 +124,27 @@ RSpec.describe Condition, type: :model do
         expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
       end
     end
+
+    context "when answer_value is 'None of the above" do
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id, answer_value: :none_of_the_above.to_s }
+      let(:check_page) { create :page, :with_selections_settings, form:, is_optional: }
+
+      context "and routing page has 'None of the above' as an option" do
+        let(:is_optional) { true }
+
+        it "returns nil" do
+          expect(condition.warning_answer_doesnt_exist).to eq(nil)
+        end
+      end
+
+      context "and routing page does not have 'None of the above' as an option" do
+        let(:is_optional) { false }
+
+        it "returns object with error short name code" do
+          expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
+        end
+      end
+    end
   end
 
   describe "#warning_routing_to_next_page" do

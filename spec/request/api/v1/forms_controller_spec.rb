@@ -16,7 +16,9 @@ describe Api::V1::FormsController, type: :request do
   let(:user_form) { create :form, creator_id: 123 }
   let(:other_user_form) { create :form, creator_id: 1234 }
 
-  let(:all_forms) { [gds_forms, other_org_forms, user_form, other_user_form] }
+  let(:all_forms) do
+    gds_forms + [other_org_forms, user_form, other_user_form]
+  end
 
   before do
     all_forms
@@ -304,6 +306,49 @@ describe Api::V1::FormsController, type: :request do
 
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
+    end
+  end
+
+  describe "#update_org_for_creator" do
+    let(:updated_org) { "updated-org" }
+
+    it "updates org for forms only if creator ID matches" do
+      selected_creator_id = 1234
+      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: selected_creator_id, org: updated_org }
+
+      expect(response).to have_http_status(:no_content)
+
+      all_forms.each do |form|
+        form.reload
+        if form.creator_id == selected_creator_id
+          expect(form.org).to eq(updated_org)
+        else
+          expect(form.org).not_to eq(updated_org)
+        end
+      end
+    end
+
+    it "does not update org if no forms have a matching creator ID" do
+      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: 321, org: updated_org }
+
+      expect(response).to have_http_status(:no_content)
+
+      all_forms.each do |form|
+        form.reload
+        expect(form.org).not_to eq(updated_org)
+      end
+    end
+
+    it "returns bad request if creator ID is missing" do
+      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: nil, org: updated_org }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "returns bad request if org is missing" do
+      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: 123, org: nil }
+
+      expect(response).to have_http_status(:bad_request)
     end
   end
 end

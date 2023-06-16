@@ -310,45 +310,55 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#update_org_for_creator" do
+    let(:selected_creator_id) { 1234 }
     let(:updated_org) { "updated-org" }
 
-    it "updates org for forms only if creator ID matches" do
-      selected_creator_id = 1234
-      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: selected_creator_id, org: updated_org }
+    before do
+      patch update_org_for_creator_forms_path, params: { creator_id: selected_creator_id, org: updated_org }
+    end
 
-      expect(response).to have_http_status(:no_content)
+    context "when some forms match creator ID" do
+      it "updates org only if creator ID matches" do
+        expect(response).to have_http_status(:no_content)
 
-      all_forms.each do |form|
-        form.reload
-        if form.creator_id == selected_creator_id
-          expect(form.org).to eq(updated_org)
-        else
+        all_forms.each do |form|
+          form.reload
+          if form.creator_id == selected_creator_id
+            expect(form.org).to eq(updated_org)
+          else
+            expect(form.org).not_to eq(updated_org)
+          end
+        end
+      end
+    end
+
+    context "when no forms match creator ID" do
+      let(:selected_creator_id) { 321 }
+
+      it "does not update org" do
+        expect(response).to have_http_status(:no_content)
+
+        all_forms.each do |form|
+          form.reload
           expect(form.org).not_to eq(updated_org)
         end
       end
     end
 
-    it "does not update org if no forms have a matching creator ID" do
-      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: 321, org: updated_org }
+    context "without creator ID" do
+      let(:selected_creator_id) { nil }
 
-      expect(response).to have_http_status(:no_content)
-
-      all_forms.each do |form|
-        form.reload
-        expect(form.org).not_to eq(updated_org)
+      it "returns bad request if creator ID is missing" do
+        expect(response).to have_http_status(:bad_request)
       end
     end
 
-    it "returns bad request if creator ID is missing" do
-      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: nil, org: updated_org }
+    context "without org" do
+      let(:updated_org) { nil }
 
-      expect(response).to have_http_status(:bad_request)
-    end
-
-    it "returns bad request if org is missing" do
-      patch "/api/v1/forms/update_org_for_creator", params: { creator_id: 123, org: nil }
-
-      expect(response).to have_http_status(:bad_request)
+      it "returns bad request if org is missing" do
+        expect(response).to have_http_status(:bad_request)
+      end
     end
   end
 end

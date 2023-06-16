@@ -4,7 +4,7 @@ class Form < ApplicationRecord
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
-  validates :org, :name, presence: true
+  validates :name, presence: true
   validate :marking_complete_with_errors
 
   scope :filter_by_org, ->(org) { where org: org }

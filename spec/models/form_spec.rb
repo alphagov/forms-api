@@ -26,18 +26,12 @@ RSpec.describe Form, type: :model do
   describe "validations" do
     it "validates" do
       form.name = "test"
-      form.org = "test-org"
       expect(form).to be_valid
     end
 
     it "requires name" do
       expect(form).to be_invalid
       expect(form.errors[:name]).to include("can't be blank")
-    end
-
-    it "requires org" do
-      expect(form).to be_invalid
-      expect(form.errors[:org]).to include("can't be blank")
     end
 
     context "when the form has validation errors" do

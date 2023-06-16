@@ -8,13 +8,13 @@ describe Api::V1::FormsController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
   let(:gds_forms) do
     [
-      create(:form, name: "Fill me in", org: "gds"),
-      create(:form, name: "Can you answer my questions?", org: "gds"),
+      create(:form, name: "Fill me in", org: "gds", organisation_id: 1),
+      create(:form, name: "Can you answer my questions?", org: "gds", organisation_id: 1),
     ]
   end
-  let(:other_org_forms) { create :form, creator_id: 123, org: "not-gds" }
-  let(:user_form) { create :form, creator_id: 123 }
-  let(:other_user_form) { create :form, creator_id: 1234 }
+  let(:other_org_forms) { create :form, creator_id: 123, org: "not-gds", organisation_id: 2 }
+  let(:user_form) { create :form, creator_id: 123, org: nil, organisation_id: nil }
+  let(:other_user_form) { create :form, creator_id: 1234, org: nil, organisation_id: nil }
 
   let(:all_forms) do
     gds_forms + [other_org_forms, user_form, other_user_form]
@@ -32,6 +32,13 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body).to eq([])
     end
 
+    it "when no forms exist for an organisation ID, returns 200 and an empty json array" do
+      get(forms_path, params: { organisation_id: 3 }, headers:)
+      expect(response.status).to eq(200)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq([])
+    end
+
     it "when not given an org, returns 200 forms and forms for all orgs." do
       get(forms_path, headers:)
       expect(response.status).to eq(200)
@@ -41,6 +48,16 @@ describe Api::V1::FormsController, type: :request do
 
     it "when given an org with forms, returns a json array of forms" do
       get(forms_path, params: { org: "gds" }, headers:)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body.count).to eq(2)
+      expect(response).to be_successful
+
+      expect(json_body[0]).to include(name: "Can you answer my questions?")
+      expect(json_body[1]).to include(name: "Fill me in")
+    end
+
+    it "when given an organisation ID with forms, returns a json array of forms" do
+      get(forms_path, params: { organisation_id: 1 }, headers:)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(2)
       expect(response).to be_successful
@@ -72,6 +89,18 @@ describe Api::V1::FormsController, type: :request do
       end
     end
 
+    it "when given an organisation ID and a creator with forms, returns a json array of forms" do
+      get(forms_path, params: { creator_id: 123, organisation_id: 2 }, headers:)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body.count).to eq(1)
+      expect(response).to be_successful
+
+      json_body.each do |form|
+        expect(form[:creator_id]).to eq(123)
+        expect(form[:organisation_id]).to eq(2)
+      end
+    end
+
     describe "ordering of forms" do
       it "returns a list of forms sorted in alphabetical order" do
         get(forms_path, params: { org: "gds" }, headers:)
@@ -84,7 +113,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#create" do
     let(:created_form) { Form.find_by(name: "test form one") }
-    let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk" } }
+    let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
       freeze_time
@@ -106,6 +135,7 @@ describe Api::V1::FormsController, type: :request do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
         expect(created_form[:org]).to eq("gds")
+        expect(created_form[:organisation_id]).to eq(1)
       end
     end
 
@@ -120,7 +150,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     context "with extra params" do
-      let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
+      let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
 
       it "returns a status code 201" do
         expect(response.status).to eq(201)
@@ -132,12 +162,13 @@ describe Api::V1::FormsController, type: :request do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
         expect(created_form[:org]).to eq("gds")
+        expect(created_form[:organisation_id]).to eq(1)
         expect(created_form[:support_url]).to eq("http://example.org")
       end
     end
 
     context "with created_at and updated_at params" do
-      let(:new_form_params) { { org: "gds", name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
+      let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
 
       it "does not use the provided created_at or updated_at values" do
         expect(response.status).to eq(201)
@@ -164,7 +195,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     it "when given an existing id, returns 200 and form data" do
-      form1 = Form.create!(name: "test form 1", org: "gds", creator_id: 123)
+      form1 = Form.create!(name: "test form 1", org: "gds", organisation_id: 1, creator_id: 123)
       get form_path(form1), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
@@ -174,6 +205,7 @@ describe Api::V1::FormsController, type: :request do
         name: "test form 1",
         submission_email: nil,
         org: "gds",
+        organisation_id: 1,
         creator_id: 123,
         has_draft_version: true,
         has_live_version: false,

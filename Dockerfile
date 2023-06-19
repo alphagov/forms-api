@@ -47,4 +47,4 @@ COPY --chown=ruby:ruby --from=build /app /app
 
 EXPOSE 9292
 
-CMD ["/bin/sh", "-c", "rake db:migrate && rails s -b 0.0.0.0 -p 9292"]
+CMD ["/bin/sh", "-o", "xtrace", "-c", "rake db:migrate && rails s -b 0.0.0.0 -p 9292"]

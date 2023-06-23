@@ -16,7 +16,9 @@ describe Api::V1::FormsController, type: :request do
   let(:user_form) { create :form, creator_id: 123 }
   let(:other_user_form) { create :form, creator_id: 1234 }
 
-  let(:all_forms) { [gds_forms, other_org_forms, user_form, other_user_form] }
+  let(:all_forms) do
+    gds_forms + [other_org_forms, user_form, other_user_form]
+  end
 
   before do
     all_forms
@@ -304,6 +306,59 @@ describe Api::V1::FormsController, type: :request do
 
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
+    end
+  end
+
+  describe "#update_org_for_creator" do
+    let(:selected_creator_id) { 1234 }
+    let(:updated_org) { "updated-org" }
+
+    before do
+      patch update_org_for_creator_forms_path, params: { creator_id: selected_creator_id, org: updated_org }
+    end
+
+    context "when some forms match creator ID" do
+      it "updates org only if creator ID matches" do
+        expect(response).to have_http_status(:no_content)
+
+        all_forms.each do |form|
+          form.reload
+          if form.creator_id == selected_creator_id
+            expect(form.org).to eq(updated_org)
+          else
+            expect(form.org).not_to eq(updated_org)
+          end
+        end
+      end
+    end
+
+    context "when no forms match creator ID" do
+      let(:selected_creator_id) { 321 }
+
+      it "does not update org" do
+        expect(response).to have_http_status(:no_content)
+
+        all_forms.each do |form|
+          form.reload
+          expect(form.org).not_to eq(updated_org)
+        end
+      end
+    end
+
+    context "without creator ID" do
+      let(:selected_creator_id) { nil }
+
+      it "returns bad request if creator ID is missing" do
+        expect(response).to have_http_status(:bad_request)
+      end
+    end
+
+    context "without org" do
+      let(:updated_org) { nil }
+
+      it "returns bad request if org is missing" do
+        expect(response).to have_http_status(:bad_request)
+      end
     end
   end
 end

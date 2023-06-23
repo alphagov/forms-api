@@ -49,6 +49,11 @@ class Api::V1::FormsController < ApplicationController
     render json: form.draft_version, status: :ok
   end
 
+  def update_org_for_creator
+    params.require(%i[creator_id org])
+    Form.where(creator_id: params[:creator_id]).update_all(org: params[:org], updated_at: Time.zone.now)
+  end
+
 private
 
   def form

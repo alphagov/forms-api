@@ -57,6 +57,12 @@ class Api::V1::FormsController < ApplicationController
     render json: { success: true }.to_json, status: :ok
   end
 
+  def update_organisation_for_creator
+    params.require(%i[creator_id organisation_id])
+    Form.where(creator_id: params[:creator_id]).update_all(organisation_id: params[:organisation_id], updated_at: Time.zone.now)
+    render json: { success: true }.to_json, status: :ok
+  end
+
 private
 
   def form

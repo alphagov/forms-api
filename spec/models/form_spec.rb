@@ -229,6 +229,7 @@ RSpec.describe Form, type: :model do
         "name",
         "submission_email",
         "org",
+        "organisation_id",
         "creator_id",
         "created_at",
         "updated_at",

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
       collection do
         patch "/update-org-for-creator", to: "api/v1/forms#update_org_for_creator"
+        patch "/update-organisation-for-creator", to: "api/v1/forms#update_organisation_for_creator"
       end
 
       resources :pages, controller: "api/v1/pages", param: :page_id do

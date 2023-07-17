@@ -27,21 +27,15 @@ git clone git@github.com:alphagov/forms-api.git
 cd forms-api
 
 # 2. Run the setup command
-make setup
+./bin/setup
 ```
-
-`make setup` runs `bin/setup` which is idempotent, so you can also run it whenever you pull new changes.
 
 ### Running the app
 
-You can run the server via `make serve`
-
 ```bash
 # Running the server without watching for changes
-make serve
+bundle exec rails s
 ```
-
-`make serve` runs `bin/setup`which is idempotent, followed by `bin/rails server`
 
 This will start the server on `localhost:9292`
 
@@ -49,25 +43,7 @@ This will start the server on `localhost:9292`
 
 ```bash
 # Run the Ruby test suite
-make test
-```
-
-### To run the linter
-
-```bash
-# Run rubocop and display errors
-make lint
-
-# Run rubocop with fixes and display errors
-make lint-fix
-```
-
-### Running tasks before pushing
-
-Before pushing code changes, it's a good idea to run the tests and use rubocop to format your code. We have a rake task for running all of these commands in parallel:
-
-```bash
-bin/rake run_code_quality_checks
+bundle exec rake
 ```
 
 ## Secrets vs Settings

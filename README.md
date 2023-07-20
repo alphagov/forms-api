@@ -120,6 +120,13 @@ And check with `FeatureService.enabled?("some.nested_feature")`.
 
 Rspec tests can also be tagged with `feature_{name}: true`. This will turn that feature on just for the duration of that test.
 
+## Logging
+
+- HTTP access logs are managed using [Lograge](https://github.com/roidrage/lograge) and configured within [the application config](./config/application.rb)
+- The output format is JSON using the [JsonLogFormatter](./app/lib/json_log_formatter.rb) to enable simpler searching and visbility especially in Splunk.
+- **DO NOT** use [log_tags](https://guides.rubyonrails.org/configuring.html#config-log-tags) since it breaks the JSON formatting produced by Lograge.
+
+
 ## Updating versions
 
 Use the [update_app_versions.sh script in forms-deploy](https://github.com/alphagov/forms-deploy/blob/main/support/update_app_versions.sh)
@@ -135,3 +142,5 @@ We welcome contributions - please read [CONTRIBUTING.md](CONTRIBUTING.md) and th
 ## License
 
 We use the [MIT License](https://opensource.org/licenses/MIT).
+
+

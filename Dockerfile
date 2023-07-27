@@ -11,7 +11,11 @@ USER ruby
 
 COPY --chown=ruby:ruby Gemfile* ./
 RUN gem install bundler -v 2.4.10
-RUN bundle install --jobs "$(nproc)"
+
+RUN bundle config set --local without development:test \
+  && bundle config set --local jobs "$(nproc)"
+
+RUN bundle install
 
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \

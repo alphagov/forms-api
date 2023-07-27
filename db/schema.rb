@@ -40,7 +40,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_100920) do
   create_table "forms", force: :cascade do |t|
     t.text "name"
     t.text "submission_email"
-    t.text "org"
     t.text "privacy_policy_url"
     t.text "form_slug"
     t.text "what_happens_next_text"

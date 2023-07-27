@@ -1,11 +1,9 @@
 class Api::V1::FormsController < ApplicationController
   def index
-    org = params[:org]
     organisation_id = params[:organisation_id]
     creator_id = params[:creator_id]
 
     forms = Form.all
-    forms = forms.filter_by_org(org) if org.present?
     forms = forms.filter_by_organisation_id(organisation_id) if organisation_id.present?
     forms = forms.filter_by_creator_id(creator_id) if creator_id.present?
 

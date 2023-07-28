@@ -341,59 +341,6 @@ describe Api::V1::FormsController, type: :request do
     end
   end
 
-  describe "#update_org_for_creator" do
-    let(:selected_creator_id) { 1234 }
-    let(:updated_org) { "updated-org" }
-
-    before do
-      patch update_org_for_creator_forms_path, params: { creator_id: selected_creator_id, org: updated_org }
-    end
-
-    context "when some forms match creator ID" do
-      it "updates org only if creator ID matches" do
-        expect(response).to have_http_status(:ok)
-
-        all_forms.each do |form|
-          form.reload
-          if form.creator_id == selected_creator_id
-            expect(form.org).to eq(updated_org)
-          else
-            expect(form.org).not_to eq(updated_org)
-          end
-        end
-      end
-    end
-
-    context "when no forms match creator ID" do
-      let(:selected_creator_id) { 321 }
-
-      it "does not update org" do
-        expect(response).to have_http_status(:ok)
-
-        all_forms.each do |form|
-          form.reload
-          expect(form.org).not_to eq(updated_org)
-        end
-      end
-    end
-
-    context "without creator ID" do
-      let(:selected_creator_id) { nil }
-
-      it "returns bad request if creator ID is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-
-    context "without org" do
-      let(:updated_org) { nil }
-
-      it "returns bad request if org is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-  end
-
   describe "#update_organisation_for_creator" do
     let(:selected_creator_id) { 1234 }
     let(:updated_organisation_id) { 111 }

@@ -1,5 +1,4 @@
-![build status badge](https://github.com/alphagov/forms-api/actions/workflows/deploy.yml/badge.svg)
-![tests status](https://github.com/alphagov/forms-api/actions/workflows/ruby.yml/badge.svg)
+![tests status](https://github.com/alphagov/forms-api/actions/workflows/test.yml/badge.svg)
 
 # GOV.UK Forms - API
 

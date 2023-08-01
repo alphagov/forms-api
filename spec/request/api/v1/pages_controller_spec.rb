@@ -71,7 +71,9 @@ describe Api::V1::PagesController, type: :request do
                                                            routing_conditions: [],
                                                            has_routing_errors: false,
                                                            created_at: "2023-01-01T12:00:00.000Z",
-                                                           updated_at: "2023-01-01T12:00:00.000Z").as_json)
+                                                           updated_at: "2023-01-01T12:00:00.000Z",
+                                                           page_heading: nil,
+                                                           detailed_guidance_markdown: nil).as_json)
     end
 
     context "with params missing required keys" do

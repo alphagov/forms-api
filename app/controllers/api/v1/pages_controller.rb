@@ -82,6 +82,10 @@ private
     end
   end
 
+  def additional_guidance_params
+    %i[page_heading additional_guidance_markdown]
+  end
+
   def page_params
     params.require(:page).permit(
       :id,
@@ -90,6 +94,7 @@ private
       :answer_type,
       :next_page,
       :is_optional,
+      *additional_guidance_params,
       answer_setting_params,
     )
   end

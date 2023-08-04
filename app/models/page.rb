@@ -11,6 +11,7 @@ class Page < ApplicationRecord
 
   validates :question_text, presence: true
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
+  validate :additional_guidance_fields
 
   def destroy_and_update_form!
     form = self.form
@@ -52,5 +53,15 @@ class Page < ApplicationRecord
 
   def has_routing_errors
     routing_conditions.filter(&:has_routing_errors).any?
+  end
+
+private
+
+  def additional_guidance_fields
+    if page_heading.present? && additional_guidance_markdown.blank?
+      errors.add(:additional_guidance_markdown, "must be present when Page Heading is present")
+    elsif additional_guidance_markdown.present? && page_heading.blank?
+      errors.add(:page_heading, "must be present when Additional Guidance Markdown is present")
+    end
   end
 end

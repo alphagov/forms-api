@@ -8,13 +8,13 @@ describe Api::V1::FormsController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
   let(:gds_forms) do
     [
-      create(:form, name: "Fill me in", org: "gds", organisation_id: 1),
-      create(:form, name: "Can you answer my questions?", org: "gds", organisation_id: 1),
+      create(:form, name: "Fill me in", organisation_id: 1),
+      create(:form, name: "Can you answer my questions?", organisation_id: 1),
     ]
   end
-  let(:other_org_forms) { create :form, creator_id: 123, org: "not-gds", organisation_id: 2 }
-  let(:user_form) { create :form, creator_id: 123, org: nil, organisation_id: nil }
-  let(:other_user_form) { create :form, creator_id: 1234, org: nil, organisation_id: nil }
+  let(:other_org_forms) { create :form, creator_id: 123, organisation_id: 2 }
+  let(:user_form) { create :form, creator_id: 123, organisation_id: nil }
+  let(:other_user_form) { create :form, creator_id: 1234, organisation_id: nil }
 
   let(:all_forms) do
     gds_forms + [other_org_forms, user_form, other_user_form]
@@ -25,38 +25,21 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#index" do
-    it "when no forms exist for an org, returns 200 and an empty json array" do
-      get(forms_path, params: { org: "unknown-org" }, headers:)
-      expect(response.status).to eq(200)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq([])
-    end
-
-    it "when no forms exist for an organisation ID, returns 200 and an empty json array" do
+    it "when no forms exist for an organisation, returns 200 and an empty json array" do
       get(forms_path, params: { organisation_id: 3 }, headers:)
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
     end
 
-    it "when not given an org, returns 200 forms and forms for all orgs." do
+    it "when not given an organisation, returns 200 forms and forms for all orgs." do
       get(forms_path, headers:)
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.length).to eq 5
     end
 
-    it "when given an org with forms, returns a json array of forms" do
-      get(forms_path, params: { org: "gds" }, headers:)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.count).to eq(2)
-      expect(response).to be_successful
-
-      expect(json_body[0]).to include(name: "Can you answer my questions?")
-      expect(json_body[1]).to include(name: "Fill me in")
-    end
-
-    it "when given an organisation ID with forms, returns a json array of forms" do
+    it "when given an organisation with forms, returns a json array of forms" do
       get(forms_path, params: { organisation_id: 1 }, headers:)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(2)
@@ -77,19 +60,7 @@ describe Api::V1::FormsController, type: :request do
       end
     end
 
-    it "when given an org and a creator with forms, returns a json array of forms" do
-      get(forms_path, params: { creator_id: 123, org: "not-gds" }, headers:)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.count).to eq(1)
-      expect(response).to be_successful
-
-      json_body.each do |form|
-        expect(form[:creator_id]).to eq(123)
-        expect(form[:org]).to eq("not-gds")
-      end
-    end
-
-    it "when given an organisation ID and a creator with forms, returns a json array of forms" do
+    it "when given an organisation and a creator with forms, returns a json array of forms" do
       get(forms_path, params: { creator_id: 123, organisation_id: 2 }, headers:)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(1)
@@ -103,7 +74,7 @@ describe Api::V1::FormsController, type: :request do
 
     describe "ordering of forms" do
       it "returns a list of forms sorted in alphabetical order" do
-        get(forms_path, params: { org: "gds" }, headers:)
+        get(forms_path, params: { organisation_id: 1 }, headers:)
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body.pluck(:name)).to eq(gds_forms.sort_by(&:name).pluck(:name))
@@ -113,7 +84,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#create" do
     let(:created_form) { Form.find_by(name: "test form one") }
-    let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk" } }
+    let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
       freeze_time
@@ -134,7 +105,6 @@ describe Api::V1::FormsController, type: :request do
       it "created the form in the DB" do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
-        expect(created_form[:org]).to eq("gds")
         expect(created_form[:organisation_id]).to eq(1)
       end
     end
@@ -150,7 +120,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     context "with extra params" do
-      let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
+      let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
 
       it "returns a status code 201" do
         expect(response.status).to eq(201)
@@ -161,14 +131,13 @@ describe Api::V1::FormsController, type: :request do
       it "created the form in the DB" do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
-        expect(created_form[:org]).to eq("gds")
         expect(created_form[:organisation_id]).to eq(1)
         expect(created_form[:support_url]).to eq("http://example.org")
       end
     end
 
     context "with created_at and updated_at params" do
-      let(:new_form_params) { { org: "gds", organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
+      let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
 
       it "does not use the provided created_at or updated_at values" do
         expect(response.status).to eq(201)
@@ -195,7 +164,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     it "when given an existing id, returns 200 and form data" do
-      form1 = Form.create!(name: "test form 1", org: "gds", organisation_id: 1, creator_id: 123)
+      form1 = Form.create!(name: "test form 1", organisation_id: 1, creator_id: 123)
       get form_path(form1), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
@@ -204,7 +173,6 @@ describe Api::V1::FormsController, type: :request do
         id: form1.id,
         name: "test form 1",
         submission_email: nil,
-        org: "gds",
         organisation_id: 1,
         creator_id: 123,
         has_draft_version: true,
@@ -338,59 +306,6 @@ describe Api::V1::FormsController, type: :request do
 
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
-    end
-  end
-
-  describe "#update_org_for_creator" do
-    let(:selected_creator_id) { 1234 }
-    let(:updated_org) { "updated-org" }
-
-    before do
-      patch update_org_for_creator_forms_path, params: { creator_id: selected_creator_id, org: updated_org }
-    end
-
-    context "when some forms match creator ID" do
-      it "updates org only if creator ID matches" do
-        expect(response).to have_http_status(:ok)
-
-        all_forms.each do |form|
-          form.reload
-          if form.creator_id == selected_creator_id
-            expect(form.org).to eq(updated_org)
-          else
-            expect(form.org).not_to eq(updated_org)
-          end
-        end
-      end
-    end
-
-    context "when no forms match creator ID" do
-      let(:selected_creator_id) { 321 }
-
-      it "does not update org" do
-        expect(response).to have_http_status(:ok)
-
-        all_forms.each do |form|
-          form.reload
-          expect(form.org).not_to eq(updated_org)
-        end
-      end
-    end
-
-    context "without creator ID" do
-      let(:selected_creator_id) { nil }
-
-      it "returns bad request if creator ID is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-
-    context "without org" do
-      let(:updated_org) { nil }
-
-      it "returns bad request if org is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
     end
   end
 

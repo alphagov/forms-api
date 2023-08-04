@@ -4,7 +4,6 @@ FactoryBot.define do
     sequence(:form_slug) { |n| "form-#{n}" }
     submission_email { Faker::Internet.email(domain: "example.gov.uk") }
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
-    org { "test-org" }
     organisation_id { 1 }
     support_email { nil }
     support_phone { nil }

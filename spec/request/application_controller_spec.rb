@@ -17,7 +17,7 @@ describe ApplicationController, type: :request do
       end
 
       it "returns 200" do
-        get forms_path, params: { org: "gds" }, headers: req_headers
+        get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(200)
       end
     end
@@ -26,7 +26,7 @@ describe ApplicationController, type: :request do
       it "returns 200" do
         Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 123_456
-        get forms_path, params: { org: "gds" }, headers: req_headers
+        get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(200)
       end
     end
@@ -41,7 +41,7 @@ describe ApplicationController, type: :request do
       it "returns 401" do
         Settings.forms_api.enabled_auth = true
         Settings.forms_api.authentication_key = 123_456
-        get forms_path, params: { org: "gds" }, headers: req_headers
+        get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(401)
       end
     end
@@ -51,7 +51,7 @@ describe ApplicationController, type: :request do
 
       it "returns 200" do
         Settings.forms_api.authentication_key = 123_456
-        get forms_path, params: { org: "gds" }, headers: req_headers
+        get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(401)
       end
     end
@@ -75,7 +75,7 @@ describe ApplicationController, type: :request do
         access_token.save!
         freeze_time do
           time_now
-          get forms_path, params: { org: "gds" }, headers: req_headers
+          get forms_path, params: { organisation_id: 1 }, headers: req_headers
         end
       end
 
@@ -94,7 +94,7 @@ describe ApplicationController, type: :request do
           access_token
           token
           access_token.save!
-          get forms_path, params: { org: "gds" }, headers: req_headers
+          get forms_path, params: { organisation_id: 1 }, headers: req_headers
         end
 
         it "returns 401" do
@@ -126,7 +126,7 @@ describe ApplicationController, type: :request do
         access_token.save!
         freeze_time do
           time_now
-          get forms_path, params: { org: "gds" }, headers: req_headers
+          get forms_path, params: { organisation_id: 1 }, headers: req_headers
         end
       end
 
@@ -145,7 +145,7 @@ describe ApplicationController, type: :request do
           access_token
           token
           access_token.save!
-          get forms_path, params: { org: "gds" }, headers: req_headers
+          get forms_path, params: { organisation_id: 1 }, headers: req_headers
         end
 
         it "returns 401" do

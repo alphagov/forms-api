@@ -20,6 +20,13 @@ FactoryBot.define do
     routing_conditions { [] }
     check_conditions { [] }
     goto_conditions { [] }
+    page_heading { nil }
+    additional_guidance_markdown { nil }
+
+    trait :with_additional_guidance do
+      page_heading { Faker::Quote.yoda }
+      additional_guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
+    end
 
     trait :with_hints do
       hint_text { Faker::Quote.yoda }

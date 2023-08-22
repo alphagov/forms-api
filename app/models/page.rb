@@ -58,10 +58,10 @@ class Page < ApplicationRecord
 private
 
   def additional_guidance_fields
-    if page_heading.present? && additional_guidance_markdown.blank?
-      errors.add(:additional_guidance_markdown, "must be present when Page Heading is present")
-    elsif additional_guidance_markdown.present? && page_heading.blank?
-      errors.add(:page_heading, "must be present when Additional Guidance Markdown is present")
+    if page_heading.present? && guidance_markdown.blank?
+      errors.add(:guidance_markdown, "must be present when Page Heading is present")
+    elsif guidance_markdown.present? && page_heading.blank?
+      errors.add(:page_heading, "must be present when Guidance Markdown is present")
     end
   end
 end

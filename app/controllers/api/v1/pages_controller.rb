@@ -83,7 +83,7 @@ private
   end
 
   def additional_guidance_params
-    %i[page_heading additional_guidance_markdown]
+    %i[page_heading guidance_markdown]
   end
 
   def page_params

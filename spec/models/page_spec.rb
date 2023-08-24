@@ -50,16 +50,16 @@ RSpec.describe Page, type: :model do
     end
 
     context "when additional_guidance_fields are provided" do
-      it "requires additional_guidance_markdown if page_heading is present" do
+      it "requires guidance_markdown if page_heading is present" do
         page.page_heading = "My new page heading"
         expect(page).to be_invalid
-        expect(page.errors[:additional_guidance_markdown]).to include("must be present when Page Heading is present")
+        expect(page.errors[:guidance_markdown]).to include("must be present when Page Heading is present")
       end
 
-      it "requires page_heading if additional_guidance_markdown is present" do
-        page.additional_guidance_markdown = "Some extra guidance for this question"
+      it "requires page_heading if guidance_markdown is present" do
+        page.guidance_markdown = "Some extra guidance for this question"
         expect(page).to be_invalid
-        expect(page.errors[:page_heading]).to include("must be present when Additional Guidance Markdown is present")
+        expect(page.errors[:page_heading]).to include("must be present when Guidance Markdown is present")
       end
     end
   end

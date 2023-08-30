@@ -1,3 +1,5 @@
+require "govuk_forms_markdown"
+
 class Page < ApplicationRecord
   has_paper_trail
 
@@ -11,7 +13,8 @@ class Page < ApplicationRecord
 
   validates :question_text, presence: true
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
-  validate :guidance_fields
+  validate :guidance_fields_presence
+  validate :guidance_markdown_length_and_tags
 
   def destroy_and_update_form!
     form = self.form
@@ -57,11 +60,28 @@ class Page < ApplicationRecord
 
 private
 
-  def guidance_fields
+  def guidance_fields_presence
     if page_heading.present? && guidance_markdown.blank?
       errors.add(:guidance_markdown, "must be present when Page Heading is present")
     elsif guidance_markdown.present? && page_heading.blank?
       errors.add(:page_heading, "must be present when Guidance Markdown is present")
+    end
+  end
+
+  def guidance_markdown_length_and_tags
+    return true if guidance_markdown.blank?
+
+    markdown_validation = GovukFormsMarkdown.validate(guidance_markdown)
+
+    return true if markdown_validation[:errors].empty?
+
+    if markdown_validation[:errors].include?(:too_long)
+      errors.add(:guidance_markdown, :too_long, count: 4999)
+    end
+
+    tag_errors = markdown_validation[:errors].excluding(:too_long)
+    if tag_errors.any?
+      errors.add(:guidance_markdown, :unsupported_markdown_syntax, message: "can only contain formatting for links, subheadings(##), bulleted listed (*), or numbered lists(1.)")
     end
   end
 end

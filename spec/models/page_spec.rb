@@ -61,6 +61,31 @@ RSpec.describe Page, type: :model do
         expect(page).to be_invalid
         expect(page.errors[:page_heading]).to include("must be present when Guidance Markdown is present")
       end
+
+      context "when markdown is too long" do
+        it "adds an error to guidance_markdown" do
+          page.guidance_markdown = "ABC" * 5000
+          expect(page).to be_invalid
+          expect(page.errors[:guidance_markdown]).to include("is too long (maximum is 4999 characters)")
+        end
+      end
+
+      context "when markdown is using unsupported syntax" do
+        it "adds error to guidance_markdown" do
+          page.guidance_markdown = "# Heading level 1"
+          expect(page).to be_invalid
+          expect(page.errors[:guidance_markdown]).to include("can only contain formatting for links, subheadings(##), bulleted listed (*), or numbered lists(1.)")
+        end
+      end
+
+      context "when markdown is using unsupported syntax which is too long" do
+        it "adds error to guidance_markdown" do
+          page.guidance_markdown = "# Heading level 1\n\n" * 5000
+          expect(page).to be_invalid
+          expect(page.errors[:guidance_markdown]).to include("can only contain formatting for links, subheadings(##), bulleted listed (*), or numbered lists(1.)")
+          expect(page.errors[:guidance_markdown]).to include("is too long (maximum is 4999 characters)")
+        end
+      end
     end
   end
 

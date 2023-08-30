@@ -5,6 +5,8 @@ WORKDIR /app
 RUN apk update
 RUN apk upgrade --available
 RUN apk add libc6-compat openssl-dev build-base libpq-dev
+# Adding git so that we can bundle install gems from github
+RUN apk add git
 RUN adduser -D ruby
 
 USER ruby

@@ -49,7 +49,7 @@ RSpec.describe Page, type: :model do
       expect(page.errors[:answer_type]).to include("is not included in the list")
     end
 
-    context "when additional_guidance_fields are provided" do
+    context "when guidance_fields are provided" do
       it "requires guidance_markdown if page_heading is present" do
         page.page_heading = "My new page heading"
         expect(page).to be_invalid

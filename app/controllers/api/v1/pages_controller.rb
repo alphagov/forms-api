@@ -82,7 +82,7 @@ private
     end
   end
 
-  def additional_guidance_params
+  def guidance_params
     %i[page_heading guidance_markdown]
   end
 
@@ -94,7 +94,7 @@ private
       :answer_type,
       :next_page,
       :is_optional,
-      *additional_guidance_params,
+      *guidance_params,
       answer_setting_params,
     )
   end

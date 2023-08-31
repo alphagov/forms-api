@@ -44,6 +44,9 @@ gem "bootsnap", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem "rack-cors"
 
+# Our own custom markdown renderer
+gem "govuk-forms-markdown", github: "alphagov/govuk-forms-markdown", tag: "0.3.0"
+
 # For structured logging
 gem "lograge"
 

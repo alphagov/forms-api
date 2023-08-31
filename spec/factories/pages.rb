@@ -23,7 +23,7 @@ FactoryBot.define do
     page_heading { nil }
     guidance_markdown { nil }
 
-    trait :with_additional_guidance do
+    trait :with_guidance do
       page_heading { Faker::Quote.yoda }
       guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
     end

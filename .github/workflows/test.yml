@@ -32,7 +32,7 @@ jobs:
       ENV: "test"
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.
         uses: ruby/setup-ruby@250fcd6a742febb1123a77a841497ccaa8b9e939

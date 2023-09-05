@@ -18,6 +18,7 @@ class Page < ApplicationRecord
 
   validates :answer_type, presence: true, inclusion: { in: ANSWER_TYPES }
   validate :guidance_fields_presence
+  validates :page_heading, length: { maximum: 250 }
   validate :guidance_markdown_length_and_tags
 
   def destroy_and_update_form!

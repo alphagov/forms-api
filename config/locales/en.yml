@@ -6,6 +6,9 @@ en:
           attributes:
             hint_text:
               too_long: "Hint text must be %{count} characters or less"
+            page_heading:
+              blank: Enter a page heading
+              too_long: "Page heading must be %{count} characters or less"
             question_text:
               blank: Question text cannot be blank
               too_long: "Question text must be %{count} characters or less"

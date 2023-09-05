@@ -127,6 +127,36 @@ RSpec.describe Page, type: :model do
         expect(page.errors[:page_heading]).to include("must be present when Guidance Markdown is present")
       end
 
+      describe "page_heading length validations" do
+        let(:page) { build :page, :with_guidance, page_heading: }
+        let(:page_heading) { "What is your address?" }
+
+        it "is valid if page heading below 500 characters" do
+          expect(page).to be_valid
+        end
+
+        context "when page heading 250 characters" do
+          let(:page_heading) { "A" * 250 }
+
+          it "is valid" do
+            expect(page).to be_valid
+          end
+        end
+
+        context "when page_heading more than 250 characters" do
+          let(:page_heading) { "A" * 251 }
+
+          it "is invalid" do
+            expect(page).not_to be_valid
+          end
+
+          it "has an error message" do
+            page.valid?
+            expect(page.errors[:page_heading]).to include(I18n.t("activerecord.errors.models.page.attributes.page_heading.too_long", count: 250))
+          end
+        end
+      end
+
       context "when markdown is too long" do
         it "adds an error to guidance_markdown" do
           page.guidance_markdown = "ABC" * 5000

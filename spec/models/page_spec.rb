@@ -25,10 +25,75 @@ RSpec.describe Page, type: :model do
       expect(page).to be_valid
     end
 
-    it "requires question_text" do
-      page.question_text = nil
-      expect(page).to be_invalid
-      expect(page.errors[:question_text]).to include("can't be blank")
+    describe "#question_text" do
+      let(:page) { build :page, question_text: }
+      let(:question_text) { "What is your address?" }
+
+      it "is required" do
+        page.question_text = nil
+        expect(page).to be_invalid
+        expect(page.errors[:question_text]).to include(I18n.t("activerecord.errors.models.page.attributes.question_text.blank"))
+      end
+
+      it "is valid if question text below 250 characters" do
+        expect(page).to be_valid
+      end
+
+      context "when question text 250 characters" do
+        let(:question_text) { "A" * 250 }
+
+        it "is valid" do
+          expect(page).to be_valid
+        end
+      end
+
+      context "when question text more 250 characters" do
+        let(:question_text) { "A" * 251 }
+
+        it "is invalid" do
+          expect(page).not_to be_valid
+        end
+
+        it "has an error message" do
+          page.valid?
+          expect(page.errors[:question_text]).to include(I18n.t("activerecord.errors.models.page.attributes.question_text.too_long", count: 250))
+        end
+      end
+    end
+
+    describe "#hint_text" do
+      let(:page) { build :page, hint_text: }
+      let(:hint_text) { "Enter your full name as it appears in your passport" }
+
+      it "is valid if hint text is empty" do
+        page.hint_text = nil
+        expect(page).to be_valid
+      end
+
+      it "is valid if hint text below 500 characters" do
+        expect(page).to be_valid
+      end
+
+      context "when hint text 500 characters" do
+        let(:hint_text) { "A" * 500 }
+
+        it "is valid" do
+          expect(page).to be_valid
+        end
+      end
+
+      context "when hint text more than 500 characters" do
+        let(:hint_text) { "A" * 501 }
+
+        it "is invalid" do
+          expect(page).not_to be_valid
+        end
+
+        it "has an error message" do
+          page.valid?
+          expect(page.errors[:hint_text]).to include(I18n.t("activerecord.errors.models.page.attributes.hint_text.too_long", count: 500))
+        end
+      end
     end
 
     it "requires form" do
@@ -60,6 +125,36 @@ RSpec.describe Page, type: :model do
         page.guidance_markdown = "Some extra guidance for this question"
         expect(page).to be_invalid
         expect(page.errors[:page_heading]).to include("must be present when Guidance Markdown is present")
+      end
+
+      describe "page_heading length validations" do
+        let(:page) { build :page, :with_guidance, page_heading: }
+        let(:page_heading) { "What is your address?" }
+
+        it "is valid if page heading below 500 characters" do
+          expect(page).to be_valid
+        end
+
+        context "when page heading 250 characters" do
+          let(:page_heading) { "A" * 250 }
+
+          it "is valid" do
+            expect(page).to be_valid
+          end
+        end
+
+        context "when page_heading more than 250 characters" do
+          let(:page_heading) { "A" * 251 }
+
+          it "is invalid" do
+            expect(page).not_to be_valid
+          end
+
+          it "has an error message" do
+            page.valid?
+            expect(page.errors[:page_heading]).to include(I18n.t("activerecord.errors.models.page.attributes.page_heading.too_long", count: 250))
+          end
+        end
       end
 
       context "when markdown is too long" do

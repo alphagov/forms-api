@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
   rescue_from ActionController::ParameterMissing, with: :missing_parameter
 
   before_action :set_content_type
@@ -59,5 +60,9 @@ private
 
   def missing_parameter(exception)
     render json: { error: exception.message }, status: :bad_request
+  end
+
+  def invalid_record(resource)
+    render json: resource.record.errors, status: :unprocessable_entity
   end
 end

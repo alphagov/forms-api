@@ -25,10 +25,40 @@ RSpec.describe Page, type: :model do
       expect(page).to be_valid
     end
 
-    it "requires question_text" do
-      page.question_text = nil
-      expect(page).to be_invalid
-      expect(page.errors[:question_text]).to include("can't be blank")
+    describe "#question_text" do
+      let(:page) { build :page, question_text: }
+      let(:question_text) { "What is your address?" }
+
+      it "is required" do
+        page.question_text = nil
+        expect(page).to be_invalid
+        expect(page.errors[:question_text]).to include(I18n.t("activerecord.errors.models.page.attributes.question_text.blank"))
+      end
+
+      it "is valid if question text below 250 characters" do
+        expect(page).to be_valid
+      end
+
+      context "when question text 250 characters" do
+        let(:question_text) { "A" * 250 }
+
+        it "is valid" do
+          expect(page).to be_valid
+        end
+      end
+
+      context "when question text more 250 characters" do
+        let(:question_text) { "A" * 251 }
+
+        it "is invalid" do
+          expect(page).not_to be_valid
+        end
+
+        it "has an error message" do
+          page.valid?
+          expect(page.errors[:question_text]).to include(I18n.t("activerecord.errors.models.page.attributes.question_text.too_long", count: 250))
+        end
+      end
     end
 
     it "requires form" do

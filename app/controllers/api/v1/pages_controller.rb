@@ -8,8 +8,6 @@ class Api::V1::PagesController < ApplicationController
 
     if new_page.save_and_update_form
       render json: { id: new_page.id }, status: :created
-    else
-      render json: new_page.errors.to_json, status: :bad_request
     end
   end
 

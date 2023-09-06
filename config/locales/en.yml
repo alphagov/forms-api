@@ -10,5 +10,5 @@ en:
               blank: Enter a page heading
               too_long: "Page heading must be %{count} characters or less"
             question_text:
-              blank: Question text cannot be blank
+              blank: Enter a question
               too_long: "Question text must be %{count} characters or less"

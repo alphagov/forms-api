@@ -20,8 +20,6 @@ class Api::V1::PagesController < ApplicationController
 
     if page.save_and_update_form
       render json: { success: true }.to_json, status: :ok
-    else
-      render json: page.errors.to_json, status: :bad_request
     end
   end
 

@@ -273,4 +273,77 @@ RSpec.describe Form, type: :model do
       end
     end
   end
+
+  describe "#ready_for_live" do
+    context "when a form is complete and ready to be made live" do
+      let(:completed_form) { create(:form, :live) }
+
+      it "returns true" do
+        expect(completed_form.ready_for_live).to eq true
+      end
+    end
+
+    context "when a form is incomplete and should still be in draft state" do
+      let(:new_form) { build :form, :new_form }
+
+      [
+        {
+          attribute: :pages,
+          attribute_value: [],
+        },
+        {
+          attribute: :what_happens_next_text,
+          attribute_value: nil,
+        },
+        {
+          attribute: :privacy_policy_url,
+          attribute_value: nil,
+        },
+        {
+          attribute: :support_email,
+          attribute_value: nil,
+        },
+      ].each do |scenario|
+        it "returns false if #{scenario[:attribute]} is missing" do
+          new_form.send("#{scenario[:attribute]}=", scenario[:attribute_value])
+          expect(new_form.ready_for_live).to eq false
+        end
+      end
+    end
+  end
+
+  describe "#missing_sections" do
+    context "when a form is complete and ready to be made live" do
+      let(:completed_form) { build :form, :live }
+
+      it "returns no missing sections" do
+        expect(completed_form.missing_sections).to be_empty
+      end
+    end
+
+    context "when a form is incomplete and should still be in draft state" do
+      let(:new_form) { build :form, :new_form }
+
+      it "returns a set of keys related to missing fields" do
+        expect(new_form.missing_sections).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
+      end
+    end
+  end
+
+  describe "#task_statuses" do
+    let(:completed_form) { create(:form, :live) }
+
+    it "returns a hash with each of the task statuses" do
+      expected_hash = {
+        name_status: :completed,
+        pages_status: :completed,
+        declaration_status: :completed,
+        what_happens_next_status: :completed,
+        privacy_policy_status: :completed,
+        support_contact_details_status: :completed,
+        make_live_status: :completed,
+      }
+      expect(completed_form.task_statuses).to eq expected_hash
+    end
+  end
 end

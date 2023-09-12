@@ -52,7 +52,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live missing_sections task_statuses]
     super(options)
   end
 

@@ -50,6 +50,7 @@ FactoryBot.define do
 
     trait :live do
       ready_for_live
+      after(:create, &:make_live!)
     end
 
     trait :with_support do

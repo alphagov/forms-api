@@ -3,6 +3,31 @@ class TaskStatusService
     @form = form
   end
 
+  def mandatory_tasks_completed?
+    incomplete_tasks.empty?
+  end
+
+  def incomplete_tasks
+    { missing_pages: pages_status,
+      missing_what_happens_next: what_happens_next_status,
+      missing_privacy_policy_url: privacy_policy_status,
+      missing_contact_details: support_contact_details_status }.reject { |_k, v| v == :completed }.map { |k, _v| k }
+  end
+
+  def task_statuses
+    {
+      name_status:,
+      pages_status:,
+      declaration_status:,
+      what_happens_next_status:,
+      privacy_policy_status:,
+      support_contact_details_status:,
+      make_live_status:,
+    }
+  end
+
+private
+
   def name_status
     :completed
   end
@@ -53,35 +78,8 @@ class TaskStatusService
 
   def make_live_status
     if @form.has_draft_version
-      if mandatory_tasks_completed?
-        return :not_started
-      else
-        return :cannot_start
-      end
+      return mandatory_tasks_completed? ? :not_started : :cannot_start
     end
     return :completed if @form.has_live_version
-  end
-
-  def mandatory_tasks_completed?
-    missing_sections.empty?
-  end
-
-  def missing_sections
-    { missing_pages: pages_status,
-      missing_what_happens_next: what_happens_next_status,
-      missing_privacy_policy_url: privacy_policy_status,
-      missing_contact_details: support_contact_details_status }.reject { |_k, v| v == :completed }.map { |k, _v| k }
-  end
-
-  def task_statuses
-    {
-      name_status:,
-      pages_status:,
-      declaration_status:,
-      what_happens_next_status:,
-      privacy_policy_status:,
-      support_contact_details_status:,
-      make_live_status:,
-    }
   end
 end

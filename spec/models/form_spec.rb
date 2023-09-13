@@ -312,12 +312,12 @@ RSpec.describe Form, type: :model do
     end
   end
 
-  describe "#missing_sections" do
+  describe "#incomplete_tasks" do
     context "when a form is complete and ready to be made live" do
       let(:completed_form) { build :form, :live }
 
       it "returns no missing sections" do
-        expect(completed_form.missing_sections).to be_empty
+        expect(completed_form.incomplete_tasks).to be_empty
       end
     end
 
@@ -325,7 +325,7 @@ RSpec.describe Form, type: :model do
       let(:new_form) { build :form, :new_form }
 
       it "returns a set of keys related to missing fields" do
-        expect(new_form.missing_sections).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
+        expect(new_form.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
       end
     end
   end

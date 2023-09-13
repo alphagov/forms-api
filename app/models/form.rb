@@ -52,7 +52,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live missing_sections task_statuses]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live incomplete_tasks task_statuses]
     super(options)
   end
 
@@ -83,7 +83,7 @@ class Form < ApplicationRecord
     task_status_service.mandatory_tasks_completed?
   end
 
-  delegate :missing_sections, to: :task_status_service
+  delegate :incomplete_tasks, to: :task_status_service
 
   delegate :task_statuses, to: :task_status_service
 

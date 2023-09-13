@@ -41,7 +41,7 @@ class Api::V1::FormsController < ApplicationController
       form.make_live!
       render json: { success: true }.to_json, status: :ok
     else
-      render json: form.missing_sections.to_json, status: :forbidden
+      render json: form.incomplete_tasks.to_json, status: :forbidden
     end
   end
 

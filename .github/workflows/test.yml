@@ -5,13 +5,13 @@
 # This workflow will install a prebuilt Ruby version, install dependencies, and
 # run tests and linters.
 
-name: "Ruby on Rails CI"
+name: "Tests"
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   merge_group:
     types: [checks_requested]
 permissions:
@@ -25,14 +25,16 @@ jobs:
         ports:
           - "5432:5432"
         env:
-          POSTGRES_DB: postgres
+          POSTGRES_DB: forms_api_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
     env:
-      ENV: "test"
-      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
+      RAILS_ENV: "test"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_api_test"
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # Add or replace dependency steps here
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.
         uses: ruby/setup-ruby@5311f05890856149502132d25c4a24985a00d426
@@ -44,14 +46,12 @@ jobs:
       - name: Set up database schema
         run: bin/rails db:schema:load
       # Add or replace test runners here
-      - name: Run tests
+      - name: Run Ruby tests
         run: bundle exec rspec
       # Add or replace any other lints here
       - name: Security audit dependencies
         run: bundle exec bundle-audit check --update
       - name: Security audit application code
-        uses: artplan1/brakeman-action@v1.2.1
-        with:
-          flags: "--color"
-      - name: Run lint
-        run: bundle exec rubocop
+        run: bundle exec brakeman -q -w2
+      - name: Lint Ruby files
+        run: bundle exec rubocop --parallel

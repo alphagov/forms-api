@@ -52,7 +52,7 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
-    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors]
+    options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live incomplete_tasks task_statuses]
     super(options)
   end
 
@@ -77,5 +77,19 @@ class Form < ApplicationRecord
 
   def marking_complete_with_errors
     errors.add(:base, :has_validation_errors, message: "Form has routing validation errors") if question_section_completed && has_routing_errors
+  end
+
+  def ready_for_live
+    task_status_service.mandatory_tasks_completed?
+  end
+
+  delegate :incomplete_tasks, to: :task_status_service
+
+  delegate :task_statuses, to: :task_status_service
+
+private
+
+  def task_status_service
+    @task_status_service ||= TaskStatusService.new(form: self)
   end
 end

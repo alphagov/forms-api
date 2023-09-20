@@ -193,6 +193,9 @@ describe Api::V1::FormsController, type: :request do
         created_at: form1.created_at.as_json,
         updated_at: form1.updated_at.as_json,
         has_routing_errors: false,
+        incomplete_tasks: %w[missing_pages missing_what_happens_next missing_privacy_policy_url missing_contact_details],
+        ready_for_live: false,
+        task_statuses: { declaration_status: "not_started", make_live_status: "cannot_start", name_status: "completed", pages_status: "not_started", privacy_policy_status: "not_started", support_contact_details_status: "not_started", what_happens_next_status: "not_started" },
       )
     end
   end
@@ -251,8 +254,18 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#make_live" do
+    context "when given a form with missing sections" do
+      it "doesn't make the form live" do
+        form_to_be_made_live = create(:form, :new_form)
+        post make_live_form_path(form_to_be_made_live), as: :json
+        expect(response.status).to eq(403)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to eq(%w[missing_pages missing_what_happens_next missing_privacy_policy_url missing_contact_details])
+      end
+    end
+
     it "when given a form, sets live_at to current time" do
-      form_to_be_made_live = create :form
+      form_to_be_made_live = create(:form, :ready_for_live)
       post make_live_form_path(form_to_be_made_live), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")

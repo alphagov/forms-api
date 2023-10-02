@@ -52,7 +52,7 @@ describe Api::V1::ConditionsController, type: :request do
     it "returns condition id, status code 201 when new condition created" do
       expect(response.status).to eq(201)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ id: new_condition.id })
+      expect(json_body).to include(id: new_condition.id, **new_condition_params)
     end
 
     context "with a form with question_section_completed = true" do
@@ -116,7 +116,7 @@ describe Api::V1::ConditionsController, type: :request do
     it "returns correct response" do
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(json_body).to include(**params)
       expect(condition.reload.answer_value).to eq(answer_value)
       expect(form.reload.question_section_completed).to be false
     end
@@ -128,9 +128,7 @@ describe Api::V1::ConditionsController, type: :request do
     end
 
     it "removes the condition and returns the correct response" do
-      expect(response.status).to eq(200)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(response.status).to eq(204)
       expect(routing_page.routing_conditions.count).to eq(0)
       expect(form.reload.question_section_completed).to be false
     end

@@ -13,7 +13,7 @@ class Api::V1::FormsController < ApplicationController
   def create
     new_form = Form.new(form_params)
     if new_form.save
-      render json: { id: new_form.id }, status: :created # Fixup - just returning id here, could we return whole object?
+      render json: new_form.to_json, status: :created
     else
       render json: new_form.errors.to_json, status: :bad_request
     end
@@ -21,7 +21,7 @@ class Api::V1::FormsController < ApplicationController
 
   def update
     if form.update(form_params)
-      render json: { success: true }.to_json, status: :ok
+      render json: form.to_json, status: :ok
     else
       render json: form.errors.to_json, status: :bad_request
     end
@@ -33,7 +33,7 @@ class Api::V1::FormsController < ApplicationController
 
   def destroy
     form.destroy!
-    render json: { success: true }.to_json, status: :ok
+    render status: :no_content
   end
 
   def make_live

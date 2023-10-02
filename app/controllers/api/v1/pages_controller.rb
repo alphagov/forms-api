@@ -7,7 +7,7 @@ class Api::V1::PagesController < ApplicationController
     new_page = form.pages.new(page_params)
 
     if new_page.save_and_update_form
-      render json: { id: new_page.id }, status: :created
+      render json: new_page.to_json, status: :created
     end
   end
 
@@ -19,13 +19,13 @@ class Api::V1::PagesController < ApplicationController
     page.assign_attributes(page_params)
 
     if page.save_and_update_form
-      render json: { success: true }.to_json, status: :ok
+      render json: page.to_json, status: :ok
     end
   end
 
   def destroy
     page.destroy_and_update_form!
-    render json: { success: true }.to_json, status: :ok
+    render status: :no_content
   end
 
   def move_down

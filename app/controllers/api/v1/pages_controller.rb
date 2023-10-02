@@ -33,7 +33,7 @@ class Api::V1::PagesController < ApplicationController
       page.move_lower
       form.update!(question_section_completed: false)
     end
-    render json: { success: 1 }.to_json, status: :ok
+    render json: page.to_json, status: :ok
   end
 
   def move_up
@@ -41,7 +41,7 @@ class Api::V1::PagesController < ApplicationController
       page.move_higher
       form.update!(question_section_completed: false)
     end
-    render json: { success: 1 }.to_json, status: :ok
+    render json: page.to_json, status: :ok
   end
 
 private

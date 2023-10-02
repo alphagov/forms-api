@@ -276,7 +276,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns correct response" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ success: 1 })
+        expect(json_body).to include(position: page_to_move.position + 1)
       end
 
       it "changes order of pages returned" do
@@ -295,7 +295,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns correct response" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ success: 1 })
+        expect(json_body).to include(position: page_to_move.position)
       end
 
       it "does not change order of pages" do
@@ -327,7 +327,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns correct response" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ success: 1 })
+        expect(json_body).to include(position: page_to_move.position - 1)
       end
 
       it "changes order of pages returned" do
@@ -346,7 +346,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns correct response" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ success: 1 })
+        expect(json_body).to include(position: page_to_move.position)
       end
 
       it "does not change order of pages" do

@@ -332,7 +332,7 @@ describe Api::V1::FormsController, type: :request do
 
     context "when some forms match creator ID" do
       it "updates organisation only if creator ID matches" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
 
         all_forms.each do |form|
           form.reload
@@ -349,7 +349,7 @@ describe Api::V1::FormsController, type: :request do
       let(:selected_creator_id) { 321 }
 
       it "does not update organisation" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
 
         all_forms.each do |form|
           form.reload

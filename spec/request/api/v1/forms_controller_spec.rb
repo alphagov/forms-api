@@ -250,6 +250,14 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#make_live" do
+    before do
+      freeze_time
+    end
+
+    after do
+      unfreeze_time
+    end
+
     context "when given a form with missing sections" do
       it "doesn't make the form live" do
         form_to_be_made_live = create(:form, :new_form)
@@ -265,7 +273,7 @@ describe Api::V1::FormsController, type: :request do
       post make_live_form_path(form_to_be_made_live), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(json_body).to include(live_at: Time.zone.now)
     end
   end
 

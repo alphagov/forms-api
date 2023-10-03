@@ -58,7 +58,7 @@ describe Api::V1::PagesController, type: :request do
     end
 
     it "returns page id, status code 201 when new page created" do
-      expect(response.status).to eq(201)
+      expect(response).to have_http_status(:created)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(id: new_page.id, **new_page_params.deep_symbolize_keys)
     end
@@ -157,7 +157,7 @@ describe Api::V1::PagesController, type: :request do
     end
 
     it "returns correct response" do
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(**params)
       expect(page1.reload.question_text).to eq("updated page title")
@@ -185,7 +185,7 @@ describe Api::V1::PagesController, type: :request do
         let(:answer_settings) { settings }
 
         it "returns correct response" do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(:ok)
           expect(response.headers["Content-Type"]).to eq("application/json")
           expect(json_body).to include(**params.deep_symbolize_keys)
           page1.reload
@@ -206,7 +206,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "returns correct response" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(**params.deep_symbolize_keys)
         page1.reload
@@ -229,7 +229,7 @@ describe Api::V1::PagesController, type: :request do
 
     context "with existing page" do
       it "removes page and returns correct response" do
-        expect(response.status).to eq(204)
+        expect(response).to have_http_status(:no_content)
         expect(form.pages.count).to eq(1)
         expect(form.reload.question_section_completed).to be false
       end
@@ -274,7 +274,7 @@ describe Api::V1::PagesController, type: :request do
 
     context "with valid page" do
       it "returns correct response" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(position: page_to_move.position + 1)
       end
@@ -293,7 +293,7 @@ describe Api::V1::PagesController, type: :request do
       let(:page_to_move) { last_page }
 
       it "returns correct response" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(position: page_to_move.position)
       end
@@ -325,7 +325,7 @@ describe Api::V1::PagesController, type: :request do
 
     context "with valid page" do
       it "returns correct response" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(position: page_to_move.position - 1)
       end
@@ -344,7 +344,7 @@ describe Api::V1::PagesController, type: :request do
       let(:page_to_move) { first_page }
 
       it "returns correct response" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(position: page_to_move.position)
       end

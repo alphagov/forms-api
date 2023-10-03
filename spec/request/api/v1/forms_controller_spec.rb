@@ -97,9 +97,9 @@ describe Api::V1::FormsController, type: :request do
 
     context "with valid params" do
       it "returns a status code 201 when new form created" do
-        expect(response.status).to eq(201)
+        expect(response).to have_http_status(:created)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(id: created_form[:id])
+        expect(json_body).to include(id: created_form[:id], **new_form_params)
       end
 
       it "created the form in the DB" do
@@ -123,9 +123,9 @@ describe Api::V1::FormsController, type: :request do
       let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
 
       it "returns a status code 201" do
-        expect(response.status).to eq(201)
+        expect(response).to have_http_status(:created)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(id: created_form[:id])
+        expect(json_body).to include(id: created_form[:id], **new_form_params)
       end
 
       it "created the form in the DB" do
@@ -211,9 +211,9 @@ describe Api::V1::FormsController, type: :request do
     it "when given an valid id and params, updates DB and returns 200" do
       form1 = create :form
       put form_path(form1), params: { submission_email: "test@example.gov.uk" }, as: :json
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq(success: true)
+      expect(json_body).to include(submission_email: "test@example.gov.uk")
       expect(form1.reload.submission_email).to eq("test@example.gov.uk")
     end
 
@@ -239,21 +239,25 @@ describe Api::V1::FormsController, type: :request do
     it "when given an existing id, returns 200 and deletes the form from DB" do
       form_to_be_deleted = create :form
       delete form_path(form_to_be_deleted), as: :json
-      expect(response.status).to eq(200)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(response).to have_http_status(:no_content)
     end
 
     it "when given an existing id, returns 200 and deletes the form and any existing pages from DB" do
       form_to_be_deleted = create :form, :with_pages
       delete form_path(form_to_be_deleted), as: :json
-      expect(response.status).to eq(200)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(response).to have_http_status(:no_content)
     end
   end
 
   describe "#make_live" do
+    before do
+      freeze_time
+    end
+
+    after do
+      unfreeze_time
+    end
+
     context "when given a form with missing sections" do
       it "doesn't make the form live" do
         form_to_be_made_live = create(:form, :new_form)
@@ -269,7 +273,7 @@ describe Api::V1::FormsController, type: :request do
       post make_live_form_path(form_to_be_made_live), as: :json
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq({ success: true })
+      expect(json_body).to include(live_at: Time.zone.now)
     end
   end
 
@@ -332,7 +336,7 @@ describe Api::V1::FormsController, type: :request do
 
     context "when some forms match creator ID" do
       it "updates organisation only if creator ID matches" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
 
         all_forms.each do |form|
           form.reload
@@ -349,7 +353,7 @@ describe Api::V1::FormsController, type: :request do
       let(:selected_creator_id) { 321 }
 
       it "does not update organisation" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
 
         all_forms.each do |form|
           form.reload

@@ -30,6 +30,7 @@ class ApplicationController < ActionController::API
                         elsif params[:form_id].present?
                           params[:form_id]
                         end
+    payload[:page_id] = params[:page_id] if params[:page_id].present?
   end
 
 private

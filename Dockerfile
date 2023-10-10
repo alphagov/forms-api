@@ -34,8 +34,6 @@ ENV RAILS_ENV="${RAILS_ENV:-production}" \
 
 WORKDIR /app
 
-# Edge repo is necessary for openssl 3
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
 RUN apk update
 RUN apk upgrade --available
 RUN apk add libc6-compat openssl-dev libpq

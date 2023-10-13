@@ -144,7 +144,7 @@ GEM
     irb (1.6.1)
       reline (>= 0.3.0)
     json (2.6.3)
-    lograge (0.13.0)
+    lograge (0.14.0)
       actionpack (>= 4)
       activesupport (>= 4)
       railties (>= 4)

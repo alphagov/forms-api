@@ -1,4 +1,9 @@
 class Api::V1::FormsController < ApplicationController
+  def append_info_to_payload(payload)
+    super
+    payload[:form_id] = params[:id] if params[:id].present?
+  end
+
   def index
     organisation_id = params[:organisation_id]
     creator_id = params[:creator_id]

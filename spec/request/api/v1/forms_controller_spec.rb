@@ -24,6 +24,19 @@ describe Api::V1::FormsController, type: :request do
     all_forms
   end
 
+  describe "#append_info_to_payload" do
+    it "adds :id to payload as :form_id" do
+      payload = nil
+      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_name, _start, _finish, _id, payload_|
+        payload = payload_
+      end
+
+      get form_path(id: 987), as: :json
+
+      expect(payload).to include form_id: "987"
+    end
+  end
+
   describe "#index" do
     it "when no forms exist for an organisation, returns 200 and an empty json array" do
       get(forms_path, params: { organisation_id: 3 }, headers:)

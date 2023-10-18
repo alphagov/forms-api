@@ -25,11 +25,7 @@ class ApplicationController < ActionController::API
     payload[:host] = request.host
     payload[:request_id] = request.request_id
     payload[:requested_by] = "#{@access_token.owner}-#{@access_token.id}" if @access_token.present?
-    payload[:form_id] = if params[:id].present?
-                          params[:id]
-                        elsif params[:form_id].present?
-                          params[:form_id]
-                        end
+    payload[:form_id] = params[:form_id] if params[:form_id].present?
     payload[:page_id] = params[:page_id] if params[:page_id].present?
   end
 

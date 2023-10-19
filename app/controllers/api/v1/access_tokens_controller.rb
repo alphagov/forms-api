@@ -35,6 +35,6 @@ private
   end
 
   def token_deactivate_params
-    params.require(:id)
+    params.require(:token_id)
   end
 end

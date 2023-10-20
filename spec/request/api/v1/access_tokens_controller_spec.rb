@@ -27,12 +27,14 @@ describe Api::V1::AccessTokensController, type: :request do
 
   describe "#create" do
     before do
-      allow(AccessToken).to receive(:new).and_return(OpenStruct.new(save: true, generate_token: "test-token"))
+      token = build(:access_token, id: 1)
+      allow(token).to receive(:generate_token).and_return("test-token")
+      allow(AccessToken).to receive(:new).and_return(token)
       post access_tokens_path, params: { owner: "testing user" }, as: :json
     end
 
     it "returns a user token" do
-      expect(response.body).to eq({ token: "test-token" }.to_json)
+      expect(response.parsed_body).to include({ "id" => 1, "token" => "test-token" })
     end
 
     it "returns 201 if its saved" do
@@ -82,7 +84,7 @@ describe Api::V1::AccessTokensController, type: :request do
     end
 
     it "returns a status message" do
-      expect(json_body).to eq({ status: "`#{access_token.owner}` has been deactivated" })
+      expect(json_body).to include(status: "`#{access_token.owner}` has been deactivated")
     end
 
     context "when access token is not found" do

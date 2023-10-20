@@ -6,9 +6,9 @@ class Api::V1::AccessTokensController < ApplicationController
 
   def create
     @access_token = AccessToken.new(token_params)
-    users_token = @access_token.generate_token
+    token = @access_token.generate_token
     if @access_token.save
-      render json: { token: users_token }.to_json, status: :created
+      render json: { **@access_token.as_json, token: }.to_json, status: :created
     else
       render json: @access_token.errors.to_json, status: :bad_request
     end
@@ -17,7 +17,8 @@ class Api::V1::AccessTokensController < ApplicationController
   def deactivate
     @access_token = AccessToken.find(token_deactivate_params)
     @access_token.update!(deactivated_at: Time.zone.now)
-    render json: { status: "`#{@access_token.owner}` has been deactivated" }.to_json, status: :ok
+    status = "`#{@access_token.owner}` has been deactivated"
+    render json: { **@access_token.as_json, status: }.to_json, status: :ok
   end
 
   def caller_identity

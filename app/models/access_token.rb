@@ -8,4 +8,9 @@ class AccessToken < ApplicationRecord
     self.token_digest = Digest::SHA256.hexdigest(users_token)
     users_token
   end
+
+  def as_json(options = {})
+    options[:except] ||= [:token_digest]
+    super
+  end
 end

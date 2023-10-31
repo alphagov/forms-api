@@ -27,7 +27,7 @@ Rails.application.routes.draw do
       put "/pages/:page_id/up", to: "api/v1/pages#move_up", as: :move_page_up
     end
 
-    resources :access_tokens, path: "access-tokens", controller: "api/v1/access_tokens", only: %i[index create] do
+    resources :access_tokens, path: "access-tokens", controller: "api/v1/access_tokens", only: %i[index create], param: :token_id do
       member do
         put "/deactivate", to: "api/v1/access_tokens#deactivate"
       end

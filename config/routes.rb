@@ -8,9 +8,10 @@ Rails.application.routes.draw do
   scope "api/v1" do
     resources :forms, controller: "api/v1/forms" do
       member do
-        post "/make-live", to: "api/v1/forms#make_live"
-        get "/live", to: "api/v1/forms#show_live"
         get "/draft", to: "api/v1/forms#show_draft"
+        get "/live", to: "api/v1/forms#show_live"
+        post "/make-live", to: "api/v1/forms#make_live"
+        post "/make-unlive", to: "api/v1/forms#make_unlive"
       end
 
       collection do

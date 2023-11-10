@@ -159,6 +159,20 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe ".make_unlive!" do
+    let(:made_live_form) { create :made_live_form }
+    let(:form) { made_live_form.form }
+
+    it "deletes the made live version" do
+      expect { form.make_unlive! }.to change { MadeLiveForm.exists?(made_live_form.id) }.to(false)
+    end
+
+    it "sets the live_at to nil" do
+      form.make_unlive!
+      expect(form.live_at).to be_nil
+    end
+  end
+
   describe "#has_draft_version" do
     let(:live_form) { create(:made_live_form).form }
     let(:new_form) { create(:form) }

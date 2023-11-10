@@ -87,6 +87,10 @@ class Form < ApplicationRecord
 
   delegate :task_statuses, to: :task_status_service
 
+  def make_unlive!
+    made_live_forms.destroy_all
+  end
+
 private
 
   def task_status_service

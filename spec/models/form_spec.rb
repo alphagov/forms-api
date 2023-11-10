@@ -14,12 +14,14 @@ RSpec.describe Form, type: :model do
     end
   end
 
-  describe "made_live_form" do
-    let(:made_live_form) { create :made_live_form }
-    let(:form) { made_live_form.form }
+  describe ".destroy" do
+    context "when a form was made live" do
+      let(:made_live_form) { create :made_live_form }
+      let(:form) { made_live_form.form }
 
-    it "does delete a live form" do
-      expect { form.destroy }.to change { MadeLiveForm.exists?(made_live_form.id) }.to(false)
+      it "does delete a live form" do
+        expect { form.destroy }.to change { MadeLiveForm.exists?(made_live_form.id) }.to(false)
+      end
     end
   end
 

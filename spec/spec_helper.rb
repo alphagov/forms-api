@@ -1,3 +1,4 @@
+require "active_support"
 require "active_support/testing/time_helpers"
 require "simplecov"
 require_relative "support/features"

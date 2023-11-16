@@ -53,6 +53,19 @@ all_question_types_form = Form.create!(
       answer_type: "phone_number",
     ),
     Page.create(
+      question_text: "Selection from a list of options",
+      answer_type: "selection",
+      answer_settings: {
+        "only_one_option": "0", # TODO: investigate why we set this to "0"
+        "selection_options": [
+          { "name": "Option 1" },
+          { "name": "Option 2" },
+          { "name": "Option 3" },
+        ],
+      },
+      is_optional: true, # Include an option for 'None of the above'
+    ),
+    Page.create(
       question_text: "Multiple lines of text",
       answer_type: "text",
       answer_settings: {

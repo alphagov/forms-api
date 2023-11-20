@@ -261,6 +261,7 @@ RSpec.describe Form, type: :model do
         "declaration_section_completed",
         "pages",
         "page_order",
+        "what_happens_next_markdown",
       )
     end
   end

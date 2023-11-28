@@ -53,7 +53,7 @@ private
   end
 
   def what_happens_next_status
-    if @form.what_happens_next_text.present?
+    if @form.what_happens_next_text.present? || @form.what_happens_next_markdown.present?
       :completed
     else
       :not_started

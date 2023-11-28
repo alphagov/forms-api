@@ -85,10 +85,18 @@ describe TaskStatusService do
         end
       end
 
-      context "with a form which has a what happens next section" do
+      context "with a form which has a what_happens_next_text" do
         let(:form) { build(:form, :new_form, what_happens_next_text: "We usually respond to applications within 10 working days.") }
 
-        it "returns the in progress status" do
+        it "returns the completed status" do
+          expect(task_status_service.task_statuses[:what_happens_next_status]).to eq :completed
+        end
+      end
+
+      context "with a form which has a what_happens_next_markdown" do
+        let(:form) { build(:form, :new_form, what_happens_next_markdown: "We usually respond to applications within 10 working days.") }
+
+        it "returns the completed status" do
           expect(task_status_service.task_statuses[:what_happens_next_status]).to eq :completed
         end
       end

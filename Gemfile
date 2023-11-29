@@ -45,7 +45,7 @@ gem "bootsnap", require: false
 # gem "rack-cors"
 
 # Our own custom markdown renderer
-gem "govuk-forms-markdown", github: "alphagov/govuk-forms-markdown", tag: "0.3.1"
+gem "govuk-forms-markdown", github: "alphagov/govuk-forms-markdown", tag: "0.4.0"
 
 # For structured logging
 gem "lograge"

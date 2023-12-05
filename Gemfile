@@ -81,3 +81,5 @@ group :test do
   # Code coverage reporter
   gem "simplecov", require: false
 end
+
+gem "reverse_markdown", "~> 2.1"

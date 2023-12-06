@@ -251,7 +251,6 @@ RSpec.describe Form, type: :model do
         "privacy_policy_url",
         "form_slug",
         "start_page",
-        "what_happens_next_text",
         "support_email",
         "support_phone",
         "support_url",
@@ -309,7 +308,7 @@ RSpec.describe Form, type: :model do
           attribute_value: [],
         },
         {
-          attribute: :what_happens_next_text,
+          attribute: :what_happens_next_markdown,
           attribute_value: nil,
         },
         {

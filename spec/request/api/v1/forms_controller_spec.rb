@@ -194,7 +194,6 @@ describe Api::V1::FormsController, type: :request do
         privacy_policy_url: nil,
         form_slug: "test-form-1",
         start_page: nil,
-        what_happens_next_text: nil,
         what_happens_next_markdown: nil,
         support_email: nil,
         support_phone: nil,

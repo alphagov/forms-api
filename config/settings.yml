@@ -8,5 +8,6 @@ forms_api:
 sentry:
   dsn:
   environment: local
+  filter_mask: "[Filtered (client-side)]"
 
 features: {}

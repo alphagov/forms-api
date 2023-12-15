@@ -1,5 +1,6 @@
 class AccessToken < ApplicationRecord
   validates :token_digest, :owner, presence: true
+  validates :token_digest, uniqueness: { conditions: -> { active } }
 
   scope :active, -> { where(deactivated_at: nil) }
 

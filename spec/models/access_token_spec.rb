@@ -24,6 +24,22 @@ RSpec.describe AccessToken, type: :model do
       expect(access_token).to be_invalid
       expect(access_token.errors[:token_digest]).to include("can't be blank")
     end
+
+    it "is invalid to have two active tokens with the same digest" do
+      access_token_1 = described_class.create!(owner: "test1", token_digest: "baabaa")
+      expect(access_token_1).to be_valid
+
+      access_token_2 = described_class.new(owner: "test2", token_digest: "baabaa")
+      expect(access_token_2).not_to be_valid
+    end
+
+    it "is valid to reuse the same token digest" do
+      access_token_1 = described_class.create!(owner: "test1", token_digest: "baabaa")
+      access_token_1.update!(deactivated_at: Time.zone.now)
+
+      access_token_2 = described_class.new(owner: "test2", token_digest: "baabaa")
+      expect(access_token_2).to be_valid
+    end
   end
 
   describe "scopes" do

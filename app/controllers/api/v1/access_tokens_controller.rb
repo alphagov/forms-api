@@ -32,7 +32,7 @@ class Api::V1::AccessTokensController < ApplicationController
 private
 
   def token_params
-    params.permit(:owner, :description)
+    params.permit(:owner, :description, :permissions)
   end
 
   def token_deactivate_params

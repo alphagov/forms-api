@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  include ActionController::HttpAuthentication::Token::ControllerMethods
+  include ActionController::HttpAuthentication::Token
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record
@@ -38,22 +38,11 @@ private
   end
 
   def authenticate_using_access_tokens
-    if request.headers["X-Api-Token"].present?
-      token = request.headers["X-Api-Token"]
+    (request.headers["X-Api-Token"].presence || token_and_options(request)&.first).try! do |token|
       @access_token = AccessToken.active.find_by_token_digest(Digest::SHA256.hexdigest(token))
-      if @access_token.present? && AccessTokenPolicy.new(@access_token, request).request?
-        @access_token.update!(last_accessed_at: Time.zone.now)
-        true
-      else
-        false
-      end
-    else
-      authenticate_with_http_token do |token|
-        @access_token = AccessToken.active.find_by_token_digest(Digest::SHA256.hexdigest(token))
-        return unless @access_token.present? && AccessTokenPolicy.new(@access_token, request).request?
+      return nil unless @access_token.present? && AccessTokenPolicy.new(@access_token, request).request?
 
-        @access_token.update!(last_accessed_at: Time.zone.now)
-      end
+      @access_token.update!(last_accessed_at: Time.zone.now)
     end
   end
 

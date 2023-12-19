@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe ApplicationController, type: :request do
   describe "#authentication" do
-    let(:token) { Settings.forms_api.authentication_key }
+    let(:token) { Settings.forms_api.auth_key }
     let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
     let(:req_headers) do
       {
@@ -24,8 +24,8 @@ describe ApplicationController, type: :request do
 
     context "when valid header and token passed" do
       it "returns 200" do
+        Settings.forms_api.auth_key = 123_456
         Settings.forms_api.enabled_auth = true
-        Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(200)
       end
@@ -39,8 +39,8 @@ describe ApplicationController, type: :request do
       end
 
       it "returns 401" do
+        Settings.forms_api.auth_key = 123_456
         Settings.forms_api.enabled_auth = true
-        Settings.forms_api.authentication_key = 123_456
         get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(401)
       end
@@ -50,7 +50,7 @@ describe ApplicationController, type: :request do
       let(:token) { "incorrect-auth-key" }
 
       it "returns 200" do
-        Settings.forms_api.authentication_key = 123_456
+        Settings.forms_api.auth_key = 123_456
         get forms_path, params: { organisation_id: 1 }, headers: req_headers
         expect(response.status).to eq(401)
       end
@@ -68,8 +68,8 @@ describe ApplicationController, type: :request do
       let(:time_now) { Time.zone.now }
 
       before do
+        Settings.forms_api.auth_key = 1234
         Settings.forms_api.enabled_auth = true
-        Settings.forms_api.authentication_key = 1234
         access_token
         token
         access_token.save!
@@ -119,8 +119,8 @@ describe ApplicationController, type: :request do
       let(:time_now) { Time.zone.now }
 
       before do
+        Settings.forms_api.auth_key = 1234
         Settings.forms_api.enabled_auth = true
-        Settings.forms_api.authentication_key = 1234
         access_token
         token
         access_token.save!

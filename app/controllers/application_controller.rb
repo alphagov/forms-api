@@ -32,9 +32,9 @@ class ApplicationController < ActionController::API
 private
 
   def authenticate_using_old_env_vars
-    return false if request.headers["X-Api-Token"].blank? || Settings.forms_api.authentication_key.blank?
+    return false if request.headers["X-Api-Token"].blank? || Settings.forms_api.auth_key.blank?
 
-    request.headers["X-Api-Token"] == Settings.forms_api.authentication_key
+    request.headers["X-Api-Token"] == Settings.forms_api.auth_key
   end
 
   def authenticate_using_access_tokens

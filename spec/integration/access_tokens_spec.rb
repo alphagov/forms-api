@@ -47,5 +47,52 @@ RSpec.describe "access control using access tokens" do
 
       expect(response).to have_http_status(:unauthorized)
     end
+
+    context "when a user has a readonly token" do
+      let(:access) do
+        AccessToken.new(owner: :test, permissions: :readonly)
+      end
+
+      let(:headers) do
+        { Authorization: "Token #{token}" }
+      end
+
+      it "allows access to the API for GET requests" do
+        get(forms_path, headers:)
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "denies access to the API for POST requests" do
+        post(forms_path, params: { form: { name: "test form" } }, headers:)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(Form.last).to be nil
+      end
+
+      it "denies access to the API for PUT requests" do
+        form = create :form, id: 1, name: "test form"
+
+        put(form_path(1), params: { form: { name: "edited test form" } }, headers:)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(form.name).to eq "test form"
+      end
+
+      it "denies access to the API for PATCH requests" do
+        form = create :form, id: 1, name: "test form"
+
+        patch(form_path(1), params: { form: { name: "edited test form" } }, headers:)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(form.name).to eq "test form"
+      end
+
+      it "does not allow creating other access tokens" do
+        post(access_tokens_path, params: { owner: "test" }, headers:)
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 end

@@ -156,6 +156,25 @@ describe ApplicationController, type: :request do
           expect(json_body[:status]).to eq("unauthorised")
         end
       end
+
+      context "when token with readonly permissions is used for update method" do
+        let(:access_token) { AccessToken.new(owner: "test-owner", permissions: :readonly) }
+
+        before do
+          access_token
+          token
+          access_token.save!
+          post forms_path, params: { form: { name: "Test form" } }, headers: req_headers
+        end
+
+        it "returns 401" do
+          expect(response.status).to eq(401)
+        end
+
+        it "returns an error message" do
+          expect(json_body[:status]).to eq("unauthorised")
+        end
+      end
     end
   end
 end

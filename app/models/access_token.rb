@@ -3,6 +3,11 @@ class AccessToken < ApplicationRecord
 
   scope :active, -> { where(deactivated_at: nil) }
 
+  enum :permissions, {
+    all: "all",
+    readonly: "readonly",
+  }, suffix: true, validate: true
+
   def generate_token
     users_token = SecureRandom.uuid
     self.token_digest = Digest::SHA256.hexdigest(users_token)

@@ -46,6 +46,35 @@ RSpec.describe AccessToken, type: :model do
     end
   end
 
+  describe "permissions" do
+    let(:access_token) do
+      described_class.new(owner: "test")
+        .tap(&:generate_token)
+    end
+
+    it "defaults to all permissions" do
+      expect(access_token.all_permissions?).to be true
+    end
+
+    it "allows readonly permissions" do
+      access_token.permissions = :readonly
+
+      expect(access_token).to be_valid
+    end
+
+    it "validates the permissions are set" do
+      access_token.permissions = nil
+
+      expect(access_token).not_to be_valid
+    end
+
+    it "validates the permissions are valid" do
+      access_token.permissions = :foobar
+
+      expect(access_token).not_to be_valid
+    end
+  end
+
   describe "#generate_token" do
     let(:result) { access_token.generate_token }
 

@@ -33,7 +33,7 @@ class Form < ApplicationRecord
   end
 
   def live_at
-    return made_live_forms.last.created_at if made_live_forms.present?
+    made_live_forms.last.created_at if made_live_forms.present?
   end
 
   def has_live_version

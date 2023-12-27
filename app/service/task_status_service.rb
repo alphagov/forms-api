@@ -80,6 +80,7 @@ private
     if @form.has_draft_version
       return mandatory_tasks_completed? ? :not_started : :cannot_start
     end
-    return :completed if @form.has_live_version
+
+    :completed if @form.has_live_version
   end
 end

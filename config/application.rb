@@ -22,7 +22,12 @@ Bundler.require(*Rails.groups)
 module FormsApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -45,11 +50,6 @@ module FormsApi
     # Use JSON log formatter for better support in Splunk. To use conventional
     # logging use the Logger::Formatter.new.
     config.log_formatter = JsonLogFormatter.new
-
-    if ENV["RAILS_LOG_TO_STDOUT"].present?
-      config.logger = ActiveSupport::Logger.new($stdout)
-      config.logger.formatter = config.log_formatter
-    end
 
     # Lograge is used to format the standard HTTP request logging
     config.lograge.enabled = true

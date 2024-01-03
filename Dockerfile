@@ -12,7 +12,6 @@ RUN adduser -D ruby
 USER ruby
 
 COPY --chown=ruby:ruby Gemfile* ./
-RUN gem install bundler -v 2.4.10
 
 RUN bundle config set --local without development:test \
   && bundle config set --local jobs "$(nproc)"

@@ -1,4 +1,4 @@
-FROM ruby:3.2.2-alpine3.18@sha256:198e97ccb12cd0297c274d10e504138f412f90bed50c36ebde0a466ab89cf526 AS build
+FROM ruby:3.2.2-alpine3.18@sha256:a9ecf92c7b559e42f2df42ce6d115b18e6a1e292a6ee96e4c719f71d3a7e47c6 AS build
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ ENV RAILS_ENV="${RAILS_ENV:-production}" \
 
 COPY --chown=ruby:ruby . .
 
-FROM ruby:3.2.2-alpine3.18@sha256:198e97ccb12cd0297c274d10e504138f412f90bed50c36ebde0a466ab89cf526 AS app
+FROM ruby:3.2.2-alpine3.18@sha256:a9ecf92c7b559e42f2df42ce6d115b18e6a1e292a6ee96e4c719f71d3a7e47c6 AS app
 
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \

@@ -30,7 +30,6 @@ class ApplicationController < ActionController::API
   end
 
 private
-
   def authenticate_using_old_env_vars
     return false if request.headers["X-Api-Token"].blank? || Settings.forms_api.authentication_key.blank?
 

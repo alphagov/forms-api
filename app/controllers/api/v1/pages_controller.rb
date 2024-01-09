@@ -47,7 +47,15 @@ class Api::V1::PagesController < ApplicationController
 private
 
   def form
-    @form ||= Form.find(params.require(:form_id))
+    #  TODO: Forms controller uses id param look to standardise so this could be reused
+    @form ||= Form.exists?(params.require(:form_id)) ? Form.find(params.require(:form_id)) : Form.find_by_external_id(params.require(:form_id))
+
+    # Alternative approach
+    # begin
+    #   @form = Form.find(params.require(:form_id))
+    # rescue ActiveRecord::RecordNotFound
+    #   @form = Form.find_by_external_id(params.require(:form_id))
+    # end
   end
 
   def page

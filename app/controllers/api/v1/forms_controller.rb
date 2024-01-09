@@ -76,7 +76,14 @@ class Api::V1::FormsController < ApplicationController
 private
 
   def form
-    @form ||= Form.find(params.require(:id))
+    @form ||= Form.exists?(params.require(:id)) ? Form.find(params.require(:id)) : Form.find_by_external_id(params.require(:id))
+
+    # Alternative approach
+    # begin
+    #   @form = Form.find(params.require(:id)) 
+    # rescue ActiveRecord::RecordNotFound
+    #   @form = Form.find_by_external_id(params.require(:id))  
+    # end
   end
 
   def form_params

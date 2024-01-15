@@ -96,10 +96,7 @@ class Form < ApplicationRecord
 private
 
   def set_external_id
-    loop do
-      self.external_id = SecureRandom.uuid[0, 8]
-      break unless Form.where(external_id:).exists?
-    end
+    self.external_id = SecureRandom.hex(4)
   end
 
   def task_status_service

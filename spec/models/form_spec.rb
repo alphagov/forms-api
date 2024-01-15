@@ -64,6 +64,13 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "external_id" do
+    it "initalises a new form with a valid external ID" do
+      form = create :form
+      expect(form.external_id).to match(/[a-f0-9]{8}/)
+    end
+  end
+
   describe "form_slug" do
     it "updates when name is changed" do
       form.name = "Apply for a license to test forms"

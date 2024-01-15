@@ -14,6 +14,7 @@ FactoryBot.define do
     question_section_completed { false }
     declaration_section_completed { false }
     page_order { nil }
+    external_id { nil }
 
     trait :new_form do
       submission_email { "" }

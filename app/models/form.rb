@@ -1,4 +1,7 @@
+require_relative "../state_machines/form_state_machine"
 class Form < ApplicationRecord
+  include FormStateMachine
+
   has_paper_trail
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy

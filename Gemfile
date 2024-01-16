@@ -83,3 +83,7 @@ group :test do
 end
 
 gem "reverse_markdown", "~> 2.1"
+
+# Add state machine for forms
+gem "aasm", "~> 5.5"
+gem "after_commit_everywhere", "~> 1.0"

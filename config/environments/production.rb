@@ -4,7 +4,7 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
-  config.cache_classes = true
+  config.enable_reloading = false
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
@@ -56,7 +56,7 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   # config.log_tags = [:request_id]
 
-  # Info include generic and useful information about system operation, but avoids logging too much
+  # "info" includes generic and useful information about system operation, but avoids logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
@@ -65,7 +65,7 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter     = :resque
+  # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "forms_api_production"
 
   config.action_mailer.perform_caching = false

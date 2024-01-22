@@ -42,8 +42,7 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def make_live
-    if form.ready_for_live
-      form.make_live!
+    if form.make_form_live!
       render json: form.live_version, status: :ok
     else
       render json: form.incomplete_tasks.to_json, status: :forbidden

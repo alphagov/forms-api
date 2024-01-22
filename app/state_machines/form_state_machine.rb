@@ -20,7 +20,11 @@ module FormStateMachine
       state :draft_archived
 
       event :make_form_live do
-        transitions from: :draft, to: :live, guard: Proc.new { task_status_service.mandatory_tasks_completed? }
+        after do
+          self.make_live!
+        end
+
+        transitions from: [:draft, :draft_live, :draft_archived], to: :live, guard: Proc.new { task_status_service.mandatory_tasks_completed? }
       end
 
       event :draft_new_live_form do

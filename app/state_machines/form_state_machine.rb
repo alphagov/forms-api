@@ -36,7 +36,7 @@ module FormStateMachine
         transitions from :live, to: :archived
       end
 
-      event :create_draft_from_arhived_form do
+      event :create_draft_from_archived_form do
         transitions from: :archived, to: :draft_archived
       end
 

@@ -1,7 +1,6 @@
 forms_api:
+  auth_key:
   enabled_auth: true
-  authentication_key:
-
 
 # Configuration for Sentry
 # Sentry will only initialise if dsn is set to some other value

@@ -18,6 +18,7 @@ RUN bundle config set --local without development:test \
 
 RUN bundle install
 
+ARG RAILS_ENV
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \
     USER="ruby" \

@@ -21,9 +21,13 @@ module FormStateMachine
       # state :archived
       # state :draft_archived
 
-      event :make_form_live do
+      event :make_live do
         after do
-          make_live!
+          live_at ||= Time.zone.now
+          touch(time: live_at)
+
+          form_blob = self.snapshot(live_at:)
+          made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
         end
 
         transitions from: %i[draft draft_live draft_archived], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }

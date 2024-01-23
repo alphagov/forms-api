@@ -17,14 +17,6 @@ class Form < ApplicationRecord
     pages&.first&.id
   end
 
-  def make_live!(live_at = nil)
-    live_at ||= Time.zone.now
-    touch(time: live_at)
-
-    form_blob = snapshot(live_at:)
-    made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
-  end
-
   def has_draft_version
     return true if made_live_forms.blank?
 

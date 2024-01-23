@@ -14,10 +14,12 @@ module FormStateMachine
 
     aasm column: :state, enum: true do
       state :draft, initial: true
-      state :live
-      state :draft_live
-      state :archived
-      state :draft_archived
+      state :live, :draft_live, :archived, :draft_archived
+      # or written like
+      # state :live
+      # state :draft_live
+      # state :archived
+      # state :draft_archived
 
       event :make_form_live do
         after do
@@ -32,12 +34,12 @@ module FormStateMachine
       end
 
       event :make_draft_changes_live do
-        transitions from [:draft_live, :draft_archived], to: :live
+        transitions from: [:draft_live, :draft_archived], to: :live
       end
 
       event :archive_live_form do
         # TODO: Is this only if a form is live and no draft or could a live form be archived even if there is an existing draft?
-        transitions from [:live, :draft_live], to: :archived, guard: Proc.new { has_live_version }
+        transitions from: [:live, :draft_live], to: :archived, guard: Proc.new { has_live_version }
       end
 
       event :create_draft_from_archived_form do

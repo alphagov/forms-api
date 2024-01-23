@@ -1,6 +1,29 @@
 require "rails_helper"
 
 describe ApplicationController, type: :request do
+  context "when there is a application load balancer trace ID" do
+    let(:payloads) { [] }
+    let(:payload) { payloads.last }
+
+    let!(:subscriber) do
+      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_, _, _, _, payload|
+        payloads << payload
+      end
+    end
+
+    before do
+      get forms_path, headers: { "HTTP_X_AMZN_TRACE_ID": "Root=1-63441c4a-abcdef012345678912345678" }
+    end
+
+    after do
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    it "adds the trace ID to the instrumentation payload" do
+      expect(payload).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
+    end
+  end
+
   describe "#authentication" do
     let(:token) { Settings.forms_api.auth_key }
     let(:json_body) { JSON.parse(response.body, symbolize_names: true) }

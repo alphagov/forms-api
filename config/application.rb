@@ -64,6 +64,7 @@ module FormsApi
         h[:page_id] = event.payload[:page_id] if event.payload[:page_id]
         h[:params] = event.payload[:params].except(:controller, :action)
         h[:exception] = event.payload[:exception] if event.payload[:exception]
+        h[:trace_id] = event.payload[:trace_id] if event.payload[:trace_id]
       end
     end
   end

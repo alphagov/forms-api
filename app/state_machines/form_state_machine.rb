@@ -37,6 +37,7 @@ module FormStateMachine
         transitions from: :live, to: :draft_live, guard: proc { has_live_version }
       end
 
+      # TODO: do we want this even?
       event :make_draft_changes_live do
         transitions from: %i[draft_live draft_archived], to: :live
       end

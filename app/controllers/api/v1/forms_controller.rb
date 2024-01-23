@@ -26,6 +26,9 @@ class Api::V1::FormsController < ApplicationController
 
   def update
     if form.update(form_params)
+      form.draft_new_live_form! if form.live?
+      form.create_draft_from_archived_form! if form.archived?
+
       render json: form.to_json, status: :ok
     else
       render json: form.errors.to_json, status: :bad_request

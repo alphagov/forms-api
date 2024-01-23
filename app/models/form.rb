@@ -44,7 +44,7 @@ class Form < ApplicationRecord
   end
 
   def live_version
-    raise ActiveRecord::RecordNotFound if made_live_forms.blank?
+    raise ActiveRecord::RecordNotFound if made_live_forms.blank? || archived?
 
     made_live_forms.last.json_form_blob
   end

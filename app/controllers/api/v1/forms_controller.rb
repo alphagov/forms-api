@@ -50,8 +50,7 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def make_unlive
-    if form.has_live_version
-      form.make_unlive!
+    if form.archive_live_form!
       render json: form, status: :ok
     else
       render json: { error: "Form has no live version" }, status: :bad_request

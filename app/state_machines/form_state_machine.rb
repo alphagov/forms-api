@@ -32,16 +32,20 @@ module FormStateMachine
       end
 
       event :make_draft_changes_live do
-        transitions from :draft_live, to: :live
+        transitions from [:draft_live, :draft_archived], to: :live
       end
 
       event :archive_live_form do
         # TODO: Is this only if a form is live and no draft or could a live form be archived even if there is an existing draft?
-        transitions from :live, to: :archived
+        transitions from [:live, :draft_live], to: :archived, guard: Proc.new { has_live_version }
       end
 
       event :create_draft_from_archived_form do
         transitions from: :archived, to: :draft_archived
+      end
+
+      event :make_archived_form_live do
+        transitions from: :archived, to: :live
       end
 
     end

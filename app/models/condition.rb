@@ -8,7 +8,7 @@ class Condition < ApplicationRecord
   has_one :form, through: :routing_page
 
   def save_and_update_form
-    save
+    save!
     form.update!(question_section_completed: false)
     form.draft_new_live_form! if form.live?
     form.create_draft_from_archived_form! if form.archived?

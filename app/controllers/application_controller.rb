@@ -27,6 +27,7 @@ class ApplicationController < ActionController::API
     payload[:requested_by] = "#{@access_token.owner}-#{@access_token.id}" if @access_token.present?
     payload[:form_id] = params[:form_id] if params[:form_id].present?
     payload[:page_id] = params[:page_id] if params[:page_id].present?
+    payload[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"].presence
   end
 
 private

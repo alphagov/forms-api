@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_06_162240) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_24_160123) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_06_162240) do
     t.bigint "creator_id"
     t.bigint "organisation_id"
     t.text "what_happens_next_markdown"
+    t.string "state"
   end
 
   create_table "made_live_forms", force: :cascade do |t|

@@ -55,7 +55,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_15_195355) do
     t.bigint "creator_id"
     t.bigint "organisation_id"
     t.text "what_happens_next_markdown"
-    t.string "state", default: "draft"
+    t.string "state"
   end
 
   create_table "made_live_forms", force: :cascade do |t|

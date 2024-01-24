@@ -6,6 +6,7 @@ module FormStateMachine
 
     enum :state, {
       draft: "draft",
+      deleted: "deleted",
       live: "live",
       draft_live: "draft_live",
       archived: "archived",
@@ -14,12 +15,15 @@ module FormStateMachine
 
     aasm column: :state, enum: true do
       state :draft, initial: true
-      state :live, :draft_live, :archived, :draft_archived
-      # or written like
-      # state :live
-      # state :draft_live
-      # state :archived
-      # state :draft_archived
+      state :deleted, :live, :draft_live, :archived, :draft_archived
+
+      event :delete_form do
+        after do
+          self.destroy!
+        end
+
+        transitions from: :draft, to: :deleted
+      end
 
       event :make_live do
         after do
@@ -30,20 +34,16 @@ module FormStateMachine
           made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
         end
 
-        transitions from: %i[draft draft_live draft_archived], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }
+        transitions from: %i[draft draft_live archived draft_archived], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }
       end
 
       event :draft_new_live_form do
         transitions from: :live, to: :draft_live, guard: proc { has_live_version }
       end
 
-      # TODO: do we want this even?
-      event :make_draft_changes_live do
-        transitions from: %i[draft_live draft_archived], to: :live
-      end
-
       event :archive_live_form do
-        transitions from: %i[live draft_live], to: :archived, guard: proc { has_live_version }
+        transitions from: :live, to: :archived
+        transitions from: :draft_live, to: :draft_archived
       end
 
       event :create_draft_from_archived_form do

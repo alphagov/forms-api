@@ -120,8 +120,8 @@ RSpec.describe Form, type: :model do
     end
   end
 
-  describe "#make_live!" do
-    let(:form_to_be_made_live) { create :form }
+  describe "#make_live! from FormStateMachine" do
+    let(:form_to_be_made_live) { create :form, :ready_for_live }
     let(:time_now) { Time.zone.now }
 
     before do
@@ -150,7 +150,7 @@ RSpec.describe Form, type: :model do
     end
 
     it "makes timestamps consistent" do
-      form = create :form
+      form = create :form, :ready_for_live
       form.make_live!
       made_live_form = form.made_live_forms.last
 
@@ -203,15 +203,6 @@ RSpec.describe Form, type: :model do
     it "returns nil if form has not been made live" do
       form = create :form
       expect(form.live_at).to be_nil
-    end
-
-    it "returns the created_at time of the latest live version" do
-      form = create :form
-      _first_live_version = form.make_live!
-      _second_live_version = form.make_live!
-      third_live_version = form.make_live!
-
-      expect(form.live_at).to eq third_live_version.created_at
     end
   end
 

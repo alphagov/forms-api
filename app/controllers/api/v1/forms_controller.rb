@@ -26,6 +26,10 @@ class Api::V1::FormsController < ApplicationController
 
   def update
     if form.update(form_params)
+      # TODO: https://trello.com/c/dg9CFPgp/1503-user-triggers-state-change-from-live-to-livewithdraft
+      # Will not be needed when users can trigger this event themselves through the UI
+      form.create_draft_from_live_form! if form.live?
+
       render json: form.to_json, status: :ok
     else
       render json: form.errors.to_json, status: :bad_request

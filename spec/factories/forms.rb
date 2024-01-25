@@ -14,11 +14,13 @@ FactoryBot.define do
     question_section_completed { false }
     declaration_section_completed { false }
     page_order { nil }
+    state { :draft }
 
     trait :new_form do
       submission_email { "" }
       privacy_policy_url { "" }
       pages { [] }
+      state { :draft }
     end
 
     trait :with_pages do

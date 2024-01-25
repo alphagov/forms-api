@@ -1,6 +1,8 @@
 class Form < ApplicationRecord
   has_paper_trail
 
+  include FormStateMachine
+
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 

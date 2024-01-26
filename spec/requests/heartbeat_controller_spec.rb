@@ -3,7 +3,7 @@ require "rails_helper"
 describe HeartbeatController, type: :request do
   describe "GET /ping" do
     it "returns PONG" do
-      get "/ping"
+      get ping_path
 
       expect(response.body).to eq "PONG"
     end
@@ -14,7 +14,7 @@ describe HeartbeatController, type: :request do
       end
 
       it "returns PONG" do
-        get "/ping"
+        get ping_path
 
         expect(response.body).to eq "PONG"
       end

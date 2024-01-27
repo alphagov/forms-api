@@ -315,14 +315,14 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body.to_json).to eq made_live_form.json_form_blob
     end
 
-    it "returns 404 if live form doesn't exist" do
+    it "returns 404 if form has never existed" do
       get live_form_path(1), as: :json
 
       expect(response.status).to eq(404)
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
 
-    it "returns 404 if form has never existed" do
+    it "returns 404 if form is not live " do
       form = create :form
       get live_form_path(form.id), as: :json
 

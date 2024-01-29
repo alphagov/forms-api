@@ -46,7 +46,7 @@ describe Api::V1::ConditionsController, type: :request do
     let(:new_condition) { routing_page.reload.routing_conditions.first }
 
     before do
-      post "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions", params: new_condition_params, as: :json
+      post form_conditions_path(form_id: form.id, page_id: routing_page.id), params: new_condition_params, as: :json
     end
 
     it "returns condition id, status code 201 when new condition created" do
@@ -124,7 +124,7 @@ describe Api::V1::ConditionsController, type: :request do
 
   describe "#destroy" do
     before do
-      delete "/api/v1/forms/#{form.id}/pages/#{routing_page.id}/conditions/#{condition_id}", as: :json
+      delete form_condition_path(form_id: form.id, page_id: routing_page.id, condition_id:), as: :json
     end
 
     it "removes the condition and returns the correct response" do

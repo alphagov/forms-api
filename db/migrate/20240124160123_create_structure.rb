@@ -1,0 +1,85 @@
+class CreateStructure < ActiveRecord::Migration[7.1]
+  def change
+    create_table "access_tokens" do |t|
+      t.string "token_digest"
+      t.string "owner"
+      t.datetime "deactivated_at"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.datetime "last_accessed_at"
+      t.string "description"
+    end
+
+    create_table "conditions" do |t|
+      t.bigint "check_page_id", comment: "The question page this condition looks at to compare answers"
+      t.bigint "routing_page_id", comment: "The question page at which this conditional route takes place"
+      t.bigint "goto_page_id", comment: "The question page which this conditions will skip forwards to"
+      t.string "answer_value"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.boolean "skip_to_end", default: false
+      t.index %w[check_page_id], name: "index_conditions_on_check_page_id"
+      t.index %w[goto_page_id], name: "index_conditions_on_goto_page_id"
+      t.index %w[routing_page_id], name: "index_conditions_on_routing_page_id"
+    end
+
+    create_table "forms" do |t|
+      t.text "name"
+      t.text "submission_email"
+      t.text "privacy_policy_url"
+      t.text "form_slug"
+      t.text "support_email"
+      t.text "support_phone"
+      t.text "support_url"
+      t.text "support_url_text"
+      t.text "declaration_text"
+      t.boolean "question_section_completed", default: false
+      t.boolean "declaration_section_completed", default: false
+      t.integer "page_order", array: true
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.bigint "creator_id"
+      t.bigint "organisation_id"
+      t.text "what_happens_next_markdown"
+      t.string "state"
+    end
+
+    create_table "made_live_forms" do |t|
+      t.bigint "form_id"
+      t.json "json_form_blob"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index %w[form_id], name: "index_made_live_forms_on_form_id"
+    end
+
+    create_table "pages" do |t|
+      t.text "question_text"
+      t.text "hint_text"
+      t.text "answer_type"
+      t.integer "next_page"
+      t.boolean "is_optional"
+      t.jsonb "answer_settings"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.bigint "form_id"
+      t.integer "position"
+      t.text "page_heading"
+      t.text "guidance_markdown"
+      t.index %w[form_id], name: "index_pages_on_form_id"
+    end
+
+    create_table "versions" do |t|
+      t.string "item_type", null: false
+      t.bigint "item_id", null: false
+      t.string "event", null: false
+      t.string "whodunnit"
+      t.jsonb "object"
+      t.datetime "created_at"
+      t.jsonb "object_changes"
+      t.index %w[item_type item_id], name: "index_versions_on_item_type_and_item_id"
+    end
+
+    add_foreign_key "made_live_forms", "forms"
+    add_foreign_key "pages", "forms"
+  end
+end

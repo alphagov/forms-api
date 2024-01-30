@@ -16,6 +16,8 @@ RSpec.describe "forms_admin.rake" do
 
       form.reload
       expect(form.made_live_forms.present?).to be false
+      expect(form.has_live_version).to be false
+      expect(form).to transition_from(:live).to(:draft).on_event(:archive_live_form)
     end
 
     it "does not make a form unlive if it has no live version" do

@@ -15,7 +15,7 @@ RSpec.describe "forms_admin.rake" do
       Rake::Task["forms_admin:make_unlive"].invoke(form.id)
 
       form.reload
-      expect(form.has_live_version).to be false
+      expect(form.made_live_forms.present?).to be false
     end
 
     it "does not make a form unlive if it has no live version" do

@@ -177,15 +177,18 @@ RSpec.describe Form, type: :model do
     let(:live_form) { create(:made_live_form).form }
     let(:new_form) { create(:form) }
 
-    it "returns true if form has not been made live before" do
+    it "returns true if form is draft" do
+      new_form.state = :draft
       expect(new_form.has_draft_version).to eq(true)
     end
 
-    it "returns false if form has been made live and not edited" do
+    it "returns false if form is live and no edits" do
+      live_form.state = :live
       expect(live_form.has_draft_version).to eq(false)
     end
 
-    it "returns true if form has been made live and been edited" do
+    it "returns true if form is live with a draft" do
+      live_form.state = :live_with_draft
       live_form.update!(name: "Form (edited)")
 
       expect(live_form.has_draft_version).to eq(true)

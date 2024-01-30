@@ -17,9 +17,7 @@ class Form < ApplicationRecord
   end
 
   def has_draft_version
-    return true if made_live_forms.blank?
-
-    updated_at > live_at
+    draft? || live_with_draft?
   end
 
   def draft_version
@@ -31,11 +29,11 @@ class Form < ApplicationRecord
   end
 
   def has_live_version
-    made_live_forms.present?
+    live? || live_with_draft?
   end
 
   def live_version
-    raise ActiveRecord::RecordNotFound if made_live_forms.blank?
+    raise ActiveRecord::RecordNotFound unless has_live_version
 
     made_live_forms.last.json_form_blob
   end

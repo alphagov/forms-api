@@ -17,9 +17,7 @@ class Form < ApplicationRecord
   end
 
   def has_draft_version
-    return true if made_live_forms.blank?
-
-    updated_at > live_at
+    draft? || live_with_draft?
   end
 
   def draft_version

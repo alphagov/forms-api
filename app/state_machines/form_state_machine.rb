@@ -38,6 +38,16 @@ module FormStateMachine
       event :create_draft_from_live_form do
         transitions from: :live, to: :live_with_draft
       end
+
+      event :archive_live_form do
+        # TODO: Temporary transition until we do archive state properly so that live forms cant
+        # be accessed but still exist in the database
+        # https://trello.com/c/QXtBIrKc/1342-add-archived-states-to-forms-state-machine
+        transitions from: %i[live live_with_draft], to: :draft
+
+        # transitions from: :live, to: :archived
+        # transitions from: :live_with_draft, to: :archived_with_draft
+      end
     end
   end
 end

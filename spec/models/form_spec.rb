@@ -171,6 +171,13 @@ RSpec.describe Form, type: :model do
       form.make_unlive!
       expect(form.live_at).to be_nil
     end
+
+    it "changes the state from live to draft" do
+      expect(form).to have_state(:live)
+      form.make_unlive!
+      form.reload
+      expect(form).to have_state(:draft)
+    end
   end
 
   describe "#has_draft_version" do

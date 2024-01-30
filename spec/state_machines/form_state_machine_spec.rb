@@ -67,4 +67,20 @@ RSpec.describe FormStateMachine do
       end
     end
   end
+
+  describe ".archive_live_form" do
+    let(:form) { FakeForm.new(state: :live) }
+
+    it "transitions to draft if form is live" do
+      expect(form).to transition_from(:live).to(:draft).on_event(:archive_live_form)
+    end
+
+    context "when form is live_with_draft" do
+      let(:form) { FakeForm.new(state: :live_with_draft) }
+
+      it "transitions to draft if form is live_with_draft" do
+        expect(form).to transition_from(:live_with_draft).to(:draft).on_event(:archive_live_form)
+      end
+    end
+  end
 end

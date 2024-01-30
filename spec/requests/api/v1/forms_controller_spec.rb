@@ -293,12 +293,13 @@ describe Api::V1::FormsController, type: :request do
 
   describe "make unlive" do
     it "makes a live form unlive" do
-      form = (create :made_live_form).form
+      form = create(:made_live_form).form
       post make_unlive_form_path(form), as: :json
 
       expect(response.status).to eq(200)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(live_at: nil)
+      expect(json_body).to include(state: "draft")
     end
   end
 

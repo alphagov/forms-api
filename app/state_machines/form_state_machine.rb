@@ -32,18 +32,12 @@ module FormStateMachine
           made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
         end
 
-        transitions from: %i[draft live_with_draft], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }
+        transitions from: %i[draft live_with_draft], to: :live, guard: proc { ready_for_live }
       end
 
       event :create_draft_from_live_form do
         transitions from: :live, to: :live_with_draft
       end
-    end
-
-  private
-
-    def task_status_service
-      @task_status_service ||= TaskStatusService.new(form: self)
     end
   end
 end

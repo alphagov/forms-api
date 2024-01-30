@@ -1,6 +1,8 @@
 class Form < ApplicationRecord
   has_paper_trail
 
+  include FormStateMachine
+
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
@@ -12,14 +14,6 @@ class Form < ApplicationRecord
 
   def start_page
     pages&.first&.id
-  end
-
-  def make_live!(live_at = nil)
-    live_at ||= Time.zone.now
-    touch(time: live_at)
-
-    form_blob = snapshot(live_at:)
-    made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
   end
 
   def has_draft_version

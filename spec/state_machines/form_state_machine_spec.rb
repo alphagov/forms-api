@@ -35,7 +35,7 @@ RSpec.describe FormStateMachine do
       end
 
       context "when all sections are completed" do
-        it_behaves_like "transition to live state", FakeForm, :draft, true
+        it_behaves_like "transition to live state", FakeForm, :draft
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe FormStateMachine do
       end
 
       context "when all sections are completed" do
-        it_behaves_like "transition to live state", FakeForm, :live_with_draft, true
+        it_behaves_like "transition to live state", FakeForm, :live_with_draft
       end
     end
   end

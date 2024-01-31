@@ -9,11 +9,13 @@ module FormStateMachine
       deleted: "deleted",
       live: "live",
       live_with_draft: "live_with_draft",
+      archived: "archived",
+      archived_with_draft: "archived_with_draft",
     }
 
     aasm column: :state, enum: true do
       state :draft, initial: true
-      state :deleted, :live, :live_with_draft
+      state :deleted, :live, :live_with_draft, :archived, :archived_with_draft
 
       event :delete_form do
         after do
@@ -40,13 +42,8 @@ module FormStateMachine
       end
 
       event :archive_live_form do
-        # TODO: Temporary transition until we do archive state properly so that live forms cant
-        # be accessed but still exist in the database
-        # https://trello.com/c/QXtBIrKc/1342-add-archived-states-to-forms-state-machine
-        transitions from: %i[live live_with_draft], to: :draft
-
-        # transitions from: :live, to: :archived
-        # transitions from: :live_with_draft, to: :archived_with_draft
+        transitions from: :live, to: :archived
+        transitions from: :live_with_draft, to: :archived_with_draft
       end
     end
   end

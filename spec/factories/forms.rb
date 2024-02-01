@@ -13,7 +13,6 @@ FactoryBot.define do
     declaration_text { nil }
     question_section_completed { false }
     declaration_section_completed { false }
-    page_order { nil }
     state { :draft }
 
     trait :new_form do

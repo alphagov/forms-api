@@ -25,6 +25,12 @@ RSpec.describe Page, type: :model do
       expect(page).to be_valid
     end
 
+    it "supports a payment_link answer type" do
+      page.question_text = "Payment link"
+      page.answer_type = "payment_link"
+      expect(page).to be_valid
+    end
+
     describe "#question_text" do
       let(:page) { build :page, question_text: }
       let(:question_text) { "What is your address?" }

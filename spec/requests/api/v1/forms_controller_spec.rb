@@ -403,4 +403,47 @@ describe Api::V1::FormsController, type: :request do
       end
     end
   end
+
+  describe "#archive" do
+    it "when no forms exists for an id, returns 404 an error" do
+      post archive_form_path(123), as: :json
+      expect(response.status).to eq(404)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq(error: "not_found")
+    end
+
+    it "when the from is not in an archivable state" do
+      form = create(:form)
+      post archive_form_path(form), as: :json
+
+      expect(response.status).to eq(403)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq(error: "Form cannot be archived")
+    end
+
+    context "when the form is live" do
+      it "archives the form" do
+        form = create(:made_live_form).form
+        post archive_form_path(form), as: :json
+
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to include(live_at: nil)
+        expect(json_body).to include(state: "archived")
+      end
+    end
+
+    context "when the form is live with draft" do
+      it "archives the form with draft" do
+        form = create(:made_live_form).form
+        form.create_draft_from_live_form!
+        post archive_form_path(form), as: :json
+
+        expect(response.status).to eq(200)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to include(live_at: nil)
+        expect(json_body).to include(state: "archived_with_draft")
+      end
+    end
+  end
 end

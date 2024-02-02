@@ -61,6 +61,13 @@ class Api::V1::FormsController < ApplicationController
     end
   end
 
+  def archive
+    form.archive_live_form!
+    render json: form, status: :ok
+  rescue AASM::InvalidTransition
+    render json: { error: "Form cannot be archived" }, status: :forbidden
+  end
+
   def show_live
     render json: form.live_version, status: :ok
   end

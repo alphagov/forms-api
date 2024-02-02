@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         get "/live", to: "api/v1/forms#show_live"
         post "/make-live", to: "api/v1/forms#make_live"
         post "/make-unlive", to: "api/v1/forms#make_unlive"
+        post "/archive", to: "api/v1/forms#archive"
       end
 
       collection do

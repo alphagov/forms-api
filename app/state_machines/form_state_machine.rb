@@ -42,10 +42,6 @@ module FormStateMachine
       end
 
       event :archive_live_form do
-        after do
-          made_live_forms.destroy_all
-        end
-
         transitions from: :live, to: :archived
         transitions from: :live_with_draft, to: :archived_with_draft
       end

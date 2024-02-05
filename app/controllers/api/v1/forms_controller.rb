@@ -52,15 +52,6 @@ class Api::V1::FormsController < ApplicationController
     render json: form.incomplete_tasks.to_json, status: :forbidden
   end
 
-  def make_unlive
-    if form.has_live_version
-      form.make_unlive!
-      render json: form, status: :ok
-    else
-      render json: { error: "Form has no live version" }, status: :bad_request
-    end
-  end
-
   def archive
     form.archive_live_form!
     render json: form, status: :ok

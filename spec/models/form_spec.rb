@@ -208,11 +208,47 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "#has_been_archived" do
+    let(:live_form) { create(:made_live_form).form }
+    let(:archived_form) { create(:form, state: :archived) }
+    let(:archived_with_draft_form) { create(:form, state: :archived_with_draft) }
+
+    it "returns false if form is live" do
+      expect(live_form.has_been_archived).to eq(false)
+    end
+
+    it "returns true if form has been archived" do
+      expect(archived_form.has_been_archived).to eq(true)
+    end
+
+    it "returns true if form has been archived with draft" do
+      expect(archived_with_draft_form.has_been_archived).to eq(true)
+    end
+  end
+
   describe "#live_version" do
     let(:made_live_form) { create :made_live_form }
 
     it "returns json version of the LIVE form and includes pages" do
       expect(made_live_form.form.live_version).to eq(made_live_form.form.snapshot.to_json)
+    end
+  end
+
+  describe "#archived_live_version" do
+    context "when the form is not archived" do
+      let(:made_live_form) { create :made_live_form }
+
+      it "returns a record not found error" do
+        expect { made_live_form.form.archived_live_version }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when the form is archived" do
+      let(:archived_live_form) { create :made_live_form, :archived }
+
+      it "returns json version of the last live form" do
+        expect(archived_live_form.form.archived_live_version).to eq(archived_live_form.form.snapshot.to_json)
+      end
     end
   end
 

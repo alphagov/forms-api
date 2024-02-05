@@ -202,7 +202,6 @@ describe Api::V1::FormsController, type: :request do
         declaration_text: nil,
         question_section_completed: false,
         declaration_section_completed: false,
-        page_order: nil,
         created_at: form1.created_at.as_json,
         updated_at: form1.updated_at.as_json,
         has_routing_errors: false,

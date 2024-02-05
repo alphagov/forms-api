@@ -10,12 +10,12 @@ module FormStateMachine
       live: "live",
       draft_live: "draft_live",
       archived: "archived",
-      draft_archived: "draft_archived",
+      archived_with_draft: "archived_with_draft",
     }
 
     aasm column: :state, enum: true do
       state :draft, initial: true
-      state :deleted, :live, :draft_live, :archived, :draft_archived
+      state :deleted, :live, :draft_live, :archived, :archived_with_draft
 
       event :delete_form do
         after do
@@ -34,7 +34,7 @@ module FormStateMachine
           made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
         end
 
-        transitions from: %i[draft draft_live archived draft_archived], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }
+        transitions from: %i[draft draft_live archived archived_with_draft], to: :live, guard: proc { task_status_service.mandatory_tasks_completed? }
       end
 
       event :draft_new_live_form do
@@ -43,11 +43,11 @@ module FormStateMachine
 
       event :archive_live_form do
         transitions from: :live, to: :archived
-        transitions from: :draft_live, to: :draft_archived
+        transitions from: :draft_live, to: :archived_with_draft
       end
 
       event :create_draft_from_archived_form do
-        transitions from: :archived, to: :draft_archived
+        transitions from: :archived, to: :archived_with_draft
       end
     end
 

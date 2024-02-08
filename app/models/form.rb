@@ -17,7 +17,7 @@ class Form < ApplicationRecord
   end
 
   def has_draft_version
-    draft? || live_with_draft?
+    draft? || live_with_draft? || archived_with_draft?
   end
 
   def draft_version

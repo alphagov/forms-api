@@ -186,6 +186,12 @@ RSpec.describe Form, type: :model do
 
       expect(live_form.has_draft_version).to eq(true)
     end
+
+    it "returns true if form is archived with a draft" do
+      live_form.state = :archived_with_draft
+
+      expect(live_form.has_draft_version).to eq(true)
+    end
   end
 
   describe "#live_at" do

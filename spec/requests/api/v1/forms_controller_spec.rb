@@ -209,6 +209,7 @@ describe Api::V1::FormsController, type: :request do
         ready_for_live: false,
         task_statuses: { declaration_status: "not_started", make_live_status: "cannot_start", name_status: "completed", pages_status: "not_started", privacy_policy_status: "not_started", support_contact_details_status: "not_started", what_happens_next_status: "not_started" },
         state: "draft",
+        payment_url: nil,
       )
     end
   end

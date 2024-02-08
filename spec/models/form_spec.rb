@@ -282,6 +282,7 @@ RSpec.describe Form, type: :model do
         "declaration_section_completed",
         "pages",
         "what_happens_next_markdown",
+        "payment_url",
       )
     end
   end

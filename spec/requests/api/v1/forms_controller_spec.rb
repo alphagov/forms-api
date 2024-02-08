@@ -40,14 +40,14 @@ describe Api::V1::FormsController, type: :request do
   describe "#index" do
     it "when no forms exist for an organisation, returns 200 and an empty json array" do
       get(forms_path, params: { organisation_id: 3 }, headers:)
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq([])
     end
 
     it "when not given an organisation, returns 200 forms and forms for all orgs." do
       get(forms_path, headers:)
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.length).to eq 5
     end
@@ -88,7 +88,7 @@ describe Api::V1::FormsController, type: :request do
     describe "ordering of forms" do
       it "returns a list of forms sorted in alphabetical order" do
         get(forms_path, params: { organisation_id: 1 }, headers:)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body.pluck(:name)).to eq(gds_forms.sort_by(&:name).pluck(:name))
       end
@@ -126,7 +126,7 @@ describe Api::V1::FormsController, type: :request do
       let(:new_form_params) { {} }
 
       it "returns a status code 400 and validation messages" do
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(:bad_request)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq({ error: "param is missing or the value is empty: form" })
       end
@@ -153,7 +153,7 @@ describe Api::V1::FormsController, type: :request do
       let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
 
       it "does not use the provided created_at or updated_at values" do
-        expect(response.status).to eq(201)
+        expect(response).to have_http_status(:created)
         expect(created_form[:created_at]).to eq(Time.current)
         expect(created_form[:updated_at]).to eq(Time.current)
       end
@@ -163,7 +163,7 @@ describe Api::V1::FormsController, type: :request do
   describe "#show" do
     it "when no forms exists for an id, returns 404 and an empty json array" do
       get form_path(id: 987), as: :json
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
     end
@@ -171,7 +171,7 @@ describe Api::V1::FormsController, type: :request do
     # This test is for documenting Grape API only
     it "when given an invalid id, returns 500 and an empty json array" do
       get form_path(id: "invalid_id"), as: :json
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
     end
@@ -179,7 +179,7 @@ describe Api::V1::FormsController, type: :request do
     it "when given an existing id, returns 200 and form data" do
       form1 = Form.create!(name: "test form 1", organisation_id: 1, creator_id: 123)
       get form_path(form1), as: :json
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
       expect(json_body).to match(
@@ -216,7 +216,7 @@ describe Api::V1::FormsController, type: :request do
   describe "#update" do
     it "when no forms exists for an id, returns 404 an error" do
       put form_path(id: 999), as: :json
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
     end
@@ -244,7 +244,7 @@ describe Api::V1::FormsController, type: :request do
   describe "#destroy" do
     it "when no forms exists for an id, returns 404 an error" do
       delete form_path(123), as: :json
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to eq(error: "not_found")
     end
@@ -275,7 +275,7 @@ describe Api::V1::FormsController, type: :request do
       it "doesn't make the form live" do
         form_to_be_made_live = create(:form, :new_form)
         post make_live_form_path(form_to_be_made_live), as: :json
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(:forbidden)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to eq(%w[missing_pages missing_what_happens_next missing_privacy_policy_url missing_contact_details])
       end
@@ -284,21 +284,9 @@ describe Api::V1::FormsController, type: :request do
     it "when given a form, sets live_at to current time" do
       form_to_be_made_live = create(:form, :ready_for_live)
       post make_live_form_path(form_to_be_made_live), as: :json
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(live_at: Time.zone.now)
-    end
-  end
-
-  describe "make unlive" do
-    it "makes a live form unlive" do
-      form = create(:made_live_form).form
-      post make_unlive_form_path(form), as: :json
-
-      expect(response.status).to eq(200)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to include(live_at: nil)
-      expect(json_body).to include(state: "draft")
     end
   end
 
@@ -309,7 +297,7 @@ describe Api::V1::FormsController, type: :request do
 
       get live_form_path(made_live_form.form), as: :json
 
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
       expect(json_body.to_json).to eq made_live_form.json_form_blob
@@ -318,7 +306,7 @@ describe Api::V1::FormsController, type: :request do
     it "returns 404 if form has never existed" do
       get live_form_path(1), as: :json
 
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
 
@@ -326,7 +314,7 @@ describe Api::V1::FormsController, type: :request do
       form = create :form
       get live_form_path(form.id), as: :json
 
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
   end
@@ -337,7 +325,7 @@ describe Api::V1::FormsController, type: :request do
 
       get draft_form_path(draft_form), as: :json
 
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
       expect(json_body.to_json).to eq draft_form.snapshot.to_json
@@ -346,7 +334,7 @@ describe Api::V1::FormsController, type: :request do
     it "returns 404 if draft form doesn't exist" do
       get draft_form_path(1), as: :json
 
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(:not_found)
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
   end
@@ -401,6 +389,68 @@ describe Api::V1::FormsController, type: :request do
       it "returns bad request if organisation ID is missing" do
         expect(response).to have_http_status(:bad_request)
       end
+    end
+  end
+
+  describe "#archive" do
+    it "when no forms exists for an id, returns 404 an error" do
+      post archive_form_path(123), as: :json
+      expect(response).to have_http_status(:not_found)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq(error: "not_found")
+    end
+
+    it "when the from is not in an archivable state" do
+      form = create(:form)
+      post archive_form_path(form), as: :json
+
+      expect(response).to have_http_status(:forbidden)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+      expect(json_body).to eq(error: "Form cannot be archived")
+    end
+
+    context "when the form is live" do
+      it "archives the form" do
+        form = create(:made_live_form).form
+        post archive_form_path(form), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to include(state: "archived")
+      end
+    end
+
+    context "when the form is live with draft" do
+      it "archives the form with draft" do
+        form = create(:made_live_form).form
+        form.create_draft_from_live_form!
+        post archive_form_path(form), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to include(state: "archived_with_draft")
+      end
+    end
+  end
+
+  describe "#show_archived" do
+    it "returns the last made live version" do
+      made_live_form = create :made_live_form
+      made_live_form.form.archive_live_form!
+
+      get archived_form_path(made_live_form.form), as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to eq("application/json")
+
+      expect(json_body.to_json).to eq made_live_form.json_form_blob
+    end
+
+    it "returns 404 if form has never existed" do
+      get archived_form_path(1), as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(response.headers["Content-Type"]).to eq("application/json")
     end
   end
 end

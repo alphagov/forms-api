@@ -32,8 +32,18 @@ class Form < ApplicationRecord
     live? || live_with_draft?
   end
 
+  def has_been_archived
+    archived? || archived_with_draft?
+  end
+
   def live_version
     raise ActiveRecord::RecordNotFound unless has_live_version
+
+    made_live_forms.last.json_form_blob
+  end
+
+  def archived_live_version
+    raise ActiveRecord::RecordNotFound unless has_been_archived
 
     made_live_forms.last.json_form_blob
   end
@@ -79,11 +89,6 @@ class Form < ApplicationRecord
   delegate :incomplete_tasks, to: :task_status_service
 
   delegate :task_statuses, to: :task_status_service
-
-  def make_unlive!
-    archive_live_form!
-    made_live_forms.destroy_all
-  end
 
 private
 

@@ -52,13 +52,11 @@ class Api::V1::FormsController < ApplicationController
     render json: form.incomplete_tasks.to_json, status: :forbidden
   end
 
-  def make_unlive
-    if form.has_live_version
-      form.make_unlive!
-      render json: form, status: :ok
-    else
-      render json: { error: "Form has no live version" }, status: :bad_request
-    end
+  def archive
+    form.archive_live_form!
+    render json: form, status: :ok
+  rescue AASM::InvalidTransition
+    render json: { error: "Form cannot be archived" }, status: :forbidden
   end
 
   def show_live
@@ -67,6 +65,10 @@ class Api::V1::FormsController < ApplicationController
 
   def show_draft
     render json: form.draft_version, status: :ok
+  end
+
+  def show_archived
+    render json: form.archived_live_version, status: :ok
   end
 
   def update_organisation_for_creator

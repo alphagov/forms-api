@@ -15,8 +15,9 @@ Rails.application.routes.draw do
       member do
         get "/draft", to: "api/v1/forms#show_draft"
         get "/live", to: "api/v1/forms#show_live"
+        get "/archived", to: "api/v1/forms#show_archived"
         post "/make-live", to: "api/v1/forms#make_live"
-        post "/make-unlive", to: "api/v1/forms#make_unlive"
+        post "/archive", to: "api/v1/forms#archive"
       end
 
       collection do

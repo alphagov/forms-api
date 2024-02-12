@@ -61,6 +61,27 @@ RSpec.describe Form, type: :model do
           expect(form).to be_valid
         end
       end
+
+      context "when the payment url is not a url" do
+        it "returns invalid" do
+          form.payment_url = "not a url"
+          expect(form).to be_invalid
+        end
+      end
+
+      context "when the payment url is a url" do
+        it "returns valid" do
+          form.payment_url = "https://example.com/"
+          expect(form).to be_valid
+        end
+      end
+
+      context "when there is no payment url" do
+        it "returns valid" do
+          form.payment_url = nil
+          expect(form).to be_valid
+        end
+      end
     end
   end
 

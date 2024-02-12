@@ -7,6 +7,7 @@ class Form < ApplicationRecord
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
   validates :name, presence: true
+  validates :payment_url, url: true, allow_blank: true
   validate :marking_complete_with_errors
 
   scope :filter_by_organisation_id, ->(organisation_id) { where organisation_id: }

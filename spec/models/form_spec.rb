@@ -398,6 +398,7 @@ RSpec.describe Form, type: :model do
         pages_status: :completed,
         declaration_status: :completed,
         what_happens_next_status: :completed,
+        payment_link_status: :optional,
         privacy_policy_status: :completed,
         support_contact_details_status: :completed,
         make_live_status: :completed,

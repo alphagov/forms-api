@@ -18,6 +18,7 @@ RUN adduser -D ruby
 
 USER ruby
 
+COPY --chown=ruby:ruby .ruby-version ./
 COPY --chown=ruby:ruby Gemfile* ./
 
 ARG BUNDLE_WITHOUT=development:test

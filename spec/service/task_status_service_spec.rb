@@ -94,6 +94,24 @@ describe TaskStatusService do
       end
     end
 
+    describe "payment link status" do
+      context "with a new form" do
+        let(:form) { build(:form, :new_form) }
+
+        it "returns the correct default value" do
+          expect(task_status_service.task_statuses[:payment_link_status]).to eq :optional
+        end
+      end
+
+      context "with a form with a payment link" do
+        let(:form) { build(:form, :new_form, payment_url: Faker::Internet.url(host: "gov.uk")) }
+
+        it "returns the completed status" do
+          expect(task_status_service.task_statuses[:payment_link_status]).to eq :completed
+        end
+      end
+    end
+
     describe "privacy policy status" do
       context "with a new form" do
         let(:form) { build(:form, :new_form) }
@@ -202,6 +220,7 @@ describe TaskStatusService do
         pages_status: :completed,
         declaration_status: :completed,
         what_happens_next_status: :completed,
+        payment_link_status: :optional,
         privacy_policy_status: :completed,
         support_contact_details_status: :completed,
         make_live_status: :completed,

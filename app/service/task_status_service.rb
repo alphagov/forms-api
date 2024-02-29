@@ -20,6 +20,7 @@ class TaskStatusService
       pages_status:,
       declaration_status:,
       what_happens_next_status:,
+      payment_link_status:,
       privacy_policy_status:,
       support_contact_details_status:,
       make_live_status:,
@@ -58,6 +59,12 @@ private
     else
       :not_started
     end
+  end
+
+  def payment_link_status
+    return :completed if @form.payment_url.present?
+
+    :optional
   end
 
   def privacy_policy_status

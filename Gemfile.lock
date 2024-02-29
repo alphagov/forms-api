@@ -212,6 +212,7 @@ GEM
     pg (1.5.5)
     psych (5.1.2)
       stringio
+    public_suffix (5.0.4)
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
@@ -337,6 +338,9 @@ GEM
     tzinfo-data (1.2024.1)
       tzinfo (>= 1.0.0)
     unicode-display_width (2.5.0)
+    validate_url (1.0.15)
+      activemodel (>= 3.0.0)
+      public_suffix
     webrick (1.8.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
@@ -377,6 +381,7 @@ DEPENDENCIES
   simplecov
   tzinfo
   tzinfo-data
+  validate_url
 
 RUBY VERSION
    ruby 3.2.2p53

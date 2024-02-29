@@ -61,6 +61,27 @@ RSpec.describe Form, type: :model do
           expect(form).to be_valid
         end
       end
+
+      context "when the payment url is not a url" do
+        it "returns invalid" do
+          form.payment_url = "not a url"
+          expect(form).to be_invalid
+        end
+      end
+
+      context "when the payment url is a url" do
+        it "returns valid" do
+          form.payment_url = "https://example.com/"
+          expect(form).to be_valid
+        end
+      end
+
+      context "when there is no payment url" do
+        it "returns valid" do
+          form.payment_url = nil
+          expect(form).to be_valid
+        end
+      end
     end
   end
 
@@ -282,6 +303,7 @@ RSpec.describe Form, type: :model do
         "declaration_section_completed",
         "pages",
         "what_happens_next_markdown",
+        "payment_url",
       )
     end
   end
@@ -376,6 +398,7 @@ RSpec.describe Form, type: :model do
         pages_status: :completed,
         declaration_status: :completed,
         what_happens_next_status: :completed,
+        payment_link_status: :optional,
         privacy_policy_status: :completed,
         support_contact_details_status: :completed,
         make_live_status: :completed,

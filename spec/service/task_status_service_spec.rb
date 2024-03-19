@@ -176,7 +176,7 @@ describe TaskStatusService do
       context "with an archived form" do
         let(:form) { create(:form, :archived) }
 
-        it "returns the completed status" do
+        it "returns the `cannot start` status" do
           expect(task_status_service.task_statuses[:make_live_status]).to eq :cannot_start
         end
       end

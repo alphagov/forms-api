@@ -88,6 +88,6 @@ private
       return mandatory_tasks_completed? ? :not_started : :cannot_start
     end
 
-    :completed if @form.has_live_version
+    :completed
   end
 end

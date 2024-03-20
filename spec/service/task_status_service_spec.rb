@@ -165,8 +165,32 @@ describe TaskStatusService do
         end
       end
 
+      context "with a live form with a draft and all tasks complete" do
+        let(:form) { build(:form, :ready_for_live, state: :live_with_draft) }
+
+        it "returns the not started status" do
+          expect(task_status_service.task_statuses[:make_live_status]).to eq :not_started
+        end
+      end
+
+      context "with an archived form with a draft and all tasks complete" do
+        let(:form) { build(:form, :ready_for_live, state: :archived_with_draft) }
+
+        it "returns the not started status" do
+          expect(task_status_service.task_statuses[:make_live_status]).to eq :not_started
+        end
+      end
+
       context "with a live form" do
         let(:form) { create(:form, :live) }
+
+        it "returns the completed status" do
+          expect(task_status_service.task_statuses[:make_live_status]).to eq :completed
+        end
+      end
+
+      context "with an archived form" do
+        let(:form) { build(:form, state: :archived) }
 
         it "returns the completed status" do
           expect(task_status_service.task_statuses[:make_live_status]).to eq :completed

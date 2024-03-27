@@ -50,6 +50,30 @@ RSpec.describe FormStateMachine do
         it_behaves_like "transition to live state", FakeForm, :live_with_draft
       end
     end
+
+    context "when form is archived" do
+      let(:form) { FakeForm.new(state: :archived) }
+
+      it "does not transition to live state by default" do
+        expect(form).not_to transition_from(:archived).to(:live).on_event(:make_live)
+      end
+
+      context "when all sections are completed" do
+        it_behaves_like "transition to live state", FakeForm, :archived
+      end
+    end
+
+    context "when form is archived_with_draft" do
+      let(:form) { FakeForm.new(state: :archived_with_draft) }
+
+      it "does not transition to live state by default" do
+        expect(form).not_to transition_from(:archived_with_draft).to(:live).on_event(:make_live)
+      end
+
+      context "when all sections are completed" do
+        it_behaves_like "transition to live state", FakeForm, :archived_with_draft
+      end
+    end
   end
 
   describe ".create_draft_from_live_form" do

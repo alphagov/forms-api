@@ -34,7 +34,7 @@ module FormStateMachine
           made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
         end
 
-        transitions from: %i[draft live_with_draft], to: :live, guard: proc { ready_for_live }
+        transitions from: %i[draft live_with_draft archived archived_with_draft], to: :live, guard: proc { ready_for_live }
       end
 
       event :create_draft_from_live_form do

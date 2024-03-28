@@ -215,6 +215,8 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#update" do
+    let(:form) { create :form }
+
     it "when no forms exists for an id, returns 404 an error" do
       put form_path(id: 999), as: :json
       expect(response).to have_http_status(:not_found)
@@ -223,22 +225,37 @@ describe Api::V1::FormsController, type: :request do
     end
 
     it "when given an valid id and params, updates DB and returns 200" do
-      form1 = create :form
-      put form_path(form1), params: { submission_email: "test@example.gov.uk" }, as: :json
+      put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(submission_email: "test@example.gov.uk")
-      expect(form1.reload.submission_email).to eq("test@example.gov.uk")
+      expect(form.reload.submission_email).to eq("test@example.gov.uk")
     end
 
     it "ignores created_at" do
-      form1 = create :form
-      expect { put form_path(form1), params: { created_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form1.reload.created_at })
+      expect { put form_path(form), params: { created_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form.reload.created_at })
     end
 
     it "ignores updated_at" do
-      form1 = create :form
-      expect { put form_path(form1), params: { updated_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form1.reload.updated_at })
+      expect { put form_path(form), params: { updated_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form.reload.updated_at })
+    end
+
+    context "when form is live" do
+      let(:form) { create(:form, :live) }
+
+      it "updates form state to live_with_draft" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+        expect(form.reload.state).to eq("live_with_draft")
+      end
+    end
+
+    context "when form is archived" do
+      let(:form) { create(:form, :archived) }
+
+      it "updates form state to archived_with_draft" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+        expect(form.reload.state).to eq("archived_with_draft")
+      end
     end
   end
 

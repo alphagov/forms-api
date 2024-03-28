@@ -85,9 +85,11 @@ private
 
   def make_live_status
     if @form.has_draft_version
-      return mandatory_tasks_completed? ? :not_started : :cannot_start
+      mandatory_tasks_completed? ? :not_started : :cannot_start
+    elsif @form.has_been_archived
+      :not_started
+    elsif @form.has_live_version
+      :completed
     end
-
-    :completed if @form.has_live_version
   end
 end

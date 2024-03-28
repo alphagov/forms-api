@@ -33,6 +33,7 @@ class Page < ApplicationRecord
     # TODO: https://trello.com/c/dg9CFPgp/1503-user-triggers-state-change-from-live-to-livewithdraft
     # Will not be needed when users can trigger this event themselves through the UI
     form.create_draft_from_live_form! if form.live?
+    form.create_draft_from_archived_form! if form.archived?
 
     form.update!(question_section_completed: false)
     check_conditions.destroy_all if answer_type_changed_from_selection

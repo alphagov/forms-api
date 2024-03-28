@@ -203,6 +203,26 @@ RSpec.describe Page, type: :model do
       expect(form.question_section_completed).to be false
     end
 
+    context "when the form is live" do
+      let(:form) { create(:form, :live) }
+
+      it "updates the form state to live_with_draft" do
+        page.question_text = "Edited question"
+        page.save_and_update_form
+        expect(form.state).to eq("live_with_draft")
+      end
+    end
+
+    context "when the form is archived" do
+      let(:form) { create(:form, :archived) }
+
+      it "updates the form state to archived_with_draft" do
+        page.question_text = "Edited question"
+        page.save_and_update_form
+        expect(form.state).to eq("archived_with_draft")
+      end
+    end
+
     context "when page has routing conditions" do
       let(:routing_conditions) { [(create :condition)] }
       let(:check_conditions) { routing_conditions }

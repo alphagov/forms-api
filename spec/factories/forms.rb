@@ -55,6 +55,11 @@ FactoryBot.define do
       after(:create, &:make_live!)
     end
 
+    trait :archived do
+      live
+      after(:create, &:archive_live_form!)
+    end
+
     trait :with_support do
       support_email { Faker::Internet.email(domain: "example.gov.uk") }
       support_phone { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }

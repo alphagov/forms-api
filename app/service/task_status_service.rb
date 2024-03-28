@@ -88,6 +88,8 @@ private
       return mandatory_tasks_completed? ? :not_started : :cannot_start
     end
 
+    return :cannot_start if @form.has_been_archived
+
     :completed if @form.has_live_version
   end
 end

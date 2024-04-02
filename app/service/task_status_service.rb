@@ -34,31 +34,23 @@ private
   end
 
   def pages_status
-    if @form.question_section_completed && @form.pages.any?
-      :completed
-    elsif @form.pages.any?
-      :in_progress
-    else
-      :not_started
-    end
+    return :completed if @form.question_section_completed && @form.pages.any?
+    return :in_progress if @form.pages.any?
+
+    :not_started
   end
 
   def declaration_status
-    if @form.declaration_section_completed
-      :completed
-    elsif @form.declaration_text.present?
-      :in_progress
-    else
-      :not_started
-    end
+    return :completed if @form.declaration_section_completed
+    return :in_progress if @form.declaration_text.present?
+
+    :not_started
   end
 
   def what_happens_next_status
-    if @form.what_happens_next_markdown.present?
-      :completed
-    else
-      :not_started
-    end
+    return :completed if @form.what_happens_next_markdown.present?
+
+    :not_started
   end
 
   def payment_link_status
@@ -68,28 +60,25 @@ private
   end
 
   def privacy_policy_status
-    if @form.privacy_policy_url.present?
-      :completed
-    else
-      :not_started
-    end
+    return :completed if @form.privacy_policy_url.present?
+
+    :not_started
   end
 
   def support_contact_details_status
-    if @form.support_email.present? || @form.support_phone.present? || (@form.support_url_text.present? && @form.support_url)
-      :completed
-    else
-      :not_started
-    end
+    return :completed if @form.support_email.present? || @form.support_phone.present? || (@form.support_url_text.present? && @form.support_url)
+
+    :not_started
   end
 
   def make_live_status
-    if @form.has_draft_version
-      mandatory_tasks_completed? ? :not_started : :cannot_start
-    elsif @form.has_been_archived
-      :not_started
-    elsif @form.has_live_version
-      :completed
-    end
+    return make_live_status_for_draft if @form.has_draft_version
+    return :not_started if @form.has_been_archived
+
+    :completed if @form.has_live_version
+  end
+
+  def make_live_status_for_draft
+    mandatory_tasks_completed? ? :not_started : :cannot_start
   end
 end

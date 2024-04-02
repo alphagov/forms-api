@@ -92,6 +92,22 @@ RSpec.describe FormStateMachine do
     end
   end
 
+  describe ".create_draft_from_archived_form" do
+    let(:form) { FakeForm.new(state: :archived) }
+
+    it "transitions to archived_with_draft if form is archived" do
+      expect(form).to transition_from(:archived).to(:archived_with_draft).on_event(:create_draft_from_archived_form)
+    end
+
+    context "when form is draft" do
+      let(:form) { FakeForm.new(state: :draft) }
+
+      it "does not transition to live_with_draft" do
+        expect(form).not_to transition_from(:draft).to(:archived_with_draft).on_event(:create_draft_from_archived_form)
+      end
+    end
+  end
+
   describe ".archive_live_form" do
     context "when the form is draft" do
       let(:form) { FakeForm.new(state: :draft) }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_08_134335) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_10_092310) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -71,7 +71,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_08_134335) do
     t.text "hint_text"
     t.text "answer_type"
     t.integer "next_page"
-    t.boolean "is_optional"
+    t.boolean "is_optional", null: false
     t.jsonb "answer_settings"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

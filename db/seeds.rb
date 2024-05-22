@@ -18,10 +18,12 @@ all_question_types_form = Form.create!(
       answer_settings: {
         input_type: "single_line",
       },
+      is_optional: false,
     ),
     Page.create(
       question_text: "Number",
       answer_type: "number",
+      is_optional: false,
     ),
     Page.create(
       question_text: "Address",
@@ -32,10 +34,12 @@ all_question_types_form = Form.create!(
           uk_address: true,
         },
       },
+      is_optional: false,
     ),
     Page.create(
       question_text: "Email address",
       answer_type: "email",
+      is_optional: false,
     ),
     Page.create(
       question_text: "Todays Date",
@@ -43,14 +47,17 @@ all_question_types_form = Form.create!(
       answer_settings: {
         input_type: "other_date",
       },
+      is_optional: false,
     ),
     Page.create(
       question_text: "National Insurance number",
       answer_type: "national_insurance_number",
+      is_optional: false,
     ),
     Page.create(
       question_text: "Phone number",
       answer_type: "phone_number",
+      is_optional: false,
     ),
     Page.create(
       question_text: "Selection from a list of options",

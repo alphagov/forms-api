@@ -92,3 +92,24 @@ all_question_types_form = Form.create!(
   what_happens_next_markdown: "Test",
 )
 all_question_types_form.make_live!
+
+Question.new(question_text: "first question").save
+Question.new(question_text: "second question").save
+Question.new(question_text: "third question").save
+Question.new(question_text: "fourth question").save
+Question.new(question_text: "fifth question").save
+QuestionSet.new(name: "first set").save
+
+Step.create(positionable: Question.find(1), position: 1)
+Step.create(positionable: QuestionSet.find(1), position: 2)
+Step.create(positionable: Question.find(2), position: 1, parent_question_set: QuestionSet.find(1))
+Step.create(positionable: Question.find(3), position: 2, parent_question_set: QuestionSet.find(1))
+Step.create(positionable: Question.find(4), position: 3, parent_question_set: QuestionSet.find(1))
+Step.create(positionable: Question.find(5), position: 3)
+
+Step.find(1).update(next_step: Step.find(2))
+Step.find(2).update(next_step: Step.find(6))
+Step.find(3).update(next_step: Step.find(4))
+Step.find(4).update(next_step: Step.find(5))
+
+# Step.all.as_json(include: :positionable)

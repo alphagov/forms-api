@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_18_152147) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_18_175604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_152147) do
     t.bigint "parent_question_set_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "form_id"
+    t.index ["form_id"], name: "index_steps_on_form_id"
     t.index ["next_step_id"], name: "index_steps_on_next_step_id"
     t.index ["parent_question_set_id"], name: "index_steps_on_parent_question_set_id"
     t.index ["positionable_type", "positionable_id"], name: "index_steps_on_positionable"
@@ -120,6 +122,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_152147) do
 
   add_foreign_key "made_live_forms", "forms"
   add_foreign_key "pages", "forms"
+  add_foreign_key "steps", "forms"
   add_foreign_key "steps", "question_sets", column: "parent_question_set_id"
   add_foreign_key "steps", "steps", column: "next_step_id"
 end

@@ -93,23 +93,26 @@ all_question_types_form = Form.create!(
 )
 all_question_types_form.make_live!
 
-Question.new(question_text: "first question").save
-Question.new(question_text: "second question").save
-Question.new(question_text: "third question").save
-Question.new(question_text: "fourth question").save
-Question.new(question_text: "fifth question").save
-QuestionSet.new(name: "first set").save
+root_question_1 = Question.create(question_text: "What is your name?")
+question_set = QuestionSet.create(name: "What addresses have you lived at in the past 3 years?")
+root_question_2 = Question.create(question_text: "What is your email address?")
 
-Step.create(positionable: Question.find(1), position: 1)
-Step.create(positionable: QuestionSet.find(1), position: 2)
-Step.create(positionable: Question.find(2), position: 1, parent_question_set: QuestionSet.find(1))
-Step.create(positionable: Question.find(3), position: 2, parent_question_set: QuestionSet.find(1))
-Step.create(positionable: Question.find(4), position: 3, parent_question_set: QuestionSet.find(1))
-Step.create(positionable: Question.find(5), position: 3)
+step1 = all_question_types_form.steps.create(positionable: root_question_1, position: 1)
+step2 = all_question_types_form.steps.create(positionable: question_set, position: 2)
+step3 = all_question_types_form.steps.create(positionable: root_question_2, position: 3)
 
-Step.find(1).update(next_step: Step.find(2))
-Step.find(2).update(next_step: Step.find(6))
-Step.find(3).update(next_step: Step.find(4))
-Step.find(4).update(next_step: Step.find(5))
+step1.update(next_step: step2)
+step2.update(next_step: step3)
+
+set_question_1 = Question.create(question_text: "What was your address?")
+set_question_2 = Question.create(question_text: "What date did you start living at this address?")
+set_question_3 = Question.create(question_text: "What date did you stop living at this address?")
+
+set_step1 = question_set.steps.create(positionable: set_question_1, position: 1)
+set_step2 = question_set.steps.create(positionable: set_question_2, position: 2)
+set_step3 = question_set.steps.create(positionable: set_question_3, position: 3)
+
+set_step1.update(next_step: set_step2)
+set_step2.update(next_step: set_step3)
 
 # Step.all.as_json(include: :positionable)

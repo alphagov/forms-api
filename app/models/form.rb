@@ -5,6 +5,7 @@ class Form < ApplicationRecord
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
+  has_many :steps, -> { order(position: :asc) }, dependent: :destroy
 
   validates :name, presence: true
   validates :payment_url, url: true, allow_blank: true

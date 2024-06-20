@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_18_175604) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_20_114759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,6 +103,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_175604) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "form_id"
+    t.integer "min_answers"
+    t.integer "max_answers"
     t.index ["form_id"], name: "index_steps_on_form_id"
     t.index ["next_step_id"], name: "index_steps_on_next_step_id"
     t.index ["parent_question_set_id"], name: "index_steps_on_parent_question_set_id"

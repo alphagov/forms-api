@@ -95,11 +95,11 @@ all_question_types_form.make_live!
 
 root_question_1 = Question.create!(question_text: "What is your name?")
 question_set = QuestionSet.create!(name: "What addresses have you lived at in the past 3 years?")
-root_question_2 = Question.create!(question_text: "What is your email address?")
+multiple_answers_question = Question.create!(question_text: "What countries have you travelled to in the past year?")
 
 step1 = all_question_types_form.steps.create!(positionable: root_question_1, position: 1)
-step2 = all_question_types_form.steps.create!(positionable: question_set, position: 2)
-step3 = all_question_types_form.steps.create!(positionable: root_question_2, position: 3)
+step2 = all_question_types_form.steps.create!(positionable: question_set, position: 2, min_answers: 1, max_answers:5)
+step3 = all_question_types_form.steps.create!(positionable: multiple_answers_question, position: 3, min_answers:1, max_answers:10)
 
 step1.update!(next_step: step2)
 step2.update!(next_step: step3)

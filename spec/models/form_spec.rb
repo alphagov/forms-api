@@ -8,7 +8,7 @@ RSpec.describe Form, type: :model do
     expect(form).to be_valid
   end
 
-  describe "versioning", versioning: true do
+  describe "versioning", :versioning do
     it "enables paper trail" do
       expect(form).to be_versioned
     end

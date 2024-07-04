@@ -12,7 +12,7 @@ RSpec.describe Page, type: :model do
     expect(page).to be_valid
   end
 
-  describe "versioning", versioning: true do
+  describe "versioning", :versioning do
     it "enables paper trail" do
       expect(page).to be_versioned
     end

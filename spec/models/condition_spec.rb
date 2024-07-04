@@ -133,7 +133,7 @@ RSpec.describe Condition, type: :model do
         let(:is_optional) { true }
 
         it "returns nil" do
-          expect(condition.warning_answer_doesnt_exist).to eq(nil)
+          expect(condition.warning_answer_doesnt_exist).to be_nil
         end
       end
 

@@ -8,7 +8,7 @@ RSpec.describe Condition, type: :model do
     expect(condition).to be_valid
   end
 
-  describe "versioning", versioning: true do
+  describe "versioning", :versioning do
     it "enables paper trail" do
       expect(condition).to be_versioned
     end
@@ -83,7 +83,7 @@ RSpec.describe Condition, type: :model do
     context "when goto page has been deleted" do
       let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: 999 }
 
-      it "returns object with error short name code " do
+      it "returns object with error short name code" do
         expect(condition.warning_goto_page_doesnt_exist).to eq({ name: "goto_page_doesnt_exist" })
       end
     end
@@ -91,7 +91,7 @@ RSpec.describe Condition, type: :model do
     context "when goto page may belong to another form" do
       let(:goto_page) { create :page }
 
-      it "returns object with error short name code " do
+      it "returns object with error short name code" do
         expect(condition.warning_goto_page_doesnt_exist).to eq({ name: "goto_page_doesnt_exist" })
       end
     end
@@ -112,14 +112,14 @@ RSpec.describe Condition, type: :model do
     end
 
     context "when answer has been deleted from page" do
-      it "returns object with error short name code " do
+      it "returns object with error short name code" do
         condition.check_page.answer_settings["selection_options"].shift
         expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
       end
     end
 
     context "when answer on the page has been updated" do
-      it "returns object with error short name code " do
+      it "returns object with error short name code" do
         condition.check_page.answer_settings["selection_options"].first["name"] = "Option 1.2"
         expect(condition.warning_answer_doesnt_exist).to eq({ name: "answer_value_doesnt_exist" })
       end
@@ -133,7 +133,7 @@ RSpec.describe Condition, type: :model do
         let(:is_optional) { true }
 
         it "returns nil" do
-          expect(condition.warning_answer_doesnt_exist).to eq(nil)
+          expect(condition.warning_answer_doesnt_exist).to be_nil
         end
       end
 

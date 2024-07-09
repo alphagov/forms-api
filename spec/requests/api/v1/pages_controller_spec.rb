@@ -104,11 +104,11 @@ describe Api::V1::PagesController, type: :request do
 
   describe "#show" do
     let(:form) { create :form, :with_pages, pages_count: 2 }
-    let(:page1) { form.pages.first }
-    let(:page2) { form.pages[1] }
+    let(:first_page) { form.pages.first }
+    let(:second_page) { form.pages.second }
 
     let(:form_id) { form.id }
-    let(:page_id) { page1.id }
+    let(:page_id) { first_page.id }
 
     before do
       get form_page_path(form_id, page_id), as: :json
@@ -118,7 +118,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns page, status code 200" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(JSON.parse(page1.to_json).symbolize_keys)
+        expect(json_body).to eq(JSON.parse(first_page.to_json).symbolize_keys)
       end
     end
 
@@ -145,27 +145,27 @@ describe Api::V1::PagesController, type: :request do
 
   describe "#update" do
     let(:form) { create :form, :with_pages, pages_count: 2 }
-    let(:page1) { form.pages.first }
-    let(:page2) { form.pages[1] }
+    let(:first_page) { form.pages.first }
+    let(:second_page) { form.pages.second }
 
     let(:answer_type) { "national_insurance_number" }
     let(:answer_settings) { nil }
     let(:params) { { question_text: "updated page title", answer_type:, answer_settings: } }
 
     before do
-      put form_page_path(form, page1), params:, as: :json
+      put form_page_path(form, first_page), params:, as: :json
     end
 
     it "returns correct response" do
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(**params)
-      expect(page1.reload.question_text).to eq("updated page title")
+      expect(first_page.reload.question_text).to eq("updated page title")
       expect(form.reload.question_section_completed).to be false
     end
 
     it "fields not in the params are cleared" do
-      expect(page1.hint_text).to be_nil
+      expect(first_page.hint_text).to be_nil
     end
 
     [
@@ -188,8 +188,8 @@ describe Api::V1::PagesController, type: :request do
           expect(response).to have_http_status(:ok)
           expect(response.headers["Content-Type"]).to eq("application/json")
           expect(json_body).to include(**params.deep_symbolize_keys)
-          page1.reload
-          expect(page1.answer_settings&.symbolize_keys).to eq(settings)
+          first_page.reload
+          expect(first_page.answer_settings&.symbolize_keys).to eq(settings)
         end
       end
     end
@@ -209,19 +209,19 @@ describe Api::V1::PagesController, type: :request do
         expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(**params.deep_symbolize_keys)
-        page1.reload
-        expect(page1.answer_settings.deep_symbolize_keys).to eq(answer_settings)
+        first_page.reload
+        expect(first_page.answer_settings.deep_symbolize_keys).to eq(answer_settings)
       end
     end
   end
 
   describe "#destroy" do
     let(:form) { create :form, :with_pages, pages_count: 2 }
-    let(:page1) { form.pages.first }
-    let(:page2) { form.pages[1] }
+    let(:first_page) { form.pages.first }
+    let(:second_page) { form.pages.second }
 
     let(:form_id) { form.id }
-    let(:page_id) { page1.id }
+    let(:page_id) { first_page.id }
 
     before do
       delete form_page_path(form_id, page_id), as: :json
@@ -285,7 +285,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "marks a forms question section as incomplete" do
-        expect(form_with_pages.reload.question_section_completed).to eq false
+        expect(form_with_pages.reload.question_section_completed).to be false
       end
     end
 
@@ -304,7 +304,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "does not mark a forms question section as incomplete" do
-        expect(form_with_pages.reload.question_section_completed).to eq true
+        expect(form_with_pages.reload.question_section_completed).to be true
       end
     end
   end
@@ -336,7 +336,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "marks a forms question section as incomplete" do
-        expect(form_with_pages.reload.question_section_completed).to eq false
+        expect(form_with_pages.reload.question_section_completed).to be false
       end
     end
 
@@ -355,7 +355,7 @@ describe Api::V1::PagesController, type: :request do
       end
 
       it "does not mark a forms question section as incomplete" do
-        expect(form_with_pages.reload.question_section_completed).to eq true
+        expect(form_with_pages.reload.question_section_completed).to be true
       end
     end
   end

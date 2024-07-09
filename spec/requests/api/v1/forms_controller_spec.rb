@@ -328,7 +328,7 @@ describe Api::V1::FormsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
     end
 
-    it "returns 404 if form is not live " do
+    it "returns 404 if form is not live" do
       form = create :form
       get live_form_path(form.id), as: :json
 

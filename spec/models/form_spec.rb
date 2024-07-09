@@ -8,7 +8,7 @@ RSpec.describe Form, type: :model do
     expect(form).to be_valid
   end
 
-  describe "versioning", versioning: true do
+  describe "versioning", :versioning do
     it "enables paper trail" do
       expect(form).to be_versioned
     end
@@ -186,32 +186,32 @@ RSpec.describe Form, type: :model do
 
     it "returns true if form is draft" do
       new_form.state = :draft
-      expect(new_form.has_draft_version).to eq(true)
+      expect(new_form.has_draft_version).to be(true)
     end
 
     it "returns false if form is live and no edits" do
       live_form.state = :live
-      expect(live_form.has_draft_version).to eq(false)
+      expect(live_form.has_draft_version).to be(false)
     end
 
     it "returns true if form is live with a draft" do
       live_form.state = :live_with_draft
       live_form.update!(name: "Form (edited)")
 
-      expect(live_form.has_draft_version).to eq(true)
+      expect(live_form.has_draft_version).to be(true)
     end
 
     it "returns true if form has been made live and one of its pages has been edited" do
       live_form.pages[0].question_text = "Edited question"
       live_form.pages[0].save_and_update_form
 
-      expect(live_form.has_draft_version).to eq(true)
+      expect(live_form.has_draft_version).to be(true)
     end
 
     it "returns true if form is archived with a draft" do
       live_form.state = :archived_with_draft
 
-      expect(live_form.has_draft_version).to eq(true)
+      expect(live_form.has_draft_version).to be(true)
     end
   end
 
@@ -227,11 +227,11 @@ RSpec.describe Form, type: :model do
     let(:new_form) { create(:form) }
 
     it "returns false if form has not been made live before" do
-      expect(new_form.has_live_version).to eq(false)
+      expect(new_form.has_live_version).to be(false)
     end
 
     it "returns true if form has been made live" do
-      expect(live_form.has_live_version).to eq(true)
+      expect(live_form.has_live_version).to be(true)
     end
   end
 
@@ -241,15 +241,15 @@ RSpec.describe Form, type: :model do
     let(:archived_with_draft_form) { create(:form, state: :archived_with_draft) }
 
     it "returns false if form is live" do
-      expect(live_form.has_been_archived).to eq(false)
+      expect(live_form.has_been_archived).to be(false)
     end
 
     it "returns true if form has been archived" do
-      expect(archived_form.has_been_archived).to eq(true)
+      expect(archived_form.has_been_archived).to be(true)
     end
 
     it "returns true if form has been archived with draft" do
-      expect(archived_with_draft_form.has_been_archived).to eq(true)
+      expect(archived_with_draft_form.has_been_archived).to be(true)
     end
   end
 
@@ -338,7 +338,7 @@ RSpec.describe Form, type: :model do
       let(:completed_form) { create(:form, :live) }
 
       it "returns true" do
-        expect(completed_form.ready_for_live).to eq true
+        expect(completed_form.ready_for_live).to be true
       end
     end
 
@@ -365,7 +365,7 @@ RSpec.describe Form, type: :model do
       ].each do |scenario|
         it "returns false if #{scenario[:attribute]} is missing" do
           new_form.send("#{scenario[:attribute]}=", scenario[:attribute_value])
-          expect(new_form.ready_for_live).to eq false
+          expect(new_form.ready_for_live).to be false
         end
       end
     end

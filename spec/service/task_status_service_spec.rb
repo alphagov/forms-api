@@ -212,7 +212,7 @@ describe TaskStatusService do
       let(:form) { build(:form, :new_form) }
 
       it "returns false" do
-        expect(task_status_service.mandatory_tasks_completed?).to eq false
+        expect(task_status_service.mandatory_tasks_completed?).to be false
       end
     end
 
@@ -220,7 +220,7 @@ describe TaskStatusService do
       let(:form) { build(:form, :ready_for_live) }
 
       it "returns true" do
-        expect(task_status_service.mandatory_tasks_completed?).to eq true
+        expect(task_status_service.mandatory_tasks_completed?).to be true
       end
     end
   end

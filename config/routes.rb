@@ -42,5 +42,9 @@ Rails.application.routes.draw do
         get "/caller-identity", to: "api/v1/access_tokens#caller_identity", as: :show_details_for
       end
     end
+
+    scope :reports do
+      get "/features", to: "api/v1/reports#features"
+    end
   end
 end

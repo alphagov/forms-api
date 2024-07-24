@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Api::V1::ReportsController, type: :request do
   describe "GET /features" do
     before do
-      create :form, pages: [
+      create :form, payment_url: Faker::Internet.url(host: "gov.uk"), pages: [
         (build :page, answer_type: "text"),
         (build :page, answer_type: "text"),
       ]
@@ -39,6 +39,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
           selection: 1,
           text: 2,
         },
+        payment: 1,
       }.to_json)
     end
 

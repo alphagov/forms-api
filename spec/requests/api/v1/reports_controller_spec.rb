@@ -17,7 +17,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         (build :page, answer_type: "national_insurance_number"),
         (build :page, answer_type: "date"),
         (build :page, answer_type: "number"),
-        (build :page, answer_type: "selection"),
+        (build :page, answer_type: "selection", routing_conditions: [(build :condition)]),
         (build :page, answer_type: "text"),
       ]
 
@@ -40,6 +40,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
           text: 2,
         },
         payment: 1,
+        routing: 1,
       }.to_json)
     end
 

@@ -13,6 +13,7 @@ class Api::V1::ReportsController < ApplicationController
                       selection: number_of_forms_with_answer_type("selection"),
                       text: number_of_forms_with_answer_type("text") },
       payment: number_of_forms_with_payments,
+      routing: number_of_forms_with_routes,
     }
     render json: feature_stats.to_json, status: :ok
   end
@@ -29,5 +30,9 @@ private
 
   def number_of_forms_with_payments
     forms.filter { |form| form.payment_url.present? }.count
+  end
+
+  def number_of_forms_with_routes
+    forms.filter { |form| form.pages.any? { |page| page.routing_conditions.present? } }.count
   end
 end

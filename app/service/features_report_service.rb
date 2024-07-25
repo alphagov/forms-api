@@ -1,7 +1,7 @@
 class FeaturesReportService
   def report
     {
-      total_live_forms: live_forms.count,
+      total_live_forms:,
       live_forms_with_answer_type:,
       live_pages_with_answer_type:,
       live_forms_with_payment:,
@@ -11,35 +11,23 @@ class FeaturesReportService
 
 private
 
-  def live_forms
-    @live_forms ||= Form.all.filter(&:has_live_version)
-  end
-
-  def pages_on_live_forms
-    @pages_on_live_forms ||= live_forms.flat_map(&:pages)
-  end
-
-  def number_of_live_forms_with_answer_type(answer_type)
-    live_forms.filter { |form| form.pages.any? { |page| page.answer_type == answer_type } }.count
+  def total_live_forms
+    Form.where(state: %w[live live_with_draft]).count
   end
 
   def live_forms_with_payment
-    live_forms.filter { |form| form.payment_url.present? }.count
+    Form.where(state: %w[live live_with_draft]).where.not(payment_url: [nil, ""]).count
   end
 
   def live_forms_with_routing
-    live_forms.filter { |form| form.pages.any? { |page| page.routing_conditions.present? } }.count
-  end
-
-  def number_of_live_form_pages_with_answer_type(answer_type)
-    pages_on_live_forms.filter { |page| page.answer_type == answer_type }.count
+    Page.joins(:form).where(forms: { state: %w[live live_with_draft] }).where.associated(:routing_conditions).select("forms.id").distinct.count
   end
 
   def live_forms_with_answer_type
-    Page::ANSWER_TYPES.to_h { |answer_type| [answer_type.to_sym, number_of_live_forms_with_answer_type(answer_type)] }
+    Page.joins(:form).where(forms: { state: %w[live live_with_draft] }).select("forms.id,pages.answer_type").distinct.group(:answer_type).count("forms.id").symbolize_keys
   end
 
   def live_pages_with_answer_type
-    Page::ANSWER_TYPES.to_h { |answer_type| [answer_type.to_sym, number_of_live_form_pages_with_answer_type(answer_type)] }
+    Page.joins(:form).where(forms: { state: %w[live live_with_draft] }).group(:answer_type).count.symbolize_keys
   end
 end

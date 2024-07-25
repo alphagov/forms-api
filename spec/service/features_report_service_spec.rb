@@ -132,27 +132,9 @@ describe FeaturesReportService do
       it "does not count the form in any of the report metrics" do
         response = features_report_service.report
 
-        expect(response[:live_forms_with_answer_type][:name]).to eq 0
-        expect(response[:live_forms_with_answer_type][:organisation_name]).to eq 0
-        expect(response[:live_forms_with_answer_type][:phone_number]).to eq 0
-        expect(response[:live_forms_with_answer_type][:email]).to eq 0
-        expect(response[:live_forms_with_answer_type][:address]).to eq 0
-        expect(response[:live_forms_with_answer_type][:national_insurance_number]).to eq 0
-        expect(response[:live_forms_with_answer_type][:date]).to eq 0
-        expect(response[:live_forms_with_answer_type][:number]).to eq 0
-        expect(response[:live_forms_with_answer_type][:selection]).to eq 0
-        expect(response[:live_forms_with_answer_type][:text]).to eq 0
+        expect(response[:live_forms_with_answer_type]).to eq({})
 
-        expect(response[:live_pages_with_answer_type][:name]).to eq 0
-        expect(response[:live_pages_with_answer_type][:organisation_name]).to eq 0
-        expect(response[:live_pages_with_answer_type][:phone_number]).to eq 0
-        expect(response[:live_pages_with_answer_type][:email]).to eq 0
-        expect(response[:live_pages_with_answer_type][:address]).to eq 0
-        expect(response[:live_pages_with_answer_type][:national_insurance_number]).to eq 0
-        expect(response[:live_pages_with_answer_type][:date]).to eq 0
-        expect(response[:live_pages_with_answer_type][:number]).to eq 0
-        expect(response[:live_pages_with_answer_type][:selection]).to eq 0
-        expect(response[:live_pages_with_answer_type][:text]).to eq 0
+        expect(response[:live_pages_with_answer_type]).to eq({})
 
         expect(response[:live_forms_with_payment]).to eq 0
         expect(response[:live_forms_with_routing]).to eq 0

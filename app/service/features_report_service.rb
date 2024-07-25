@@ -2,26 +2,8 @@ class FeaturesReportService
   def report
     {
       total_live_forms: live_forms.count,
-      live_forms_with_answer_type: { name: number_of_live_forms_with_answer_type("name"),
-                                     organisation_name: number_of_live_forms_with_answer_type("organisation_name"),
-                                     phone_number: number_of_live_forms_with_answer_type("phone_number"),
-                                     email: number_of_live_forms_with_answer_type("email"),
-                                     address: number_of_live_forms_with_answer_type("address"),
-                                     national_insurance_number: number_of_live_forms_with_answer_type("national_insurance_number"),
-                                     date: number_of_live_forms_with_answer_type("date"),
-                                     number: number_of_live_forms_with_answer_type("number"),
-                                     selection: number_of_live_forms_with_answer_type("selection"),
-                                     text: number_of_live_forms_with_answer_type("text") },
-      live_pages_with_answer_type: { name: number_of_live_form_pages_with_answer_type("name"),
-                                     organisation_name: number_of_live_form_pages_with_answer_type("organisation_name"),
-                                     phone_number: number_of_live_form_pages_with_answer_type("phone_number"),
-                                     email: number_of_live_form_pages_with_answer_type("email"),
-                                     address: number_of_live_form_pages_with_answer_type("address"),
-                                     national_insurance_number: number_of_live_form_pages_with_answer_type("national_insurance_number"),
-                                     date: number_of_live_form_pages_with_answer_type("date"),
-                                     number: number_of_live_form_pages_with_answer_type("number"),
-                                     selection: number_of_live_form_pages_with_answer_type("selection"),
-                                     text: number_of_live_form_pages_with_answer_type("text") },
+      live_forms_with_answer_type:,
+      live_pages_with_answer_type:,
       live_forms_with_payment:,
       live_forms_with_routing:,
     }
@@ -51,5 +33,13 @@ private
 
   def number_of_live_form_pages_with_answer_type(answer_type)
     pages_on_live_forms.filter { |page| page.answer_type == answer_type }.count
+  end
+
+  def live_forms_with_answer_type
+    Page::ANSWER_TYPES.to_h { |answer_type| [answer_type.to_sym, number_of_live_forms_with_answer_type(answer_type)] }
+  end
+
+  def live_pages_with_answer_type
+    Page::ANSWER_TYPES.to_h { |answer_type| [answer_type.to_sym, number_of_live_form_pages_with_answer_type(answer_type)] }
   end
 end

@@ -25,7 +25,9 @@ RSpec.describe Api::V1::ReportsController, type: :request do
     end
 
     it "returns the breakdown of form features used" do
-      expect(response.body).to eq({
+      response_hash = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response_hash).to eq({
         total_live_forms: 2,
         live_forms_with_answer_type: {
           name: 1,
@@ -53,7 +55,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         },
         live_forms_with_payment: 1,
         live_forms_with_routing: 1,
-      }.to_json)
+      })
     end
 
     it "returns http success" do

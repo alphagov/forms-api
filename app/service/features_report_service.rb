@@ -12,6 +12,16 @@ class FeaturesReportService
                                      number: number_of_live_forms_with_answer_type("number"),
                                      selection: number_of_live_forms_with_answer_type("selection"),
                                      text: number_of_live_forms_with_answer_type("text") },
+      live_pages_with_answer_type: { name: number_of_live_form_pages_with_answer_type("name"),
+                                     organisation_name: number_of_live_form_pages_with_answer_type("organisation_name"),
+                                     phone_number: number_of_live_form_pages_with_answer_type("phone_number"),
+                                     email: number_of_live_form_pages_with_answer_type("email"),
+                                     address: number_of_live_form_pages_with_answer_type("address"),
+                                     national_insurance_number: number_of_live_form_pages_with_answer_type("national_insurance_number"),
+                                     date: number_of_live_form_pages_with_answer_type("date"),
+                                     number: number_of_live_form_pages_with_answer_type("number"),
+                                     selection: number_of_live_form_pages_with_answer_type("selection"),
+                                     text: number_of_live_form_pages_with_answer_type("text") },
       live_forms_with_payment:,
       live_forms_with_routing:,
     }
@@ -21,6 +31,10 @@ private
 
   def live_forms
     @live_forms ||= Form.all.filter(&:has_live_version)
+  end
+
+  def pages_on_live_forms
+    @pages_on_live_forms ||= live_forms.flat_map(&:pages)
   end
 
   def number_of_live_forms_with_answer_type(answer_type)
@@ -33,5 +47,9 @@ private
 
   def live_forms_with_routing
     live_forms.filter { |form| form.pages.any? { |page| page.routing_conditions.present? } }.count
+  end
+
+  def number_of_live_form_pages_with_answer_type(answer_type)
+    pages_on_live_forms.filter { |page| page.answer_type == answer_type }.count
   end
 end

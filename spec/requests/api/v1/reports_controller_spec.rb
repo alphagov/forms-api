@@ -39,6 +39,18 @@ RSpec.describe Api::V1::ReportsController, type: :request do
           selection: 1,
           text: 2,
         },
+        live_pages_with_answer_type: {
+          name: 1,
+          organisation_name: 1,
+          phone_number: 1,
+          email: 1,
+          address: 1,
+          national_insurance_number: 1,
+          date: 1,
+          number: 1,
+          selection: 1,
+          text: 3,
+        },
         live_forms_with_payment: 1,
         live_forms_with_routing: 1,
       }.to_json)

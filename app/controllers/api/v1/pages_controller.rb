@@ -90,6 +90,7 @@ private
       :answer_type,
       :next_page,
       :is_optional,
+      :is_repeatable,
       *guidance_params,
       answer_setting_params,
     )

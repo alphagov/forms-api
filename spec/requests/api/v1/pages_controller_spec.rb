@@ -73,7 +73,8 @@ describe Api::V1::PagesController, type: :request do
                                                            created_at: "2023-01-01T12:00:00.000Z",
                                                            updated_at: "2023-01-01T12:00:00.000Z",
                                                            page_heading: nil,
-                                                           guidance_markdown: nil).as_json)
+                                                           guidance_markdown: nil,
+                                                           is_repeatable: false).as_json)
     end
 
     context "with params missing required keys" do

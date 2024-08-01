@@ -12,7 +12,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         (build :page, answer_type: "name"),
         (build :page, answer_type: "organisation_name"),
         (build :page, answer_type: "phone_number"),
-        (build :page, answer_type: "email"),
+        (build :page, answer_type: "email", is_repeatable: true),
         (build :page, answer_type: "address"),
         (build :page, answer_type: "national_insurance_number"),
         (build :page, answer_type: "date"),
@@ -55,6 +55,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         },
         live_forms_with_payment: 1,
         live_forms_with_routing: 1,
+        live_forms_with_add_another_answer: 1,
       })
     end
 

@@ -55,13 +55,14 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
+    options[:except] ||= [:external_id]
     options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live incomplete_tasks task_statuses]
     super(options)
   end
 
   def snapshot(**kwargs)
     # override methods so it doesn't include things we don't want
-    as_json(except: :state,
+    as_json(except: %i[state external_id],
             include: {
               pages: {
                 include: {

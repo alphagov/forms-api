@@ -49,11 +49,18 @@ describe FeaturesReportService do
     ]
   end
 
+  let!(:pages_with_add_another_answer) do
+    [
+      (build :page, answer_type: "name", is_repeatable: true),
+    ]
+  end
+
   let(:form_1_pages) { pages_with_all_answer_types }
   let(:form_2_pages) { pages_with_all_answer_types }
   let(:form_3_pages) { pages_with_repeated_answer_type }
   let(:form_4_pages) { pages_with_all_answer_types }
   let(:form_5_pages) { pages_with_repeated_answer_type }
+  let(:form_6_pages) { pages_with_with_add_another_answer }
 
   let(:payment_url) { nil }
 
@@ -123,6 +130,16 @@ describe FeaturesReportService do
           response = features_report_service.report
 
           expect(response[:live_forms_with_routing]).to eq 1
+        end
+      end
+
+      context "when a live form uses the add another answer feature" do
+        let(:form_5_pages) { pages_with_add_another_answer }
+
+        it "counts the form in the add another answer part of the report" do
+          response = features_report_service.report
+
+          expect(response[:live_forms_with_add_another_answer]).to eq 1
         end
       end
     end

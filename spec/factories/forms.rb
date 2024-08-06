@@ -15,6 +15,7 @@ FactoryBot.define do
     declaration_section_completed { false }
     state { :draft }
     payment_url { nil }
+    external_id { nil }
 
     trait :new_form do
       submission_email { "" }

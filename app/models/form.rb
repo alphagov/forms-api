@@ -13,6 +13,8 @@ class Form < ApplicationRecord
   scope :filter_by_organisation_id, ->(organisation_id) { where organisation_id: }
   scope :filter_by_creator_id, ->(creator_id) { where creator_id: }
 
+  after_create :set_external_id
+
   def start_page
     pages&.first&.id
   end
@@ -55,13 +57,14 @@ class Form < ApplicationRecord
   end
 
   def as_json(options = {})
+    options[:except] ||= [:external_id]
     options[:methods] ||= %i[live_at start_page has_draft_version has_live_version has_routing_errors ready_for_live incomplete_tasks task_statuses]
     super(options)
   end
 
   def snapshot(**kwargs)
     # override methods so it doesn't include things we don't want
-    as_json(except: :state,
+    as_json(except: %i[state external_id],
             include: {
               pages: {
                 include: {
@@ -92,6 +95,10 @@ class Form < ApplicationRecord
   delegate :task_statuses, to: :task_status_service
 
 private
+
+  def set_external_id
+    update(external_id: id)
+  end
 
   def task_status_service
     @task_status_service ||= TaskStatusService.new(form: self)

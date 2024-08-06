@@ -99,6 +99,13 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "external_id" do
+    it "intialises a new form with an external id matching its id" do
+      form = create :form
+      expect(form.external_id).to eq(form.id.to_s)
+    end
+  end
+
   describe "start_page" do
     it "returns nil when form has no pages" do
       expect(form.start_page).to be_nil

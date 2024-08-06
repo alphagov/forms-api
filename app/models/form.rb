@@ -13,6 +13,8 @@ class Form < ApplicationRecord
   scope :filter_by_organisation_id, ->(organisation_id) { where organisation_id: }
   scope :filter_by_creator_id, ->(creator_id) { where creator_id: }
 
+  after_create :set_external_id
+
   def start_page
     pages&.first&.id
   end
@@ -93,6 +95,10 @@ class Form < ApplicationRecord
   delegate :task_statuses, to: :task_status_service
 
 private
+
+  def set_external_id
+    update(external_id: id)
+  end
 
   def task_status_service
     @task_status_service ||= TaskStatusService.new(form: self)

@@ -7,7 +7,7 @@ namespace :access_tokens do
     token = AccessToken.find_by(owner: args[:owner_email])
     abort "Access token with owner #{args[:owner_email]} not found" unless token
 
-    token.destroy!
+    abort "Failed to remove token for #{args[:owner_email]}" unless token.destroy!
     puts "Access token removed for #{args[:owner_email]}"
   end
 end

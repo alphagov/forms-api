@@ -17,6 +17,6 @@ private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_form
-    @form = Api::V2::Form.find(params[:id])
+    @form = Api::V2::Form.find_by!(external_id: params[:id])
   end
 end

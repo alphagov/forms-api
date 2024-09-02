@@ -22,6 +22,12 @@ RSpec.describe "/forms", type: :request do
       get api_v2_forms_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
+
+    it "shows the external id as the id" do
+      Api::V2::Form.create! valid_attributes
+      get api_v2_forms_url, headers: valid_headers, as: :json
+      expect(response.parsed_body.first).to include id: "foobar"
+    end
   end
 
   describe "GET /show" do
@@ -29,6 +35,12 @@ RSpec.describe "/forms", type: :request do
       form = Api::V2::Form.create! valid_attributes
       get api_v2_form_url(form), as: :json
       expect(response).to be_successful
+    end
+
+    it "shows the external id as the id" do
+      form = Api::V2::Form.create! valid_attributes
+      get api_v2_form_url(form), as: :json
+      expect(response.parsed_body).to include id: "foobar"
     end
   end
 end

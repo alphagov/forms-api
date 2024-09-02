@@ -6,4 +6,8 @@ class Api::V2::Form < ApplicationRecord
   def as_json
     { id: external_id }
   end
+
+  def to_param
+    external_id
+  end
 end

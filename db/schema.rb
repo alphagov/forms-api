@@ -85,31 +85,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_123903) do
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 
-  create_table "question_sets", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "questions", force: :cascade do |t|
-    t.string "question_text"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "steps", force: :cascade do |t|
-    t.string "positionable_type", null: false
-    t.bigint "positionable_id", null: false
-    t.bigint "next_step_id"
-    t.integer "position"
-    t.bigint "parent_question_set_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["next_step_id"], name: "index_steps_on_next_step_id"
-    t.index ["parent_question_set_id"], name: "index_steps_on_parent_question_set_id"
-    t.index ["positionable_type", "positionable_id"], name: "index_steps_on_positionable"
-  end
-
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -123,6 +98,4 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_123903) do
 
   add_foreign_key "made_live_forms", "forms"
   add_foreign_key "pages", "forms"
-  add_foreign_key "steps", "question_sets", column: "parent_question_set_id"
-  add_foreign_key "steps", "steps", column: "next_step_id"
 end

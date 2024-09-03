@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
 
   scope "api/v2", as: "api_v2" do
-    resources :forms, controller: "api/v2/forms"
+    resources :forms, controller: "api/v2/forms", only: %i[index show] do
+      get "/:tag", to: "api/v2/form_documents#show", as: :document, constraints: { tag: /draft|live|archived/ }
+    end
   end
 
   scope "api/v1" do

@@ -42,5 +42,15 @@ RSpec.describe "/forms", type: :request do
       get api_v2_form_url(form), as: :json
       expect(response.parsed_body).to include id: "foobar"
     end
+
+    it "includes links to form documents in the response" do
+      form = Api::V2::Form.create! valid_attributes
+      get api_v2_form_url(form), as: :json
+      expect(response.parsed_body)
+        .to include "links" => {
+          "self" => a_string_ending_with("forms/foobar"),
+          "draft" => a_string_ending_with("forms/foobar/draft"),
+        }
+    end
   end
 end

@@ -41,6 +41,12 @@ RSpec.describe Api::V2::FormDocumentRepository do
           .to include("name" => "Edited form")
       end
 
+      it "includes the form external ID" do
+        form.update! external_id: "xyzzy"
+        expect(described_class.find(form.id, :draft))
+          .to include("form_id" => "xyzzy")
+      end
+
       context "when the form has been made live" do
         let(:form) { create :form, :live, name: "Test form" }
 

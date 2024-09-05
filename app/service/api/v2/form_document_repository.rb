@@ -6,7 +6,7 @@ class Api::V2::FormDocumentRepository
       raise ActiveRecord::RecordNotFound, "Could not find #{tag} form document for #{v1_form.inspect}" if v1_blob.blank?
 
       form_snapshot = JSON.parse!(v1_blob)
-      converter.to_api_v2_form_document(form_snapshot)
+      converter.to_api_v2_form_document(form_snapshot, form_id: v1_form.external_id)
     end
 
     def tags_for_form(form_id)

@@ -1,8 +1,9 @@
 class Api::V2::Converter
-  def to_api_v2_form_document(form_snapshot)
+  def to_api_v2_form_document(form_snapshot, form_id: nil)
     form_snapshot = form_snapshot.deep_dup
 
     form_snapshot.delete("id")
+    form_snapshot = { "form_id" => form_id, **form_snapshot } if form_id
 
     pages = form_snapshot.delete("pages")
     form_snapshot["steps"] = pages.map { |page| to_api_v2_step(page) }

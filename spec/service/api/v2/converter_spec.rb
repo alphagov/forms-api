@@ -15,6 +15,11 @@ RSpec.describe Api::V2::Converter do
       expect(form_document).to include(**form_snapshot.except("id", "pages"))
     end
 
+    it "can prepend a form ID" do
+      expect(converter.to_api_v2_form_document(form_snapshot, form_id: "foobar"))
+        .to include("form_id" => "foobar")
+    end
+
     context "when the form snapshot has pages" do
       let(:form_snapshot) { create(:form, :with_pages).snapshot }
 

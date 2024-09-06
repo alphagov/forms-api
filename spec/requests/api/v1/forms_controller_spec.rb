@@ -6,18 +6,16 @@ headers = {
 
 describe Api::V1::FormsController, type: :request do
   let(:json_body) { JSON.parse(response.body, symbolize_names: true) }
-  let(:gds_forms) do
+  let(:user_forms) do
     [
-      create(:form, name: "Fill me in", organisation_id: 1),
-      create(:form, name: "Can you answer my questions?", organisation_id: 1),
+      create(:form, name: "Fill me in", creator_id: 123),
+      create(:form, name: "Can you answer my questions?", creator_id: 123),
     ]
   end
-  let(:other_org_forms) { create :form, creator_id: 123, organisation_id: 2 }
-  let(:user_form) { create :form, creator_id: 123, organisation_id: nil }
-  let(:other_user_form) { create :form, creator_id: 1234, organisation_id: nil }
+  let(:other_user_form) { create :form, creator_id: 1234 }
 
   let(:all_forms) do
-    gds_forms + [other_org_forms, user_form, other_user_form]
+    user_forms + [other_user_form]
   end
 
   before do
@@ -38,28 +36,11 @@ describe Api::V1::FormsController, type: :request do
   end
 
   describe "#index" do
-    it "when no forms exist for an organisation, returns 200 and an empty json array" do
-      get(forms_path, params: { organisation_id: 3 }, headers:)
-      expect(response).to have_http_status(:ok)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to eq([])
-    end
-
-    it "when not given an organisation, returns 200 forms and forms for all orgs." do
+    it "when not given any query params, returns 200 status and all forms." do
       get(forms_path, headers:)
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.length).to eq 5
-    end
-
-    it "when given an organisation with forms, returns a json array of forms" do
-      get(forms_path, params: { organisation_id: 1 }, headers:)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.count).to eq(2)
-      expect(response).to be_successful
-
-      expect(json_body[0]).to include(name: "Can you answer my questions?")
-      expect(json_body[1]).to include(name: "Fill me in")
+      expect(json_body.length).to eq 3
     end
 
     it "when given a creator with forms, returns a json array of forms" do
@@ -68,29 +49,16 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body.count).to eq(2)
       expect(response).to be_successful
 
-      json_body.each do |form|
-        expect(form[:creator_id]).to eq(123)
-      end
-    end
-
-    it "when given an organisation and a creator with forms, returns a json array of forms" do
-      get(forms_path, params: { creator_id: 123, organisation_id: 2 }, headers:)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body.count).to eq(1)
-      expect(response).to be_successful
-
-      json_body.each do |form|
-        expect(form[:creator_id]).to eq(123)
-        expect(form[:organisation_id]).to eq(2)
-      end
+      expect(json_body[0]).to include(name: "Can you answer my questions?", creator_id: 123)
+      expect(json_body[1]).to include(name: "Fill me in", creator_id: 123)
     end
 
     describe "ordering of forms" do
       it "returns a list of forms sorted in alphabetical order" do
-        get(forms_path, params: { organisation_id: 1 }, headers:)
+        get(forms_path, params: { creator_id: 123 }, headers:)
         expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body.pluck(:name)).to eq(gds_forms.sort_by(&:name).pluck(:name))
+        expect(json_body.pluck(:name)).to eq(user_forms.sort_by(&:name).pluck(:name))
       end
     end
   end

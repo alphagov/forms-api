@@ -357,59 +357,6 @@ describe Api::V1::FormsController, type: :request do
     end
   end
 
-  describe "#update_organisation_for_creator" do
-    let(:selected_creator_id) { 1234 }
-    let(:updated_organisation_id) { 111 }
-
-    before do
-      patch update_organisation_for_creator_forms_path, params: { creator_id: selected_creator_id, organisation_id: updated_organisation_id }
-    end
-
-    context "when some forms match creator ID" do
-      it "updates organisation only if creator ID matches" do
-        expect(response).to have_http_status(:no_content)
-
-        all_forms.each do |form|
-          form.reload
-          if form.creator_id == selected_creator_id
-            expect(form.organisation_id).to eq(updated_organisation_id)
-          else
-            expect(form.organisation_id).not_to eq(updated_organisation_id)
-          end
-        end
-      end
-    end
-
-    context "when no forms match creator ID" do
-      let(:selected_creator_id) { 321 }
-
-      it "does not update organisation" do
-        expect(response).to have_http_status(:no_content)
-
-        all_forms.each do |form|
-          form.reload
-          expect(form.organisation_id).not_to eq(updated_organisation_id)
-        end
-      end
-    end
-
-    context "without creator ID" do
-      let(:selected_creator_id) { nil }
-
-      it "returns bad request if creator ID is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-
-    context "without organisation ID" do
-      let(:updated_organisation_id) { nil }
-
-      it "returns bad request if organisation ID is missing" do
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-  end
-
   describe "#archive" do
     it "when no forms exists for an id, returns 404 an error" do
       post archive_form_path(123), as: :json

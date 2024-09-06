@@ -20,10 +20,6 @@ Rails.application.routes.draw do
         post "/archive", to: "api/v1/forms#archive"
       end
 
-      collection do
-        patch "/update-organisation-for-creator", to: "api/v1/forms#update_organisation_for_creator"
-      end
-
       resources :pages, controller: "api/v1/pages", param: :page_id do
         member do
           resources :conditions, controller: "api/v1/conditions", param: :condition_id

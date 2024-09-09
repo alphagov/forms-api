@@ -148,7 +148,7 @@ describe Api::V1::FormsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
-      expect(json_body).to include(
+      expect(json_body).to match(
         id: form1.id,
         name: "test form 1",
         submission_email: nil,

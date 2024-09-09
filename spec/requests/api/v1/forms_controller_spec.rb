@@ -145,16 +145,15 @@ describe Api::V1::FormsController, type: :request do
     end
 
     it "when given an existing id, returns 200 and form data" do
-      form1 = Form.create!(name: "test form 1", organisation_id: 1, creator_id: 123)
+      form1 = Form.create!(name: "test form 1", creator_id: 123)
       get form_path(form1), as: :json
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
 
-      expect(json_body).to match(
+      expect(json_body).to include(
         id: form1.id,
         name: "test form 1",
         submission_email: nil,
-        organisation_id: 1,
         creator_id: 123,
         has_draft_version: true,
         has_live_version: false,

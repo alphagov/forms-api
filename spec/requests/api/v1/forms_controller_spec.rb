@@ -65,7 +65,7 @@ describe Api::V1::FormsController, type: :request do
 
   describe "#create" do
     let(:created_form) { Form.find_by(name: "test form one") }
-    let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk" } }
+    let(:new_form_params) { { name: "test form one", submission_email: "test@example.gov.uk" } }
 
     before do
       freeze_time
@@ -86,7 +86,6 @@ describe Api::V1::FormsController, type: :request do
       it "created the form in the DB" do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
-        expect(created_form[:organisation_id]).to eq(1)
       end
     end
 
@@ -101,7 +100,7 @@ describe Api::V1::FormsController, type: :request do
     end
 
     context "with extra params" do
-      let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
+      let(:new_form_params) { { name: "test form one", submission_email: "test@example.gov.uk", support_url: "http://example.org" } }
 
       it "returns a status code 201" do
         expect(response).to have_http_status(:created)
@@ -112,13 +111,12 @@ describe Api::V1::FormsController, type: :request do
       it "created the form in the DB" do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
-        expect(created_form[:organisation_id]).to eq(1)
         expect(created_form[:support_url]).to eq("http://example.org")
       end
     end
 
     context "with created_at and updated_at params" do
-      let(:new_form_params) { { organisation_id: 1, name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
+      let(:new_form_params) { { name: "test form one", submission_email: "test@example.gov.uk", created_at: "2023-01-11T16:22:22.661+00:00", updated_at: "2023-01-11T16:24:22.661+00:00" } }
 
       it "does not use the provided created_at or updated_at values" do
         expect(response).to have_http_status(:created)

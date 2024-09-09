@@ -129,8 +129,8 @@ RSpec.describe Form, type: :model do
   end
 
   describe "scopes" do
-    let(:form_a) { create :form, organisation_id: 111 }
-    let(:form_b) { create :form, creator_id: 123, organisation_id: 111 }
+    let(:form_a) { create :form }
+    let(:form_b) { create :form, creator_id: 123 }
     let(:form_c) { create :form, creator_id: 1234 }
 
     it "return forms with matching creator ID" do

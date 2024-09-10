@@ -5,11 +5,9 @@ class Api::V1::FormsController < ApplicationController
   end
 
   def index
-    organisation_id = params[:organisation_id]
     creator_id = params[:creator_id]
 
     forms = Form.all
-    forms = forms.filter_by_organisation_id(organisation_id) if organisation_id.present?
     forms = forms.filter_by_creator_id(creator_id) if creator_id.present?
 
     render json: forms.order(:name).to_json
@@ -70,12 +68,6 @@ class Api::V1::FormsController < ApplicationController
 
   def show_archived
     render json: form.archived_live_version, status: :ok
-  end
-
-  def update_organisation_for_creator
-    params.require(%i[creator_id organisation_id])
-    Form.where(creator_id: params[:creator_id]).update_all(organisation_id: params[:organisation_id], updated_at: Time.zone.now)
-    render status: :no_content
   end
 
 private

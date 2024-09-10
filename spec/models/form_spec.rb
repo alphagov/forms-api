@@ -129,22 +129,12 @@ RSpec.describe Form, type: :model do
   end
 
   describe "scopes" do
-    let(:form_a) { create :form, organisation_id: 111 }
-    let(:form_b) { create :form, creator_id: 123, organisation_id: 111 }
+    let(:form_a) { create :form }
+    let(:form_b) { create :form, creator_id: 123 }
     let(:form_c) { create :form, creator_id: 1234 }
 
     it "return forms with matching creator ID" do
       expect(described_class.filter_by_creator_id(1234)).to eq([form_c])
-    end
-
-    it "return forms with matching organisation" do
-      expect(described_class.filter_by_organisation_id(111)).to eq([form_a, form_b])
-    end
-
-    it "return forms with matching organisation and creator ID" do
-      described_class.filter_by_organisation_id(111)
-      forms = described_class.filter_by_creator_id(123)
-      expect(forms).to eq([form_b])
     end
   end
 
@@ -294,7 +284,6 @@ RSpec.describe Form, type: :model do
         "id",
         "name",
         "submission_email",
-        "organisation_id",
         "creator_id",
         "created_at",
         "updated_at",

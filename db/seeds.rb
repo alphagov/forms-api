@@ -7,7 +7,6 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 submission_email = ENV["EMAIL"] || `git config --get user.email`.strip
-organisation_id = 1 # Assumes you're using the default database seed for forms-admin
 
 all_question_types_form = Form.create!(
   name: "All question types form",
@@ -84,7 +83,6 @@ all_question_types_form = Form.create!(
   question_section_completed: true,
   declaration_text: "",
   declaration_section_completed: true,
-  organisation_id:,
   privacy_policy_url: "https://www.gov.uk/help/privacy-notice",
   submission_email:,
   support_email: "your.email+fakedata84701@gmail.com.gov.uk",

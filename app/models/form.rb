@@ -10,10 +10,11 @@ class Form < ApplicationRecord
   validates :payment_url, url: true, allow_blank: true
   validate :marking_complete_with_errors
 
-  scope :filter_by_organisation_id, ->(organisation_id) { where organisation_id: }
   scope :filter_by_creator_id, ->(creator_id) { where creator_id: }
 
   after_create :set_external_id
+
+  self.ignored_columns = %w[organisation_id]
 
   def start_page
     pages&.first&.id

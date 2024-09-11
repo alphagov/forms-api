@@ -14,8 +14,6 @@ class Form < ApplicationRecord
 
   after_create :set_external_id
 
-  self.ignored_columns = %w[organisation_id]
-
   def start_page
     pages&.first&.id
   end

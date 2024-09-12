@@ -8,8 +8,12 @@ Rails.application.routes.draw do
   get "/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
   get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  scope "api/v2", as: "api_v2" do
+    resources :forms, controller: "api/v2/forms", only: %i[index show] do
+      get "/:tag", to: "api/v2/form_documents#show", as: :document, constraints: { tag: /draft|live|archived/ }
+    end
+  end
+
   scope "api/v1" do
     resources :forms, controller: "api/v1/forms" do
       member do

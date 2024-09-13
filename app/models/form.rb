@@ -6,9 +6,15 @@ class Form < ApplicationRecord
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
 
+  enum :submission_type, {
+    email: "email",
+    email_with_csv: "email_with_csv",
+  }
+
   validates :name, presence: true
   validates :payment_url, url: true, allow_blank: true
   validate :marking_complete_with_errors
+  validates :submission_type, presence: true
 
   scope :filter_by_creator_id, ->(creator_id) { where creator_id: }
 

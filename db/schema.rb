@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_13_151655) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_16_122719) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_13_151655) do
     t.datetime "updated_at", null: false
     t.datetime "last_accessed_at"
     t.string "description"
+  end
+
+  create_table "api_v2_form_documents", force: :cascade do |t|
+    t.bigint "form_id", comment: "The form this document belongs to"
+    t.text "tag", null: false, comment: "The tag for the form, for example: 'live' or 'draft'"
+    t.jsonb "content", comment: "The JSON which describes the form"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["form_id", "tag"], name: "index_api_v2_form_documents_on_form_id_and_tag", unique: true
+    t.index ["form_id"], name: "index_api_v2_form_documents_on_form_id"
   end
 
   create_table "conditions", force: :cascade do |t|
@@ -96,6 +106,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_13_151655) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "api_v2_form_documents", "forms"
   add_foreign_key "made_live_forms", "forms"
   add_foreign_key "pages", "forms"
 end

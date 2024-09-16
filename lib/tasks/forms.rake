@@ -7,4 +7,13 @@ namespace :forms do
 
     puts "external_id has been set for each form to their id"
   end
+
+  desc "Set submission_type to email_with_csv"
+  task :set_submission_type_to_email_with_csv, %i[form_id] => :environment do |_, args|
+    puts "setting submission_type to email_with_csv for form: #{args[:form_id]}"
+
+    Form.find(args[:form_id]).email_with_csv!
+
+    puts "set submission_type to email_with_csv for form: #{args[:form_id]}"
+  end
 end

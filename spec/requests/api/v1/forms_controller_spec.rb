@@ -175,6 +175,7 @@ describe Api::V1::FormsController, type: :request do
         task_statuses: { declaration_status: "not_started", make_live_status: "cannot_start", name_status: "completed", pages_status: "not_started", privacy_policy_status: "not_started", support_contact_details_status: "not_started", what_happens_next_status: "not_started", payment_link_status: "optional" },
         state: "draft",
         payment_url: nil,
+        submission_type: "email",
       )
     end
   end

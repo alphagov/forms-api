@@ -82,6 +82,13 @@ RSpec.describe Form, type: :model do
           expect(form).to be_valid
         end
       end
+
+      context "when there is no submission type" do
+        it "returns invalid" do
+          form.submission_type = nil
+          expect(form).to be_invalid
+        end
+      end
     end
   end
 
@@ -300,6 +307,7 @@ RSpec.describe Form, type: :model do
         "pages",
         "what_happens_next_markdown",
         "payment_url",
+        "submission_type",
       )
     end
   end
@@ -400,6 +408,15 @@ RSpec.describe Form, type: :model do
         make_live_status: :completed,
       }
       expect(completed_form.task_statuses).to eq expected_hash
+    end
+  end
+
+  describe "submission type" do
+    describe "enum" do
+      it "returns a list of submission types" do
+        expect(described_class.submission_types.keys).to eq(%w[email email_with_csv])
+        expect(described_class.submission_types.values).to eq(%w[email email_with_csv])
+      end
     end
   end
 end

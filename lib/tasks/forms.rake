@@ -10,6 +10,9 @@ namespace :forms do
 
   desc "Set submission_type to email_with_csv"
   task :set_submission_type_to_email_with_csv, %i[form_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_email_with_csv[<form_id>]".freeze
+    abort usage_message if args[:form_id].blank?
+
     puts "setting submission_type to email_with_csv for form: #{args[:form_id]}"
 
     Form.find(args[:form_id]).email_with_csv!

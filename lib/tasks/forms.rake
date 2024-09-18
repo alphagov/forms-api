@@ -13,10 +13,21 @@ namespace :forms do
     usage_message = "usage: rake forms:set_submission_type_to_email_with_csv[<form_id>]".freeze
     abort usage_message if args[:form_id].blank?
 
-    puts "setting submission_type to email_with_csv for form: #{args[:form_id]}"
+    Rails.logger.info("setting submission_type to email_with_csv for form: #{args[:form_id]}")
 
-    Form.find(args[:form_id]).email_with_csv!
+    form = Form.find(args[:form_id])
+    form.email_with_csv!
 
-    puts "set submission_type to email_with_csv for form: #{args[:form_id]}"
+    made_live_form = form.made_live_forms.last
+
+    if made_live_form.present?
+      form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
+
+      form_blob[:submission_type] = "email_with_csv"
+
+      made_live_form.update!(json_form_blob: form_blob.to_json)
+    end
+
+    Rails.logger.info("set submission_type to email_with_csv for form: #{args[:form_id]}")
   end
 end

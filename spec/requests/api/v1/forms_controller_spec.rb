@@ -87,6 +87,12 @@ describe Api::V1::FormsController, type: :request do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
       end
+
+      it "created a FormDocument" do
+        form_document = Api::V2::FormDocument.find_by(form_id: created_form[:id])
+        expect(form_document.content["name"]).to include(new_form_params[:name])
+        expect(form_document.content["submission_email"]).to include(new_form_params[:submission_email])
+      end
     end
 
     context "with no params" do
@@ -214,6 +220,14 @@ describe Api::V1::FormsController, type: :request do
       expect { put form_path(form), params: { updated_at: "2023-01-11T16:22:22.661+00:00" }, as: :json }.not_to(change { form.reload.updated_at })
     end
 
+    it "when given an valid id and params, updates the form_document" do
+      put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+      expect(response).to have_http_status(:ok)
+
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id)
+      expect(form_document.content["submission_email"]).to eq("test@example.gov.uk")
+    end
+
     context "when form is live" do
       let(:form) { create(:form, :live) }
 
@@ -251,6 +265,12 @@ describe Api::V1::FormsController, type: :request do
       form_to_be_deleted = create :form, :with_pages
       delete form_path(form_to_be_deleted), as: :json
       expect(response).to have_http_status(:no_content)
+    end
+
+    it "when given an existing id, returns 200 and deletes the form and any FormDocuments" do
+      form_to_be_deleted = create :form
+      create :form_document, form_id: form_to_be_deleted.id
+      expect { delete form_path(form_to_be_deleted), as: :json }.to change { Api::V2::FormDocument.find_by(form_id: form_to_be_deleted.id) }.to(nil)
     end
   end
 

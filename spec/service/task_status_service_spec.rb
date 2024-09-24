@@ -148,6 +148,32 @@ describe TaskStatusService do
       end
     end
 
+    describe "receive_csv_status" do
+      context "with a new form" do
+        let(:form) { build(:form, :new_form) }
+
+        it "returns optional" do
+          expect(task_status_service.task_statuses[:receive_csv_status]).to eq :optional
+        end
+      end
+
+      context "with submission_type set to 'email'" do
+        let(:form) { build(:form, :new_form, submission_type: "email") }
+
+        it "returns optional" do
+          expect(task_status_service.task_statuses[:receive_csv_status]).to eq :optional
+        end
+      end
+
+      context "with submission_type set to 'email_with_csv'" do
+        let(:form) { build(:form, :new_form, submission_type: "email_with_csv") }
+
+        it "returns completed" do
+          expect(task_status_service.task_statuses[:receive_csv_status]).to eq :completed
+        end
+      end
+    end
+
     describe "make live status" do
       context "with a new form" do
         let(:form) { build(:form, :new_form) }
@@ -256,6 +282,7 @@ describe TaskStatusService do
         privacy_policy_status: :completed,
         support_contact_details_status: :completed,
         make_live_status: :completed,
+        receive_csv_status: :optional,
       }
       expect(task_status_service.task_statuses).to eq expected_hash
     end

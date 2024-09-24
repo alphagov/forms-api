@@ -23,6 +23,7 @@ class TaskStatusService
       payment_link_status:,
       privacy_policy_status:,
       support_contact_details_status:,
+      receive_csv_status:,
       make_live_status:,
     }
   end
@@ -69,6 +70,12 @@ private
     return :completed if @form.support_email.present? || @form.support_phone.present? || (@form.support_url_text.present? && @form.support_url)
 
     :not_started
+  end
+
+  def receive_csv_status
+    return :completed if @form.email_with_csv?
+
+    :optional
   end
 
   def make_live_status

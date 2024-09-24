@@ -2,6 +2,7 @@
 # as it uses the same database table
 class Api::V2::Form < ApplicationRecord
   include Rails.application.routes.url_helpers # TODO: do we need a presenter instead?
+  has_many :form_documents, dependent: :delete_all
 
   self.table_name = "forms"
 

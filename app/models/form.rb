@@ -5,6 +5,7 @@ class Form < ApplicationRecord
 
   has_many :pages, -> { order(position: :asc) }, dependent: :destroy
   has_many :made_live_forms, -> { order(created_at: :asc) }, dependent: :destroy
+  has_many :form_documents, dependent: :delete_all, class_name: "Api::V2::FormDocument"
 
   enum :submission_type, {
     email: "email",

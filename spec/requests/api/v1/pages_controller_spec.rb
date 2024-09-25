@@ -77,6 +77,27 @@ describe Api::V1::PagesController, type: :request do
                                                            is_repeatable: false).as_json)
     end
 
+    it "updates the v2 draft" do
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+      expect(form_document.content["steps"].first).to include({
+        "id" => new_page.id,
+        "data" => {
+          "hint_text" => "Should be first/last name",
+          "answer_type" => "text",
+          "is_optional" => false,
+          "page_heading" => nil,
+          "is_repeatable" => false,
+          "question_text" => "What is your first name?",
+          "answer_settings" => { "input_type" => "single_line" },
+          "guidance_markdown" => nil,
+        },
+        "type" => "question_page",
+        "position" => 1,
+        "next_step_id" => nil,
+        "routing_conditions" => [],
+      })
+    end
+
     context "with params missing required keys" do
       let(:new_page_params) do
         { wrong: "" }
@@ -169,6 +190,12 @@ describe Api::V1::PagesController, type: :request do
       expect(first_page.hint_text).to be_nil
     end
 
+    it "updates the v2 draft" do
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+      first_step_question_text = form_document.content["steps"].first["data"]["question_text"]
+      expect(first_step_question_text).to eq "updated page title"
+    end
+
     [
       ["selection",
        {
@@ -234,6 +261,11 @@ describe Api::V1::PagesController, type: :request do
         expect(form.pages.count).to eq(1)
         expect(form.reload.question_section_completed).to be false
       end
+
+      it "updates the v2 form_document draft" do
+        form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+        expect(form_document.content["steps"].count).to eq(1)
+      end
     end
 
     context "with unknown form" do
@@ -288,6 +320,11 @@ describe Api::V1::PagesController, type: :request do
       it "marks a forms question section as incomplete" do
         expect(form_with_pages.reload.question_section_completed).to be false
       end
+
+      it "updates the v2 draft" do
+        form_document = Api::V2::FormDocument.find_by(form_id: form_with_pages.id, tag: :draft)
+        expect(form_document.content["steps"].map { |step| step["id"] }).to eq([second_page.id, page_to_move.id, third_page.id, fourth_page.id, last_page.id])
+      end
     end
 
     context "with page already at the end of the list" do
@@ -338,6 +375,11 @@ describe Api::V1::PagesController, type: :request do
 
       it "marks a forms question section as incomplete" do
         expect(form_with_pages.reload.question_section_completed).to be false
+      end
+
+      it "updates the v2 draft" do
+        form_document = Api::V2::FormDocument.find_by(form_id: form_with_pages.id, tag: :draft)
+        expect(form_document.content["steps"].map { |step| step["id"] }).to eq([page_to_move.id, first_page.id, third_page.id, fourth_page.id, last_page.id])
       end
     end
 

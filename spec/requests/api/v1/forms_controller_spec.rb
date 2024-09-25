@@ -300,6 +300,13 @@ describe Api::V1::FormsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(live_at: Time.zone.now)
     end
+
+    it "creates a form document with the tag :live" do
+      form_to_be_made_live = create(:form, :ready_for_live)
+      post make_live_form_path(form_to_be_made_live), as: :json
+      expect(response).to have_http_status(:ok)
+      expect(Api::V2::FormDocument.find_by(form_id: form_to_be_made_live.id, tag: :live)).to be_present
+    end
   end
 
   describe "#show_live" do
@@ -376,6 +383,19 @@ describe Api::V1::FormsController, type: :request do
         expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(state: "archived")
+      end
+
+      it "creates a FormDocument with the tag :archived" do
+        form = create(:made_live_form).form
+        post archive_form_path(form), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(Api::V2::FormDocument.find_by(form_id: form.id, tag: :archived)).to be_present
+      end
+
+      it "removes the FormDocument with the tag :live" do
+        form = create(:made_live_form).form
+        expect { post archive_form_path(form), as: :json }.to change { Api::V2::FormDocument.find_by(form_id: form.id, tag: :live) }.to(nil)
       end
     end
 

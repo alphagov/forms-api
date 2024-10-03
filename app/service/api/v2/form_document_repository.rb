@@ -31,7 +31,7 @@ class Api::V2::FormDocumentRepository
     def v1_blob(v1_form, tag)
       case tag.to_sym
       when :draft
-        v1_form.draft_version if v1_form.has_draft_version
+        v1_form.draft_version
       when :live
         v1_form.live_version if v1_form.has_live_version
       when :archived

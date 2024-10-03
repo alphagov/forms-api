@@ -55,10 +55,9 @@ RSpec.describe Api::V2::FormDocumentRepository do
             .to include("name" => "Test form")
         end
 
-        it "raises an exception if the draft tag is given" do
-          expect {
-            described_class.find(form.id, :draft)
-          }.to raise_error(ActiveRecord::RecordNotFound)
+        it "uses the current form snapshot if the draft tag is given" do
+          expect(described_class.find(form.id, :draft))
+            .to include("name" => "Test form")
         end
 
         it "raises an exception if the archived tag is given" do
@@ -99,10 +98,9 @@ RSpec.describe Api::V2::FormDocumentRepository do
             .to include("name" => "Test form")
         end
 
-        it "raises an exception if the draft tag is given" do
-          expect {
-            described_class.find(form.id, :draft)
-          }.to raise_error(ActiveRecord::RecordNotFound)
+        it "uses the current form snapshot if the draft tag is given" do
+          expect(described_class.find(form.id, :draft))
+            .to include("name" => "Test form")
         end
 
         it "raises an exception if the live tag is given" do

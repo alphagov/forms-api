@@ -44,6 +44,9 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Skip http-to-https redirect for the default health check endpoint.
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout)
     .tap { |logger| logger.formatter = config.log_formatter }
@@ -51,10 +54,9 @@ Rails.application.configure do
   # Do not enable log_tags because it interferes with the
   # json formatting of log_rage. The request_id is already
   # being logged by log_rage.
-  # config.log_tags = [:request_id]
 
   # Prepend all log lines with the following tags.
-  # config.log_tags = [:request_id]
+  # config.log_tags = [ :request_id ]
 
   # "info" includes generic and useful information about system operation, but avoids logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
@@ -68,6 +70,8 @@ Rails.application.configure do
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "forms_api_production"
 
+  # Disable caching for Action Mailer templates even if Action Controller
+  # caching is enabled.
   config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.

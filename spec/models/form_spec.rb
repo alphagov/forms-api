@@ -308,6 +308,7 @@ RSpec.describe Form, type: :model do
         "what_happens_next_markdown",
         "payment_url",
         "submission_type",
+        "share_preview_completed",
       )
     end
   end

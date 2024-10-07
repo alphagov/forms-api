@@ -407,6 +407,7 @@ RSpec.describe Form, type: :model do
         privacy_policy_status: :completed,
         support_contact_details_status: :completed,
         receive_csv_status: :optional,
+        share_preview_status: :completed,
         make_live_status: :completed,
       }
       expect(completed_form.task_statuses).to eq expected_hash

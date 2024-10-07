@@ -24,6 +24,7 @@ class TaskStatusService
       privacy_policy_status:,
       support_contact_details_status:,
       receive_csv_status:,
+      share_preview_status:,
       make_live_status:,
     }
   end
@@ -76,6 +77,12 @@ private
     return :completed if @form.email_with_csv?
 
     :optional
+  end
+
+  def share_preview_status
+    return :completed if @form.share_preview_completed?
+
+    :not_started
   end
 
   def make_live_status

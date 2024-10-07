@@ -49,6 +49,7 @@ FactoryBot.define do
       what_happens_next_markdown { "We usually respond to applications within 10 working days." }
       question_section_completed { true }
       declaration_section_completed { true }
+      share_preview_completed { true }
     end
 
     trait :live do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_18_153233) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_07_111443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_18_153233) do
     t.string "payment_url"
     t.string "external_id"
     t.string "submission_type", default: "email", null: false
+    t.boolean "share_preview_completed", default: false, null: false
     t.index ["external_id"], name: "index_forms_on_external_id", unique: true
   end
 

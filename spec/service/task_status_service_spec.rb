@@ -174,6 +174,24 @@ describe TaskStatusService do
       end
     end
 
+    describe "share_preview_status" do
+      context "with a new form" do
+        let(:form) { build(:form, :new_form) }
+
+        it "returns not_started" do
+          expect(task_status_service.task_statuses[:share_preview_status]).to eq :not_started
+        end
+      end
+
+      context "with share_preview_completed set to true" do
+        let(:form) { build(:form, :new_form, share_preview_completed: true) }
+
+        it "returns completed" do
+          expect(task_status_service.task_statuses[:share_preview_status]).to eq :completed
+        end
+      end
+    end
+
     describe "make live status" do
       context "with a new form" do
         let(:form) { build(:form, :new_form) }
@@ -283,6 +301,7 @@ describe TaskStatusService do
         support_contact_details_status: :completed,
         make_live_status: :completed,
         receive_csv_status: :optional,
+        share_preview_status: :completed,
       }
       expect(task_status_service.task_statuses).to eq expected_hash
     end

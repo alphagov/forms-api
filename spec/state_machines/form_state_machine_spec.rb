@@ -109,6 +109,13 @@ RSpec.describe FormStateMachine do
   end
 
   describe ".archive_live_form" do
+    let(:form_sync) { instance_double(Api::V2::ModelSync) }
+
+    before do
+      allow(form_sync).to receive(:make_live)
+      allow(form_sync).to receive(:archive_live_form)
+    end
+
     context "when the form is draft" do
       let(:form) { FakeForm.new(state: :draft) }
 
@@ -120,6 +127,10 @@ RSpec.describe FormStateMachine do
     context "when the form is live" do
       let(:form) { FakeForm.new(state: :live) }
 
+      before do
+        allow(form).to receive_messages(form_sync:, archived_live_version: "{}")
+      end
+
       it "transitions to archived if form is live" do
         expect(form).to transition_from(:live).to(:archived).on_event(:archive_live_form)
       end
@@ -127,6 +138,10 @@ RSpec.describe FormStateMachine do
 
     context "when form is live_with_draft" do
       let(:form) { FakeForm.new(state: :live_with_draft) }
+
+      before do
+        allow(form).to receive_messages(form_sync:, archived_live_version: "{}")
+      end
 
       it "transitions to archived_with_draft" do
         expect(form).to transition_from(:live_with_draft).to(:archived_with_draft).on_event(:archive_live_form)

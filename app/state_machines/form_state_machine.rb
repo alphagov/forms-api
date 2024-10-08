@@ -32,6 +32,8 @@ module FormStateMachine
 
           form_blob = snapshot(live_at:)
           made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
+
+          Api::V2::FormDocumentSyncService.new.synchronize_form(self)
         end
 
         transitions from: %i[draft live_with_draft archived archived_with_draft], to: :live, guard: proc { ready_for_live }
@@ -56,6 +58,10 @@ module FormStateMachine
       event :archive_live_form do
         transitions from: :live, to: :archived
         transitions from: :live_with_draft, to: :archived_with_draft
+
+        after do
+          Api::V2::FormDocumentSyncService.new.synchronize_form(self)
+        end
       end
     end
   end

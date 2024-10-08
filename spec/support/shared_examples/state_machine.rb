@@ -1,8 +1,11 @@
 RSpec.shared_examples "transition to live state" do |form_object, form_state|
   let(:form) { form_object.new(state: form_state) }
+  let(:form_document_sync_service) { instance_double(Api::V2::FormDocumentSyncService) }
 
   before do
     allow(form).to receive(:ready_for_live).and_return(true)
+    allow(Api::V2::FormDocumentSyncService).to receive(:new).and_return(form_document_sync_service)
+    allow(form_document_sync_service).to receive(:synchronize_form)
   end
 
   it "transitions to live state" do

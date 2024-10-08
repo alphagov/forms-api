@@ -7,6 +7,7 @@ class FeaturesReportService
       live_forms_with_payment:,
       live_forms_with_routing:,
       live_forms_with_add_another_answer:,
+      all_forms_with_add_another_answer:,
     }
   end
 
@@ -34,5 +35,9 @@ private
 
   def live_forms_with_add_another_answer
     Page.joins(:form).where(forms: { state: %w[live live_with_draft] }).select("forms.id,pages.is_repeatable").where(pages: { is_repeatable: true }).count("forms.id")
+  end
+
+  def all_forms_with_add_another_answer
+    Form.includes(:pages).where(pages: { is_repeatable: true })
   end
 end

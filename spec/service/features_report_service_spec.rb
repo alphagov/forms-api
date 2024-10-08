@@ -142,6 +142,17 @@ describe FeaturesReportService do
           expect(response[:live_forms_with_add_another_answer]).to eq 1
         end
       end
+
+      context "when a form uses the add another answer feature" do
+        let(:add_another_answer_form) { create(:form, state: "draft", pages: form_5_pages) }
+        let(:form_5_pages) { pages_with_add_another_answer }
+
+        it "obtains all forms in the add another answer report" do
+          response = features_report_service.report
+
+          expect(response[:all_forms_with_add_another_answer]).to eq([add_another_answer_form])
+        end
+      end
     end
 
     context "when there are no live forms" do

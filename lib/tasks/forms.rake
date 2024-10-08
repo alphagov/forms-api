@@ -30,4 +30,48 @@ namespace :forms do
 
     Rails.logger.info("set submission_type to email_with_csv for form: #{args[:form_id]}")
   end
+
+  desc "Synchronise FormDocuments with Forms"
+  task synchronise_form_documents: :environment do
+    Rails.logger.info "forms:synchronise_form_documents starting"
+
+    Rails.logger.info({ pre_synchronise_form_documents: summarise_form_documents })
+
+    Form.find_each do |form|
+      Api::V2::FormDocumentSyncService.new.synchronize_form(form)
+    end
+
+    Rails.logger.info({ post_synchronise_form_documents: summarise_form_documents })
+    Rails.logger.info "forms:synchronise_form_documents finished"
+  end
+
+  desc "Synchronise FormDocuments with Forms dry run"
+  task synchronise_form_documents_dry_run: :environment do
+    Rails.logger.info "forms:synchronise_form_documents_dry_run starting"
+
+    Rails.logger.info({ pre_synchronise_form_documents_dry_run: summarise_form_documents })
+
+    ActiveRecord::Base.transaction do
+      Rails.logger.info "forms:synchronise_form_documents_dry_run starting"
+      Form.find_each do |form|
+        Api::V2::FormDocumentSyncService.new.synchronize_form(form)
+      end
+      raise ActiveRecord::Rollback
+    end
+
+    Rails.logger.info({ post_synchronise_form_documents_dry_run: summarise_form_documents })
+    Rails.logger.info "forms:synchronise_form_documents_dry_run finished"
+  end
+
+  desc "Summarise FormDocuments"
+  task summarise_form_documents: :environment do
+    Rails.logger.info({ summarise_form_documents: })
+  end
+end
+
+def summarise_form_documents
+  form_counts = Form.all.group(:state).count
+  form_document_counts = Api::V2::FormDocument.all.group(:tag).count
+
+  { form_summary: { form_counts:, form_document_counts: } }
 end

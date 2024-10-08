@@ -75,4 +75,185 @@ RSpec.describe "forms.rake" do
       end
     end
   end
+
+  describe "forms:synchronise_form_documents" do
+    subject(:task) do
+      Rake::Task["forms:synchronise_form_documents"]
+        .tap(&:reenable)
+    end
+
+    let(:form) { create :form }
+
+    let(:draft_document) { Api::V2::FormDocument.find_by(form_id: form.id, tag: "draft") }
+    let(:live_document) { Api::V2::FormDocument.find_by(form_id: form.id, tag: "live") }
+    let(:archived_document) { Api::V2::FormDocument.find_by(form_id: form.id, tag: "archived") }
+
+    def create_live_form(form)
+      live_at ||= Time.zone.now
+      # make a live form without invoking the state machine, which will trigger model syncing code
+
+      form.touch(time: live_at)
+
+      form_blob = form.snapshot(live_at:)
+      form.made_live_forms.create!(json_form_blob: form_blob.to_json, created_at: live_at)
+      form.live!
+    end
+
+    shared_examples "does not change FormDocuments when invoked twice" do
+      it "does not create additional documents on multiple invocations" do
+        task.invoke
+        expect {
+          task.invoke
+        }.not_to(change { Api::V2::FormDocument.where(form_id: form.id).count })
+      end
+    end
+
+    context "when the form is live" do
+      let(:form) { create :form, :ready_for_live }
+
+      before do
+        create_live_form(form)
+      end
+
+      it "ensures the there is one FormDocument with the live tag" do
+        task.invoke
+        expect(live_document).to have_attributes(tag: "live", content: hash_including("form_id" => form.external_id))
+        expect(draft_document).to be_nil
+        expect(archived_document).to be_nil
+      end
+
+      it "updates FormDocument with 'live' tag if it already exists" do
+        create :form_document, form_id: form.id, tag: "live", content: { "submission_email" => "old_live_form@example.com" }
+
+        task.invoke
+
+        expect(live_document).to have_attributes(tag: "live", content: hash_including("submission_email" => form.submission_email))
+        expect(draft_document).to be_nil
+        expect(archived_document).to be_nil
+      end
+
+      it "removes any archived FormDocuments" do
+        create :form_document, form_id: form.id, tag: "archived"
+
+        task.invoke
+
+        expect(archived_document).to be_nil
+      end
+
+      include_examples "does not change FormDocuments when invoked twice"
+    end
+
+    context "when the form is live_with_draft" do
+      let(:form) { create :form, :ready_for_live, submission_email: "original_submission_email@example.com" }
+
+      before do
+        create_live_form(form)
+        form.create_draft_from_live_form!
+      end
+
+      it "creates draft and live FormDocuments" do
+        task.invoke
+
+        expect(draft_document).to be_present
+        expect(live_document).to be_present
+      end
+
+      it "ensures the live FormDocument matches the live version and the draft matches the current form content" do
+        form.update!(submission_email: "new_draft_submission_email@example.com")
+
+        task.invoke
+
+        expect(draft_document).to have_attributes(content: hash_including("submission_email" => "new_draft_submission_email@example.com"))
+        expect(live_document).to have_attributes(content: hash_including("submission_email" => "original_submission_email@example.com"))
+      end
+
+      include_examples "does not change FormDocuments when invoked twice"
+
+      it "removes any archived FormDocuments" do
+        create :form_document, form_id: form.id, tag: "archived"
+
+        task.invoke
+
+        expect(archived_document).to be_nil
+      end
+    end
+
+    context "when the form is draft" do
+      let!(:form) { create :form }
+
+      it "ensures there is a draft FormDocument" do
+        task.invoke
+        expect(draft_document).to be_present
+      end
+
+      it "removes any archived and live FormDocuments" do
+        create :form_document, form_id: form.id, tag: "archived"
+        create :form_document, form_id: form.id, tag: "live"
+
+        expect {
+          task.invoke
+        }.to change {
+          Api::V2::FormDocument.where(form_id: form.id, tag: %w[live archived]).count
+        }.from(2).to(0)
+      end
+
+      include_examples "does not change FormDocuments when invoked twice"
+    end
+
+    context "when the form is archived" do
+      let(:form) { create :form, :ready_for_live }
+
+      before do
+        create_live_form(form)
+        form.archived!
+      end
+
+      it "ensures there an archived FormDocument" do
+        task.invoke
+        expect(archived_document).to be_present
+      end
+
+      it "removes existing live FormDocument" do
+        create(:form_document, form_id: form.id, tag: "live")
+
+        expect {
+          task.invoke
+        }.to change {
+          Api::V2::FormDocument.where(form_id: form.id, tag: "live").count
+        }.from(1).to(0)
+      end
+
+      include_examples "does not change FormDocuments when invoked twice"
+    end
+
+    context "when the form is archived with draft" do
+      let(:form) { create :form, :ready_for_live }
+
+      before do
+        create_live_form(form)
+        form.archived!
+        form.create_draft_from_archived_form!
+      end
+
+      it "ensures there is draft and archived FormDocument which match the Form" do
+        task.invoke
+
+        [archived_document, draft_document].each do |doc|
+          expect(doc.content["updated_at"]).to eq(form.snapshot["updated_at"])
+        end
+      end
+
+      it "removes any live FormDocuments" do
+        create(:form_document, form_id: form.id, tag: "live")
+
+        expect {
+          task.invoke
+        }.to change {
+          Api::V2::FormDocument.where(form_id: form.id, tag: "live").count
+        }.from(1).to(0)
+      end
+
+      include_examples "does not change FormDocuments when invoked twice"
+    end
+  end
 end

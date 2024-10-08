@@ -8,6 +8,7 @@ class FeaturesReportService
       live_forms_with_routing:,
       live_forms_with_add_another_answer:,
       live_forms_with_csv_submission_enabled:,
+      all_forms_with_add_another_answer:,
     }
   end
 
@@ -17,6 +18,7 @@ private
   # This means that they may include updates which have been made to forms since they were made live.
   # As a result, the figures in the report may vary slightly from the actual live figures.
   # TODO: rewrite the queries to only check the content of live forms
+
   def total_live_forms
     Form.where(state: %w[live live_with_draft]).count
   end
@@ -43,5 +45,17 @@ private
 
   def live_forms_with_csv_submission_enabled
     Form.where(state: %w[live live_with_draft]).where(submission_type: "email_with_csv").count
+  end
+
+  def all_forms_with_add_another_answer
+    forms = Form.includes(:pages).where(pages: { is_repeatable: true })
+
+    forms.map do |form|
+      {
+        form_id: form.id,
+        name: form.name,
+        repeatable_pages: form.pages.map { |page| { page_id: page.id, question_text: page.question_text } if page.is_repeatable },
+      }
+    end
   end
 end

@@ -16,6 +16,7 @@ class Api::V1::FormsController < ApplicationController
   def create
     new_form = Form.new(form_params)
     if new_form.save
+      Api::V2::FormDocumentSyncService.new.synchronize_form(new_form)
       render json: new_form.to_json, status: :created
     else
       render json: new_form.errors.to_json, status: :bad_request
@@ -29,6 +30,8 @@ class Api::V1::FormsController < ApplicationController
       form.create_draft_from_live_form! if form.live?
       form.create_draft_from_archived_form! if form.archived?
 
+      Api::V2::FormDocumentSyncService.new.synchronize_form(form)
+
       render json: form.to_json, status: :ok
     else
       render json: form.errors.to_json, status: :bad_request
@@ -41,6 +44,7 @@ class Api::V1::FormsController < ApplicationController
 
   def destroy
     form.destroy!
+
     render status: :no_content
   end
 

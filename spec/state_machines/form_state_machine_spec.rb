@@ -7,6 +7,13 @@ end
 RSpec.describe FormStateMachine do
   let(:form) { FakeForm.new }
 
+  let(:form_document_sync_service) { instance_double(Api::V2::FormDocumentSyncService) }
+
+  before do
+    allow(Api::V2::FormDocumentSyncService).to receive(:new).and_return(form_document_sync_service)
+    allow(form_document_sync_service).to receive(:synchronize_form)
+  end
+
   it "has a default state of 'draft'" do
     expect(form).to have_state(:draft)
   end

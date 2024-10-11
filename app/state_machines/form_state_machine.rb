@@ -38,10 +38,18 @@ module FormStateMachine
       end
 
       event :create_draft_from_live_form do
+        after do
+          update!(share_preview_completed: false)
+        end
+
         transitions from: :live, to: :live_with_draft
       end
 
       event :create_draft_from_archived_form do
+        after do
+          update!(share_preview_completed: false)
+        end
+
         transitions from: :archived, to: :archived_with_draft
       end
 

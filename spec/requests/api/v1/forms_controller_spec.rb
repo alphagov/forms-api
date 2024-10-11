@@ -182,7 +182,7 @@ describe Api::V1::FormsController, type: :request do
                          what_happens_next_status: "not_started",
                          payment_link_status: "optional",
                          receive_csv_status: "optional",
-                         share_preview_status: "not_started" },
+                         share_preview_status: "cannot_start" },
         state: "draft",
         payment_url: nil,
         submission_type: "email",

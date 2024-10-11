@@ -80,6 +80,7 @@ private
   end
 
   def share_preview_status
+    return :cannot_start unless @form.pages.any?
     return :completed if @form.share_preview_completed?
 
     :not_started

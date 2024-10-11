@@ -302,7 +302,7 @@ describe TaskStatusService do
       let(:form) { build :form, :new_form }
 
       it "returns a set of keys related to missing fields" do
-        expect(task_status_service.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
+        expect(task_status_service.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next share_preview_not_completed])
       end
     end
   end

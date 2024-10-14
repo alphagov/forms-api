@@ -7,6 +7,7 @@ class Api::V1::PagesController < ApplicationController
     new_page = form.pages.new(page_params)
 
     if new_page.save_and_update_form
+      update_form_document
       render json: new_page.to_json, status: :created
     end
   end
@@ -19,12 +20,14 @@ class Api::V1::PagesController < ApplicationController
     page.assign_attributes(page_params)
 
     if page.save_and_update_form
+      update_form_document
       render json: page.to_json, status: :ok
     end
   end
 
   def destroy
     page.destroy_and_update_form!
+    update_form_document
     render status: :no_content
   end
 
@@ -32,7 +35,9 @@ class Api::V1::PagesController < ApplicationController
     unless page.last?
       page.move_lower
       form.update!(question_section_completed: false)
+      update_form_document
     end
+
     render json: page.to_json, status: :ok
   end
 
@@ -40,7 +45,9 @@ class Api::V1::PagesController < ApplicationController
     unless page.first?
       page.move_higher
       form.update!(question_section_completed: false)
+      update_form_document
     end
+
     render json: page.to_json, status: :ok
   end
 
@@ -94,5 +101,9 @@ private
       *guidance_params,
       answer_setting_params,
     )
+  end
+
+  def update_form_document
+    Api::V2::ModelSync.new.update_draft(form.id, form.snapshot, form.external_id)
   end
 end

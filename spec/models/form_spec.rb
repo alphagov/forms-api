@@ -436,8 +436,8 @@ RSpec.describe Form, type: :model do
   describe "submission type" do
     describe "enum" do
       it "returns a list of submission types" do
-        expect(described_class.submission_types.keys).to eq(%w[email email_with_csv])
-        expect(described_class.submission_types.values).to eq(%w[email email_with_csv])
+        expect(described_class.submission_types.keys).to eq(%w[email email_with_csv s3])
+        expect(described_class.submission_types.values).to eq(%w[email email_with_csv s3])
       end
     end
   end

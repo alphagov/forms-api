@@ -76,6 +76,106 @@ RSpec.describe "forms.rake" do
     end
   end
 
+  describe "forms:set_submission_type_to_s3" do
+    subject(:task) do
+      Rake::Task["forms:set_submission_type_to_s3"]
+        .tap(&:reenable)
+    end
+
+    let(:form) { create :form, :live }
+    let!(:other_form) { create :form, :live }
+
+    context "when the form is live" do
+      before do
+        # make this form live twice to create multiple versions
+        form.create_draft_from_live_form!
+        form.make_live!
+      end
+
+      it "sets a form's submission_type to s3" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("s3")
+      end
+
+      it "does not update a form's older live versions" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.first.json_form_blob)["submission_type"]).to eq("email")
+      end
+
+      it "updates a form's latest live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
+      end
+
+      it "does not update a different form" do
+        expect { task.invoke(form.id) }
+          .not_to(change { other_form.reload.submission_type })
+      end
+
+      it "does not update a different form's latest live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(other_form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
+      end
+    end
+
+    context "when the form is not live" do
+      it "sets a form's submission_type to s3" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("s3")
+      end
+    end
+  end
+
+  describe "forms:set_submission_type_to_email" do
+    subject(:task) do
+      Rake::Task["forms:set_submission_type_to_email"]
+        .tap(&:reenable)
+    end
+
+    let(:form) { create :form, :live, submission_type: "s3" }
+    let!(:other_form) { create :form, :live, submission_type: "s3" }
+
+    context "when the form is live" do
+      before do
+        # make this form live twice to create multiple versions
+        form.create_draft_from_live_form!
+        form.make_live!
+      end
+
+      it "sets a form's submission_type to email" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("email")
+      end
+
+      it "does not update a form's older live versions" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.first.json_form_blob)["submission_type"]).to eq("s3")
+      end
+
+      it "updates a form's latest live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
+      end
+
+      it "does not update a different form" do
+        expect { task.invoke(form.id) }
+          .not_to(change { other_form.reload.submission_type })
+      end
+
+      it "does not update a different form's latest live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(other_form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
+      end
+    end
+
+    context "when the form is not live" do
+      it "sets a form's submission_type to email" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("email")
+      end
+    end
+  end
+
   describe "forms:synchronise_form_documents" do
     subject(:task) do
       Rake::Task["forms:synchronise_form_documents"]

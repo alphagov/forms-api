@@ -327,6 +327,7 @@ RSpec.describe Form, type: :model do
         "payment_url",
         "submission_type",
         "share_preview_completed",
+        "s3_bucket_name",
       )
     end
   end

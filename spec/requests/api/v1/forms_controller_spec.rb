@@ -194,6 +194,7 @@ describe Api::V1::FormsController, type: :request do
         state: "draft",
         payment_url: nil,
         submission_type: "email",
+        s3_bucket_name: nil,
       )
     end
   end

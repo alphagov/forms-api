@@ -8,27 +8,28 @@ namespace :forms do
     puts "external_id has been set for each form to their id"
   end
 
+  desc "Set submission_type to email"
+  task :set_submission_type_to_email, %i[form_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_email[<form_id>]".freeze
+    abort usage_message if args[:form_id].blank?
+
+    set_submission_type("email", args[:form_id])
+  end
+
   desc "Set submission_type to email_with_csv"
   task :set_submission_type_to_email_with_csv, %i[form_id] => :environment do |_, args|
     usage_message = "usage: rake forms:set_submission_type_to_email_with_csv[<form_id>]".freeze
     abort usage_message if args[:form_id].blank?
 
-    Rails.logger.info("setting submission_type to email_with_csv for form: #{args[:form_id]}")
+    set_submission_type("email_with_csv", args[:form_id])
+  end
 
-    form = Form.find(args[:form_id])
-    form.email_with_csv!
+  desc "Set submission_type to s3"
+  task :set_submission_type_to_s3, %i[form_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_s3[<form_id>]".freeze
+    abort usage_message if args[:form_id].blank?
 
-    made_live_form = form.made_live_forms.last
-
-    if made_live_form.present?
-      form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
-
-      form_blob[:submission_type] = "email_with_csv"
-
-      made_live_form.update!(json_form_blob: form_blob.to_json)
-    end
-
-    Rails.logger.info("set submission_type to email_with_csv for form: #{args[:form_id]}")
+    set_submission_type("s3", args[:form_id])
   end
 
   desc "Synchronise FormDocuments with Forms"
@@ -76,4 +77,24 @@ def summarise_form_documents
   form_document_counts = Api::V2::FormDocument.all.group(:tag).count
 
   { form_summary: { form_counts:, form_document_counts: } }
+end
+
+def set_submission_type(submission_type, form_id)
+  Rails.logger.info("setting submission_type to #{submission_type} for form: #{form_id}")
+
+  form = Form.find(form_id)
+  form.submission_type = submission_type
+  form.save!
+
+  made_live_form = form.made_live_forms.last
+
+  if made_live_form.present?
+    form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
+
+    form_blob[:submission_type] = submission_type
+
+    made_live_form.update!(json_form_blob: form_blob.to_json)
+  end
+
+  Rails.logger.info("set submission_type to #{submission_type} for form: #{form_id}")
 end

@@ -10,6 +10,7 @@ class Form < ApplicationRecord
   enum :submission_type, {
     email: "email",
     email_with_csv: "email_with_csv",
+    s3: "s3",
   }
 
   validates :name, presence: true

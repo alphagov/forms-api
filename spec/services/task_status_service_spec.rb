@@ -175,19 +175,39 @@ describe TaskStatusService do
     end
 
     describe "share_preview_status" do
-      context "with a new form" do
-        let(:form) { build(:form, :new_form) }
+      context "with share_preview_completed set to false" do
+        context "when the form does not have any pages" do
+          let(:form) { build(:form, :new_form) }
 
-        it "returns not_started" do
-          expect(task_status_service.task_statuses[:share_preview_status]).to eq :not_started
+          it "returns cannot_start" do
+            expect(task_status_service.task_statuses[:share_preview_status]).to eq :cannot_start
+          end
+        end
+
+        context "when the form has pages" do
+          let(:form) { build(:form, :with_pages) }
+
+          it "returns not_started" do
+            expect(task_status_service.task_statuses[:share_preview_status]).to eq :not_started
+          end
         end
       end
 
       context "with share_preview_completed set to true" do
-        let(:form) { build(:form, :new_form, share_preview_completed: true) }
+        context "when the form does not have any pages" do
+          let(:form) { build(:form, :new_form, share_preview_completed: true) }
 
-        it "returns completed" do
-          expect(task_status_service.task_statuses[:share_preview_status]).to eq :completed
+          it "returns cannot_start" do
+            expect(task_status_service.task_statuses[:share_preview_status]).to eq :cannot_start
+          end
+        end
+
+        context "when the form has pages" do
+          let(:form) { build(:form, :with_pages, share_preview_completed: true) }
+
+          it "returns completed" do
+            expect(task_status_service.task_statuses[:share_preview_status]).to eq :completed
+          end
         end
       end
     end
@@ -282,7 +302,7 @@ describe TaskStatusService do
       let(:form) { build :form, :new_form }
 
       it "returns a set of keys related to missing fields" do
-        expect(task_status_service.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
+        expect(task_status_service.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next share_preview_not_completed])
       end
     end
   end

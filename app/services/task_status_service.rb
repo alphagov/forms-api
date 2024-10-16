@@ -11,7 +11,8 @@ class TaskStatusService
     { missing_pages: pages_status,
       missing_what_happens_next: what_happens_next_status,
       missing_privacy_policy_url: privacy_policy_status,
-      missing_contact_details: support_contact_details_status }.reject { |_k, v| v == :completed }.map { |k, _v| k }
+      missing_contact_details: support_contact_details_status,
+      share_preview_not_completed: share_preview_status }.reject { |_k, v| v == :completed }.map { |k, _v| k }
   end
 
   def task_statuses
@@ -80,6 +81,7 @@ private
   end
 
   def share_preview_status
+    return :cannot_start unless @form.pages.any?
     return :completed if @form.share_preview_completed?
 
     :not_started

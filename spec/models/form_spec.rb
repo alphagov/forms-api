@@ -145,42 +145,60 @@ RSpec.describe Form, type: :model do
     end
   end
 
-  describe "#make_live! from FormStateMachine" do
-    let(:form_to_be_made_live) { create :form, :ready_for_live }
-    let(:time_now) { Time.zone.now }
+  describe "FormStateMachine" do
+    describe "#make_live!" do
+      let(:form_to_be_made_live) { create :form, :ready_for_live }
+      let(:time_now) { Time.zone.now }
 
-    before do
-      freeze_time do
-        time_now
-        form_to_be_made_live.make_live!
+      before do
+        freeze_time do
+          time_now
+          form_to_be_made_live.make_live!
+        end
+      end
+
+      it "sets a forms live_at to make the form live" do
+        expect(form_to_be_made_live.live_at).to eq(time_now)
+      end
+
+      it "creates a made live version" do
+        expect(form_to_be_made_live.made_live_forms.last.json_form_blob)
+          .to eq(form_to_be_made_live.snapshot(live_at: time_now).to_json)
+      end
+
+      it "the made live version has a live_at datetime" do
+        form_blob = JSON.parse(
+          form_to_be_made_live.made_live_forms.last.json_form_blob,
+          symbolize_names: true,
+        )
+
+        expect(Time.zone.parse(form_blob[:live_at])).to eq time_now
+      end
+
+      it "makes timestamps consistent" do
+        form = create :form, :ready_for_live
+        form.make_live!
+        made_live_form = form.made_live_forms.last
+
+        expect(form.live_at).to eq(made_live_form.created_at)
+        expect(form.updated_at).to eq(made_live_form.created_at)
       end
     end
 
-    it "sets a forms live_at to make the form live" do
-      expect(form_to_be_made_live.live_at).to eq(time_now)
+    describe "#create_draft_from_live_form!" do
+      let(:form) { create :form, :live }
+
+      it "sets share_preview_completed to false" do
+        expect { form.create_draft_from_live_form! }.to change(form, :share_preview_completed).to(false)
+      end
     end
 
-    it "creates a made live version" do
-      expect(form_to_be_made_live.made_live_forms.last.json_form_blob)
-        .to eq(form_to_be_made_live.snapshot(live_at: time_now).to_json)
-    end
+    describe "#create_draft_from_archived_form!" do
+      let(:form) { create :form, :archived }
 
-    it "the made live version has a live_at datetime" do
-      form_blob = JSON.parse(
-        form_to_be_made_live.made_live_forms.last.json_form_blob,
-        symbolize_names: true,
-      )
-
-      expect(Time.zone.parse(form_blob[:live_at])).to eq time_now
-    end
-
-    it "makes timestamps consistent" do
-      form = create :form, :ready_for_live
-      form.make_live!
-      made_live_form = form.made_live_forms.last
-
-      expect(form.live_at).to eq(made_live_form.created_at)
-      expect(form.updated_at).to eq(made_live_form.created_at)
+      it "sets share_preview_completed to false" do
+        expect { form.create_draft_from_archived_form! }.to change(form, :share_preview_completed).to(false)
+      end
     end
   end
 
@@ -389,7 +407,8 @@ RSpec.describe Form, type: :model do
       let(:new_form) { build :form, :new_form }
 
       it "returns a set of keys related to missing fields" do
-        expect(new_form.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next])
+        expect(new_form.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next share_preview_not_completed])
+        expect(new_form.incomplete_tasks).to match_array(%i[missing_pages missing_privacy_policy_url missing_contact_details missing_what_happens_next share_preview_not_completed])
       end
     end
   end

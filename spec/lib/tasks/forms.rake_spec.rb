@@ -38,6 +38,7 @@ RSpec.describe "forms.rake" do
       before do
         # make this form live twice to create multiple versions
         form.create_draft_from_live_form!
+        form.share_preview_completed = true
         form.make_live!
       end
 

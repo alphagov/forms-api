@@ -80,6 +80,7 @@ RSpec.describe FormStateMachine do
     let(:form) { FakeForm.new(state: :live) }
 
     it "transitions to live_with_draft if form is live" do
+      allow(form).to receive(:update!)
       expect(form).to transition_from(:live).to(:live_with_draft).on_event(:create_draft_from_live_form)
     end
 
@@ -95,7 +96,11 @@ RSpec.describe FormStateMachine do
   describe ".create_draft_from_archived_form" do
     let(:form) { FakeForm.new(state: :archived) }
 
-    it "transitions to archived_with_draft if form is archived" do
+    before do
+      allow(form).to receive(:update!)
+    end
+
+    it "transitions to archived_with_draft" do
       expect(form).to transition_from(:archived).to(:archived_with_draft).on_event(:create_draft_from_archived_form)
     end
 
@@ -120,7 +125,7 @@ RSpec.describe FormStateMachine do
     context "when the form is live" do
       let(:form) { FakeForm.new(state: :live) }
 
-      it "transitions to archived if form is live" do
+      it "transitions to archived" do
         expect(form).to transition_from(:live).to(:archived).on_event(:archive_live_form)
       end
     end

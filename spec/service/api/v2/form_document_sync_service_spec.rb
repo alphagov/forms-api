@@ -120,14 +120,13 @@ RSpec.describe Api::V2::FormDocumentSyncService do
 
   describe "#delete_form_documents" do
     it "deletes form documents with specified tags" do
-      form_documents = instance_double(ActiveRecord::Relation)
-      allow(Api::V2::FormDocument).to receive(:where).with(form_id: form.id, tag: %i[draft archived]).and_return(form_documents)
-      allow(form_documents).to receive(:delete_all).and_return(true)
+      create(:form_document, form_id: form.id, tag: :draft)
+      create(:form_document, form_id: form.id, tag: :archived)
+      create(:form_document, form_id: form.id, tag: :live)
 
-      service.delete_form_documents(form, %i[draft archived])
-
-      expect(Api::V2::FormDocument).to have_received(:where).with(form_id: form.id, tag: %i[draft archived])
-      expect(form_documents).to have_received(:delete_all)
+      expect {
+        service.delete_form_documents(form, %i[live draft archived])
+      }.to change(Api::V2::FormDocument, :count).from(3).to(0)
     end
   end
 end

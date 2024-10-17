@@ -89,39 +89,70 @@ RSpec.describe "forms.rake" do
       before do
         # make this form live twice to create multiple versions
         form.create_draft_from_live_form!
+        form.share_preview_completed = true
         form.make_live!
       end
 
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id) }
+        expect { task.invoke(form.id, "s3_bucket_name") }
           .to change { form.reload.submission_type }.to("s3")
       end
 
+      it "sets a form's s3_bucket_name" do
+        expect { task.invoke(form.id, "s3_bucket_name") }
+          .to change { form.reload.s3_bucket_name }.to("s3_bucket_name")
+      end
+
       it "does not update a form's older live versions" do
-        task.invoke(form.id)
+        task.invoke(form.id, "s3_bucket_name")
         expect(JSON.parse(form.made_live_forms.first.json_form_blob)["submission_type"]).to eq("email")
+        expect(JSON.parse(form.made_live_forms.first.json_form_blob)["s3_bucket_name"]).to be_nil
       end
 
       it "updates a form's latest live version" do
-        task.invoke(form.id)
+        task.invoke(form.id, "s3_bucket_name")
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["s3_bucket_name"]).to eq("s3_bucket_name")
       end
 
       it "does not update a different form" do
-        expect { task.invoke(form.id) }
+        expect { task.invoke(form.id, "s3_bucket_name") }
           .not_to(change { other_form.reload.submission_type })
       end
 
       it "does not update a different form's latest live version" do
-        task.invoke(form.id)
+        task.invoke(form.id, "s3_bucket_name")
         expect(JSON.parse(other_form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
     end
 
     context "when the form is not live" do
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id) }
+        expect { task.invoke(form.id, "s3_bucket_name") }
           .to change { form.reload.submission_type }.to("s3")
+      end
+
+      it "sets a form's s3_bucket_name" do
+        expect { task.invoke(form.id, "s3_bucket_name") }
+        .to change { form.reload.s3_bucket_name }.to("s3_bucket_name")
+      end
+    end
+
+    context "without arguments" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke
+        }.to raise_error(SystemExit)
+         .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>]\n").to_stderr
+      end
+    end
+
+    context "without bucket name argument" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke(1)
+        }.to raise_error(SystemExit)
+         .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>]\n").to_stderr
       end
     end
   end
@@ -139,6 +170,7 @@ RSpec.describe "forms.rake" do
       before do
         # make this form live twice to create multiple versions
         form.create_draft_from_live_form!
+        form.share_preview_completed = true
         form.make_live!
       end
 

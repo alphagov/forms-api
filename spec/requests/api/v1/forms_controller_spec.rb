@@ -87,6 +87,14 @@ describe Api::V1::FormsController, type: :request do
         expect(created_form[:name]).to eq("test form one")
         expect(created_form[:submission_email]).to eq("test@example.gov.uk")
       end
+
+      it "creates a draft FormDocument" do
+        form_documents = Api::V2::FormDocument.where(form_id: created_form.id)
+        expect(form_documents.count).to eq 1
+        expect(form_documents.first.tag).to eq "draft"
+        expect(form_documents.first.content["form_id"]).to eq created_form.external_id
+        expect(form_documents.first.content["submission_email"]).to include(new_form_params[:submission_email])
+      end
     end
 
     context "with no params" do
@@ -200,12 +208,23 @@ describe Api::V1::FormsController, type: :request do
       expect(json_body).to eq(error: "not_found")
     end
 
-    it "when given an valid id and params, updates DB and returns 200" do
-      put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
-      expect(response).to have_http_status(:ok)
-      expect(response.headers["Content-Type"]).to eq("application/json")
-      expect(json_body).to include(submission_email: "test@example.gov.uk")
-      expect(form.reload.submission_email).to eq("test@example.gov.uk")
+    context "when given an valid id and params" do
+      it "updates DB and returns 200" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+        expect(response).to have_http_status(:ok)
+        expect(response.headers["Content-Type"]).to eq("application/json")
+        expect(json_body).to include(submission_email: "test@example.gov.uk")
+        expect(form.reload.submission_email).to eq("test@example.gov.uk")
+      end
+
+      it "updates the draft form_document" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+
+        form_documents = Api::V2::FormDocument.where(form_id: form.id)
+        expect(form_documents.count).to eq 1
+        expect(form_documents.first.tag).to eq "draft"
+        expect(form_documents.first.content["submission_email"]).to eq("test@example.gov.uk")
+      end
     end
 
     it "ignores created_at" do
@@ -223,6 +242,18 @@ describe Api::V1::FormsController, type: :request do
         put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
         expect(form.reload.state).to eq("live_with_draft")
       end
+
+      it "creates a draft FormDocuments with the updated form content" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+
+        form_documents = Api::V2::FormDocument.where(form_id: form.id)
+        expect(form_documents.count).to eq 2
+        expect(form_documents.pluck(:tag)).to include("live", "draft")
+        # draft form document should have the updated submission_email
+        expect(form_documents.where(tag: "draft").pick(:content)["submission_email"]).to eq("test@example.gov.uk")
+        # live form document should have the original submission_email
+        expect(form_documents.where(tag: "live").pick(:content)["submission_email"]).to eq(JSON.parse(form.live_version)["submission_email"])
+      end
     end
 
     context "when form is archived" do
@@ -231,6 +262,18 @@ describe Api::V1::FormsController, type: :request do
       it "updates form state to archived_with_draft" do
         put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
         expect(form.reload.state).to eq("archived_with_draft")
+      end
+
+      it "creates a draft FormDocument and changes the archived form document" do
+        put form_path(form), params: { submission_email: "test@example.gov.uk" }, as: :json
+
+        form_documents = Api::V2::FormDocument.where(form_id: form.id)
+        expect(form_documents.count).to eq 2
+        expect(form_documents.pluck(:tag)).to include("archived", "draft")
+        # draft form document should have the updated submission_email
+        expect(form_documents.where(tag: "draft").pick(:content)["submission_email"]).to eq("test@example.gov.uk")
+        # archived form document should be updated with the draft
+        expect(form_documents.where(tag: "archived").pick(:content)["submission_email"]).to eq("test@example.gov.uk")
       end
     end
   end
@@ -253,6 +296,12 @@ describe Api::V1::FormsController, type: :request do
       form_to_be_deleted = create :form, :with_pages
       delete form_path(form_to_be_deleted), as: :json
       expect(response).to have_http_status(:no_content)
+    end
+
+    it "when given an existing id, returns 200 and deletes the form and any FormDocuments" do
+      form_to_be_deleted = create :form
+      create :form_document, form_id: form_to_be_deleted.id
+      expect { delete form_path(form_to_be_deleted), as: :json }.to change { Api::V2::FormDocument.find_by(form_id: form_to_be_deleted.id) }.to(nil)
     end
   end
 
@@ -281,6 +330,16 @@ describe Api::V1::FormsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body).to include(live_at: Time.zone.now)
+    end
+
+    it "creates live FormDocument and removes draft FormDocument" do
+      form_to_be_made_live = create(:form, :ready_for_live)
+      post make_live_form_path(form_to_be_made_live), as: :json
+      expect(response).to have_http_status(:ok)
+
+      form_documents = Api::V2::FormDocument.where(form_id: form_to_be_made_live.id)
+      expect(form_documents.count).to eq 1
+      expect(form_documents.first.tag).to eq "live"
     end
   end
 
@@ -359,6 +418,15 @@ describe Api::V1::FormsController, type: :request do
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(state: "archived")
       end
+
+      it "removes the live FormDocument and creates an archived form document" do
+        form = create(:made_live_form).form
+        post archive_form_path(form), as: :json
+
+        form_documents = Api::V2::FormDocument.where(form_id: form.id)
+        expect(form_documents.count).to eq 1
+        expect(form_documents.first.tag).to eq "archived"
+      end
     end
 
     context "when the form is live with draft" do
@@ -370,6 +438,16 @@ describe Api::V1::FormsController, type: :request do
         expect(response).to have_http_status(:ok)
         expect(response.headers["Content-Type"]).to eq("application/json")
         expect(json_body).to include(state: "archived_with_draft")
+      end
+
+      it "removes the live FormDocument and creates a archived form document" do
+        form = create(:made_live_form).form
+        form.create_draft_from_live_form!
+        post archive_form_path(form), as: :json
+
+        form_documents = Api::V2::FormDocument.where(form_id: form.id)
+        expect(form_documents.count).to eq 2
+        expect(form_documents.pluck(:tag)).to include("archived", "draft")
       end
     end
   end

@@ -328,6 +328,7 @@ RSpec.describe Form, type: :model do
         "submission_type",
         "share_preview_completed",
         "s3_bucket_name",
+        "s3_bucket_aws_account_id",
       )
     end
   end

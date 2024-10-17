@@ -63,6 +63,7 @@ describe FeaturesReportService do
   let(:form_6_pages) { pages_with_with_add_another_answer }
 
   let(:payment_url) { nil }
+  let(:submission_type) { "email" }
 
   describe "#report" do
     before do
@@ -73,7 +74,7 @@ describe FeaturesReportService do
 
     context "when there are live forms" do
       before do
-        create(:form, state: "live", pages: form_4_pages, payment_url:)
+        create(:form, state: "live", pages: form_4_pages, payment_url:, submission_type:)
         create(:form, state: "live_with_draft", pages: form_5_pages, payment_url: nil)
       end
 
@@ -142,6 +143,16 @@ describe FeaturesReportService do
           expect(response[:live_forms_with_add_another_answer]).to eq 1
         end
       end
+
+      context "when a live form has CSV submission enabled" do
+        let(:submission_type) { "email_with_csv" }
+
+        it "counts the form in the CSV submission part of the report" do
+          response = features_report_service.report
+
+          expect(response[:live_forms_with_csv_submission_enabled]).to eq 1
+        end
+      end
     end
 
     context "when there are no live forms" do
@@ -165,6 +176,7 @@ describe FeaturesReportService do
 
         expect(response[:live_forms_with_payment]).to eq 0
         expect(response[:live_forms_with_routing]).to eq 0
+        expect(response[:live_forms_with_csv_submission_enabled]).to eq 0
       end
     end
   end

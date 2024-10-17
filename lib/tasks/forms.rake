@@ -56,10 +56,12 @@ namespace :forms do
       Form.find_each do |form|
         Api::V2::FormDocumentSyncService.new.synchronize_form(form)
       end
+
+      Rails.logger.info({ post_synchronise_form_documents_dry_run: summarise_form_documents })
+
       raise ActiveRecord::Rollback
     end
 
-    Rails.logger.info({ post_synchronise_form_documents_dry_run: summarise_form_documents })
     Rails.logger.info "forms:synchronise_form_documents_dry_run finished"
   end
 

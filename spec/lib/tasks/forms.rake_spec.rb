@@ -19,9 +19,10 @@ RSpec.describe "forms.rake" do
     it "sets a form's external_id to its id" do
       form.update!(external_id: nil)
       expect { task.invoke }
-        .to change { form.reload.external_id }.to(form.id.to_s)
-        .and output(/external_id has been set for each form to their id/)
-              .to_stdout
+        .to change { form.reload.external_id }
+              .to(form.id.to_s)
+              .and output(/external_id has been set for each form to their id/)
+                     .to_stdout
     end
   end
 
@@ -84,6 +85,8 @@ RSpec.describe "forms.rake" do
 
     let(:form) { create :form, :live }
     let!(:other_form) { create :form, :live }
+    let(:s3_bucket_name) { "a-bucket" }
+    let(:s3_bucket_aws_account_id) { "an-aws-account-id" }
 
     context "when the form is live" do
       before do
@@ -94,47 +97,57 @@ RSpec.describe "forms.rake" do
       end
 
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id, "s3_bucket_name") }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
           .to change { form.reload.submission_type }.to("s3")
       end
 
       it "sets a form's s3_bucket_name" do
-        expect { task.invoke(form.id, "s3_bucket_name") }
-          .to change { form.reload.s3_bucket_name }.to("s3_bucket_name")
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+          .to change { form.reload.s3_bucket_name }.to(s3_bucket_name)
+      end
+
+      it "sets a form's s3_bucket_aws_account_id" do
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+          .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
       end
 
       it "does not update a form's older live versions" do
-        task.invoke(form.id, "s3_bucket_name")
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
         expect(JSON.parse(form.made_live_forms.first.json_form_blob)["submission_type"]).to eq("email")
         expect(JSON.parse(form.made_live_forms.first.json_form_blob)["s3_bucket_name"]).to be_nil
       end
 
       it "updates a form's latest live version" do
-        task.invoke(form.id, "s3_bucket_name")
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
-        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["s3_bucket_name"]).to eq("s3_bucket_name")
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["s3_bucket_name"]).to eq(s3_bucket_name)
       end
 
       it "does not update a different form" do
-        expect { task.invoke(form.id, "s3_bucket_name") }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
           .not_to(change { other_form.reload.submission_type })
       end
 
       it "does not update a different form's latest live version" do
-        task.invoke(form.id, "s3_bucket_name")
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
         expect(JSON.parse(other_form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
     end
 
     context "when the form is not live" do
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id, "s3_bucket_name") }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
           .to change { form.reload.submission_type }.to("s3")
       end
 
       it "sets a form's s3_bucket_name" do
-        expect { task.invoke(form.id, "s3_bucket_name") }
-        .to change { form.reload.s3_bucket_name }.to("s3_bucket_name")
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+          .to change { form.reload.s3_bucket_name }.to(s3_bucket_name)
+      end
+
+      it "sets a form's s3_bucket_aws_account_id" do
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+          .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
       end
     end
 
@@ -143,7 +156,7 @@ RSpec.describe "forms.rake" do
         expect {
           task.invoke
         }.to raise_error(SystemExit)
-         .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>]\n").to_stderr
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
       end
     end
 
@@ -152,7 +165,16 @@ RSpec.describe "forms.rake" do
         expect {
           task.invoke(1)
         }.to raise_error(SystemExit)
-         .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>]\n").to_stderr
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
+      end
+    end
+
+    context "without AWS account ID argument" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke(1, s3_bucket_name)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
       end
     end
   end

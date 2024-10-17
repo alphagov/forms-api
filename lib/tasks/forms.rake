@@ -25,15 +25,17 @@ namespace :forms do
   end
 
   desc "Set submission_type to s3"
-  task :set_submission_type_to_s3, %i[form_id s3_bucket_name] => :environment do |_, args|
-    usage_message = "usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>]".freeze
+  task :set_submission_type_to_s3, %i[form_id s3_bucket_name s3_bucket_aws_account_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]".freeze
     abort usage_message if args[:form_id].blank?
     abort usage_message if args[:s3_bucket_name].blank?
+    abort usage_message if args[:s3_bucket_aws_account_id].blank?
 
-    Rails.logger.info("setting submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]}for form: #{args[:form_id]}")
+    Rails.logger.info("setting submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
     form = Form.find(args[:form_id])
     form.submission_type = "s3"
     form.s3_bucket_name = args[:s3_bucket_name]
+    form.s3_bucket_aws_account_id = args[:s3_bucket_aws_account_id]
     form.save!
 
     made_live_form = form.made_live_forms.last
@@ -42,6 +44,7 @@ namespace :forms do
 
       form_blob[:submission_type] = "s3"
       form_blob[:s3_bucket_name] = args[:s3_bucket_name]
+      form_blob[:s3_bucket_aws_account_id] = args[:s3_bucket_aws_account_id]
 
       made_live_form.update!(json_form_blob: form_blob.to_json)
     end

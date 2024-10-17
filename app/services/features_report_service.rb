@@ -13,6 +13,10 @@ class FeaturesReportService
 
 private
 
+  # NOTE: all of these methods currently query the Form table rather than the MadeLiveForm table.
+  # This means that they may include updates which have been made to forms since they were made live.
+  # As a result, the figures in the report may vary slightly from the actual live figures.
+  # TODO: rewrite the queries to only check the content of live forms
   def total_live_forms
     Form.where(state: %w[live live_with_draft]).count
   end

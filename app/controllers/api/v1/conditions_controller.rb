@@ -7,6 +7,7 @@ class Api::V1::ConditionsController < ApplicationController
     new_condition = page.routing_conditions.new(condition_params)
 
     if new_condition.save_and_update_form
+      update_form_document
       render json: new_condition.to_json, status: :created
     else
       render json: new_condition.errors.to_json, status: :bad_request
@@ -21,6 +22,7 @@ class Api::V1::ConditionsController < ApplicationController
     condition.assign_attributes(condition_params)
 
     if condition.save_and_update_form
+      update_form_document
       render json: condition.to_json, status: :ok
     else
       render json: page.errors.to_json, status: :bad_request
@@ -29,6 +31,7 @@ class Api::V1::ConditionsController < ApplicationController
 
   def destroy
     condition.destroy_and_update_form!
+    update_form_document
     render status: :no_content
   end
 
@@ -55,5 +58,9 @@ private
       :skip_to_end,
       :answer_value,
     )
+  end
+
+  def update_form_document
+    Api::V2::FormDocumentSyncService.new.synchronize_form(form)
   end
 end

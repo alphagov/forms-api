@@ -55,6 +55,11 @@ describe Api::V1::ConditionsController, type: :request do
       expect(json_body).to include(id: new_condition.id, **new_condition_params)
     end
 
+    it "updates the draft FormDocument" do
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+      expect(form_document.content.dig("steps", 0, "routing_conditions", 0, "answer_value")).to eq("hello")
+    end
+
     context "with a form with question_section_completed = true" do
       let(:form) { create :form, question_section_completed: true }
 
@@ -120,6 +125,11 @@ describe Api::V1::ConditionsController, type: :request do
       expect(condition.reload.answer_value).to eq(answer_value)
       expect(form.reload.question_section_completed).to be false
     end
+
+    it "updates the draft FormDocument" do
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+      expect(form_document.content.dig("steps", 1, "routing_conditions", 0, "answer_value")).to eq("goodbye")
+    end
   end
 
   describe "#destroy" do
@@ -131,6 +141,12 @@ describe Api::V1::ConditionsController, type: :request do
       expect(response).to have_http_status(:no_content)
       expect(routing_page.routing_conditions.count).to eq(0)
       expect(form.reload.question_section_completed).to be false
+    end
+
+    it "updates the draft FormDocument" do
+      form_document = Api::V2::FormDocument.find_by(form_id: form.id, tag: :draft)
+      routing_step = form_document.content["steps"].find { |s| s["id"] == routing_page.id }
+      expect(routing_step["routing_conditions"].count).to eq(0)
     end
   end
 end

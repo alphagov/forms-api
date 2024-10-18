@@ -38,8 +38,8 @@ namespace :forms do
     form.s3_bucket_aws_account_id = args[:s3_bucket_aws_account_id]
     form.save!
 
-    made_live_form = form.made_live_forms.last
-    if made_live_form.present?
+    if form.has_live_version
+      made_live_form = form.made_live_forms.last
       form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
 
       form_blob[:submission_type] = "s3"
@@ -48,7 +48,7 @@ namespace :forms do
 
       made_live_form.update!(json_form_blob: form_blob.to_json)
     end
-    Rails.logger.info("set submission_type to s3 s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
+    Rails.logger.info("set submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
   end
 
   desc "Synchronise FormDocuments with Forms"
@@ -105,9 +105,8 @@ def set_submission_type(submission_type, form_id)
   form.submission_type = submission_type
   form.save!
 
-  made_live_form = form.made_live_forms.last
-
-  if made_live_form.present?
+  if form.has_live_version
+    made_live_form = form.made_live_forms.last
     form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
 
     form_blob[:submission_type] = submission_type

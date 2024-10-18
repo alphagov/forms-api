@@ -75,6 +75,23 @@ RSpec.describe "forms.rake" do
           .to change { form.reload.submission_type }.to("email_with_csv")
       end
     end
+
+    context "when the form is archived" do
+      before do
+        form.create_draft_from_live_form!
+        form.archive_live_form!
+      end
+
+      it "sets a form's submission_type to email_with_csv" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("email_with_csv")
+      end
+
+      it "does not update the forms latest made live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
+      end
+    end
   end
 
   describe "forms:set_submission_type_to_s3" do
@@ -148,6 +165,23 @@ RSpec.describe "forms.rake" do
       it "sets a form's s3_bucket_aws_account_id" do
         expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
           .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
+      end
+    end
+
+    context "when the form is archived" do
+      before do
+        form.create_draft_from_live_form!
+        form.archive_live_form!
+      end
+
+      it "sets a form's submission_type to s3" do
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+          .to change { form.reload.submission_type }.to("s3")
+      end
+
+      it "does not update the forms latest made live version" do
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
     end
 
@@ -226,6 +260,23 @@ RSpec.describe "forms.rake" do
       it "sets a form's submission_type to email" do
         expect { task.invoke(form.id) }
           .to change { form.reload.submission_type }.to("email")
+      end
+    end
+
+    context "when the form is archived" do
+      before do
+        form.create_draft_from_live_form!
+        form.archive_live_form!
+      end
+
+      it "sets a form's submission_type to email" do
+        expect { task.invoke(form.id) }
+          .to change { form.reload.submission_type }.to("email")
+      end
+
+      it "does not update the forms latest made live version" do
+        task.invoke(form.id)
+        expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
       end
     end
   end

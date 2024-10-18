@@ -8,27 +8,47 @@ namespace :forms do
     puts "external_id has been set for each form to their id"
   end
 
+  desc "Set submission_type to email"
+  task :set_submission_type_to_email, %i[form_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_email[<form_id>]".freeze
+    abort usage_message if args[:form_id].blank?
+
+    set_submission_type("email", args[:form_id])
+  end
+
   desc "Set submission_type to email_with_csv"
   task :set_submission_type_to_email_with_csv, %i[form_id] => :environment do |_, args|
     usage_message = "usage: rake forms:set_submission_type_to_email_with_csv[<form_id>]".freeze
     abort usage_message if args[:form_id].blank?
 
-    Rails.logger.info("setting submission_type to email_with_csv for form: #{args[:form_id]}")
+    set_submission_type("email_with_csv", args[:form_id])
+  end
 
+  desc "Set submission_type to s3"
+  task :set_submission_type_to_s3, %i[form_id s3_bucket_name s3_bucket_aws_account_id] => :environment do |_, args|
+    usage_message = "usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]".freeze
+    abort usage_message if args[:form_id].blank?
+    abort usage_message if args[:s3_bucket_name].blank?
+    abort usage_message if args[:s3_bucket_aws_account_id].blank?
+
+    Rails.logger.info("setting submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
     form = Form.find(args[:form_id])
-    form.email_with_csv!
+    form.submission_type = "s3"
+    form.s3_bucket_name = args[:s3_bucket_name]
+    form.s3_bucket_aws_account_id = args[:s3_bucket_aws_account_id]
+    form.save!
 
-    made_live_form = form.made_live_forms.last
-
-    if made_live_form.present?
+    if form.has_live_version
+      made_live_form = form.made_live_forms.last
       form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
 
-      form_blob[:submission_type] = "email_with_csv"
+      form_blob[:submission_type] = "s3"
+      form_blob[:s3_bucket_name] = args[:s3_bucket_name]
+      form_blob[:s3_bucket_aws_account_id] = args[:s3_bucket_aws_account_id]
 
       made_live_form.update!(json_form_blob: form_blob.to_json)
     end
-
-    Rails.logger.info("set submission_type to email_with_csv for form: #{args[:form_id]}")
+    Rails.logger.info("set submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
   end
 
   desc "Synchronise FormDocuments with Forms"
@@ -76,4 +96,23 @@ def summarise_form_documents
   form_document_counts = Api::V2::FormDocument.all.group(:tag).count
 
   { form_summary: { form_counts:, form_document_counts: } }
+end
+
+def set_submission_type(submission_type, form_id)
+  Rails.logger.info("setting submission_type to #{submission_type} for form: #{form_id}")
+
+  form = Form.find(form_id)
+  form.submission_type = submission_type
+  form.save!
+
+  if form.has_live_version
+    made_live_form = form.made_live_forms.last
+    form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
+
+    form_blob[:submission_type] = submission_type
+
+    made_live_form.update!(json_form_blob: form_blob.to_json)
+  end
+
+  Rails.logger.info("set submission_type to #{submission_type} for form: #{form_id}")
 end

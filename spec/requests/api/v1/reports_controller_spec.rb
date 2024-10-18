@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Api::V1::ReportsController, type: :request do
   describe "GET /features" do
     before do
-      create :form, state: :live, payment_url: Faker::Internet.url(host: "gov.uk"), pages: [
+      create :form, state: :live, payment_url: Faker::Internet.url(host: "gov.uk"), submission_type: "email_with_csv", pages: [
         (build :page, answer_type: "text"),
         (build :page, answer_type: "text"),
       ]
@@ -56,6 +56,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         live_forms_with_payment: 1,
         live_forms_with_routing: 1,
         live_forms_with_add_another_answer: 1,
+        live_forms_with_csv_submission_enabled: 1,
       })
     end
 

@@ -7,11 +7,16 @@ class FeaturesReportService
       live_forms_with_payment:,
       live_forms_with_routing:,
       live_forms_with_add_another_answer:,
+      live_forms_with_csv_submission_enabled:,
     }
   end
 
 private
 
+  # NOTE: all of these methods currently query the Form table rather than the MadeLiveForm table.
+  # This means that they may include updates which have been made to forms since they were made live.
+  # As a result, the figures in the report may vary slightly from the actual live figures.
+  # TODO: rewrite the queries to only check the content of live forms
   def total_live_forms
     Form.where(state: %w[live live_with_draft]).count
   end
@@ -34,5 +39,9 @@ private
 
   def live_forms_with_add_another_answer
     Page.joins(:form).where(forms: { state: %w[live live_with_draft] }).select("forms.id,pages.is_repeatable").where(pages: { is_repeatable: true }).count("forms.id")
+  end
+
+  def live_forms_with_csv_submission_enabled
+    Form.where(state: %w[live live_with_draft]).where(submission_type: "email_with_csv").count
   end
 end

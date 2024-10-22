@@ -88,5 +88,6 @@ all_question_types_form = Form.create!(
   support_email: "your.email+fakedata84701@gmail.com.gov.uk",
   support_phone: "08000800",
   what_happens_next_markdown: "Test",
+  share_preview_completed: true,
 )
 all_question_types_form.make_live!

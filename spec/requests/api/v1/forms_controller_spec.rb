@@ -196,6 +196,7 @@ describe Api::V1::FormsController, type: :request do
         submission_type: "email",
         s3_bucket_name: nil,
         s3_bucket_aws_account_id: nil,
+        s3_bucket_region: nil,
       )
     end
   end

@@ -104,6 +104,7 @@ RSpec.describe "forms.rake" do
     let!(:other_form) { create :form, :live }
     let(:s3_bucket_name) { "a-bucket" }
     let(:s3_bucket_aws_account_id) { "an-aws-account-id" }
+    let(:s3_bucket_region) { "eu-west-1" }
 
     context "when the form is live" do
       before do
@@ -114,56 +115,56 @@ RSpec.describe "forms.rake" do
       end
 
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.submission_type }.to("s3")
       end
 
       it "sets a form's s3_bucket_name" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.s3_bucket_name }.to(s3_bucket_name)
       end
 
       it "sets a form's s3_bucket_aws_account_id" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
       end
 
       it "does not update a form's older live versions" do
-        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
         expect(JSON.parse(form.made_live_forms.first.json_form_blob)["submission_type"]).to eq("email")
         expect(JSON.parse(form.made_live_forms.first.json_form_blob)["s3_bucket_name"]).to be_nil
       end
 
       it "updates a form's latest live version" do
-        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["s3_bucket_name"]).to eq(s3_bucket_name)
       end
 
       it "does not update a different form" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .not_to(change { other_form.reload.submission_type })
       end
 
       it "does not update a different form's latest live version" do
-        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
         expect(JSON.parse(other_form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
     end
 
     context "when the form is not live" do
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.submission_type }.to("s3")
       end
 
       it "sets a form's s3_bucket_name" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.s3_bucket_name }.to(s3_bucket_name)
       end
 
       it "sets a form's s3_bucket_aws_account_id" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
       end
     end
@@ -175,12 +176,12 @@ RSpec.describe "forms.rake" do
       end
 
       it "sets a form's submission_type to s3" do
-        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id) }
+        expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.submission_type }.to("s3")
       end
 
       it "does not update the forms latest made live version" do
-        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id)
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
     end
@@ -190,7 +191,7 @@ RSpec.describe "forms.rake" do
         expect {
           task.invoke
         }.to raise_error(SystemExit)
-               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>, <s3_bucket_region>]\n").to_stderr
       end
     end
 
@@ -199,7 +200,7 @@ RSpec.describe "forms.rake" do
         expect {
           task.invoke(1)
         }.to raise_error(SystemExit)
-               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>, <s3_bucket_region>]\n").to_stderr
       end
     end
 
@@ -208,7 +209,25 @@ RSpec.describe "forms.rake" do
         expect {
           task.invoke(1, s3_bucket_name)
         }.to raise_error(SystemExit)
-               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>]\n").to_stderr
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>, <s3_bucket_region>]\n").to_stderr
+      end
+    end
+
+    context "without region argument" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke(1, s3_bucket_name, s3_bucket_aws_account_id)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake forms:set_submission_type_to_s3[<form_id>, <s3_bucket_name>, <s3_bucket_aws_account_id>, <s3_bucket_region>]\n").to_stderr
+      end
+    end
+
+    context "when region is not allowed" do
+      it "aborts with message" do
+        expect {
+          task.invoke(1, s3_bucket_name, s3_bucket_aws_account_id, "eu-west-3")
+        }.to raise_error(SystemExit)
+               .and output("s3_bucket_region must be one of eu-west-1 or eu-west-2\n").to_stderr
       end
     end
   end

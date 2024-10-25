@@ -60,7 +60,7 @@ RSpec.describe Api::V1::ReportsController, type: :request do
         live_forms_with_routing: 1,
         live_forms_with_add_another_answer: 1,
         live_forms_with_csv_submission_enabled: 1,
-        all_forms_with_add_another_answer: [{ form_id: form_with_repeatable_question.id, name: form_with_repeatable_question.name, repeatable_pages: [{ page_id: repeatable_page.id, question_text: repeatable_page.question_text }] }],
+        all_forms_with_add_another_answer: [{ form_id: form_with_repeatable_question.id, name: form_with_repeatable_question.name, state: form_with_repeatable_question.state, repeatable_pages: [{ page_id: repeatable_page.id, question_text: repeatable_page.question_text }] }],
       })
     end
 

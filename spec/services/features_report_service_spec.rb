@@ -161,7 +161,7 @@ describe FeaturesReportService do
         it "obtains all forms in the add another answer report" do
           response = features_report_service.report
 
-          expect(response[:all_forms_with_add_another_answer]).to eq([{ form_id: add_another_answer_form.id, name: add_another_answer_form.name, repeatable_pages: [{ page_id: pages_with_add_another_answer.first.id, question_text: pages_with_add_another_answer.first.question_text }] }])
+          expect(response[:all_forms_with_add_another_answer]).to eq([{ form_id: add_another_answer_form.id, name: add_another_answer_form.name, state: add_another_answer_form.state, repeatable_pages: [{ page_id: pages_with_add_another_answer.first.id, question_text: pages_with_add_another_answer.first.question_text }] }])
         end
       end
     end

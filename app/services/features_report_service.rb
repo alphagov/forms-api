@@ -54,6 +54,7 @@ private
       {
         form_id: form.id,
         name: form.name,
+        state: form.state,
         repeatable_pages: form.pages.map { |page| { page_id: page.id, question_text: page.question_text } if page.is_repeatable },
       }
     end

@@ -39,6 +39,8 @@ class Condition < ApplicationRecord
   end
 
   def warning_answer_doesnt_exist
+    return nil if has_precondition? && answer_value.nil?
+
     answer_options = check_page&.answer_settings&.dig("selection_options")&.pluck("name")
     return nil if answer_options.blank? || answer_options.include?(answer_value) || answer_value == :none_of_the_above.to_s && check_page.is_optional?
 
@@ -80,5 +82,11 @@ class Condition < ApplicationRecord
 
   def has_routing_errors
     validation_errors.any?
+  end
+
+private
+
+  def has_precondition?
+    check_page_id && check_page_id != routing_page_id && !check_page.routing_conditions.empty?
   end
 end

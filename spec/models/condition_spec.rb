@@ -149,6 +149,23 @@ RSpec.describe Condition, type: :model do
         end
       end
     end
+
+    context "when condition is a after another condition for a branch route" do
+      let(:routing_page) { create :page, form: }
+      let(:after_condition) do
+        create(
+          :condition,
+          answer_value: nil,
+          check_page_id: condition.check_page_id,
+          routing_page_id: routing_page.id,
+          skip_to_end: true,
+        )
+      end
+
+      it "returns nil" do
+        expect(after_condition.warning_answer_doesnt_exist).to be_nil
+      end
+    end
   end
 
   describe "#warning_routing_to_next_page" do

@@ -102,9 +102,13 @@ RSpec.describe Condition, type: :model do
     let(:check_page) { create :page, :with_selections_settings, form: }
     let(:goto_page) { create :page, form: }
     let(:condition) do
-      new_condition = create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id
-      new_condition.answer_value = check_page.answer_settings["selection_options"].first["name"]
-      new_condition
+      create(
+        :condition,
+        routing_page_id: check_page.id,
+        check_page_id: check_page.id,
+        goto_page_id: goto_page.id,
+        answer_value: check_page.answer_settings["selection_options"].first["name"],
+      )
     end
 
     it "returns nil if answer exists" do

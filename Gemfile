@@ -93,4 +93,4 @@ group :test do
   gem "simplecov", require: false
 end
 
-gem "reverse_markdown", "~> 2.1"
+gem "reverse_markdown", "~> 3.0"

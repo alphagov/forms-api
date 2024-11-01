@@ -117,3 +117,77 @@ e2e_s3_forms = Form.create!(
   s3_bucket_region: "eu-west-2",
 )
 e2e_s3_forms.make_live!
+
+branch_route_form = Form.create!(
+  name: "Branch route form",
+  pages: [
+    Page.create(
+      question_text: "How many times have you filled out this form?",
+      answer_type: "selection",
+      answer_settings: {
+        only_one_option: "true",
+        selection_options: [
+          { "name": "Once" },
+          { "name": "More than once" },
+        ],
+      },
+      is_optional: false,
+    ),
+    Page.create(
+      question_text: "What’s your name?",
+      answer_type: "name",
+      answer_settings: {
+        input_type: "full_name",
+        title_needed: false,
+      },
+      is_optional: false,
+      is_repeatable: false,
+    ),
+    Page.create(
+      question_text: "What’s your email address?",
+      answer_type: "email",
+      is_optional: false,
+      is_repeatable: false,
+    ),
+    Page.create(
+      question_text: "What was the reference of your previous submission?",
+      answer_type: "text",
+      answer_settings: {
+        input_type: "single_line",
+      },
+      is_optional: false,
+      is_repeatable: false,
+    ),
+    Page.create(
+      question_text: "What’s your answer?",
+      answer_type: "text",
+      answer_settings: {
+        input_type: "single_line",
+      },
+      is_optional: false,
+      is_repeatable: false,
+    ),
+  ],
+  question_section_completed: true,
+  declaration_text: "",
+  declaration_section_completed: true,
+  privacy_policy_url: "https://www.gov.uk/help/privacy-notice",
+  submission_email:,
+  support_email: "your.email+fakedata84701@gmail.com.gov.uk",
+  support_phone: "08000800",
+  what_happens_next_markdown: "Test",
+  share_preview_completed: true,
+)
+Condition.create!(
+  check_page: branch_route_form.pages.first,
+  routing_page: branch_route_form.pages.first,
+  goto_page: branch_route_form.pages.fourth,
+  answer_value: "More than once",
+)
+Condition.create!(
+  check_page: branch_route_form.pages.first,
+  routing_page: branch_route_form.pages.third,
+  goto_page: branch_route_form.pages.last,
+  answer_value: nil,
+)
+branch_route_form.reload.make_live!

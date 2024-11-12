@@ -91,3 +91,29 @@ all_question_types_form = Form.create!(
   share_preview_completed: true,
 )
 all_question_types_form.make_live!
+
+e2e_s3_forms = Form.create!(
+  name: "s3 submission test form",
+  pages: [
+    Page.create(
+      question_text: "Single line of text",
+      answer_type: "text",
+      answer_settings: {
+        input_type: "single_line",
+      },
+      is_optional: false,
+    ),
+  ],
+  question_section_completed: true,
+  declaration_text: "",
+  declaration_section_completed: true,
+  privacy_policy_url: "https://www.gov.uk/help/privacy-notice",
+  submission_email:,
+  support_email: "your.email+fakedata84701@gmail.com.gov.uk",
+  support_phone: "08000800",
+  what_happens_next_markdown: "Test",
+  share_preview_completed: true,
+  submission_type: "s3",
+  s3_bucket_region: "eu-west-2",
+)
+e2e_s3_forms.make_live!

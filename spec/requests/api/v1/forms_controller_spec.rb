@@ -103,7 +103,7 @@ describe Api::V1::FormsController, type: :request do
       it "returns a status code 400 and validation messages" do
         expect(response).to have_http_status(:bad_request)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq({ error: "param is missing or the value is empty: form" })
+        expect(json_body).to eq({ error: "param is missing or the value is empty or invalid: form" })
       end
     end
 

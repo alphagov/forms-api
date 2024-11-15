@@ -1,4 +1,4 @@
-class FeaturesReportService
+class Reports::FeatureUsageService
   def report
     {
       total_live_forms:,

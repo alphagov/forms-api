@@ -41,5 +41,35 @@ FactoryBot.define do
       answer_type { "selection" }
       answer_settings { DataStruct.new(only_one_option:, selection_options:) }
     end
+
+    trait :selection_with_radios do
+      answer_type { "selection" }
+      answer_settings do
+        {
+          only_one_option: "true",
+          selection_options: (1..30).to_a.map { |i| { name: i.to_s } },
+        }
+      end
+    end
+
+    trait :selection_with_autocomplete do
+      answer_type { "selection" }
+      answer_settings do
+        {
+          only_one_option: "true",
+          selection_options: (1..31).to_a.map { |i| { name: i.to_s } },
+        }
+      end
+    end
+
+    trait :selection_with_checkboxes do
+      answer_type { "selection" }
+      answer_settings do
+        {
+          only_one_option: "false",
+          selection_options: [{ name: "Option 1" }, { name: "Option 2" }],
+        }
+      end
+    end
   end
 end

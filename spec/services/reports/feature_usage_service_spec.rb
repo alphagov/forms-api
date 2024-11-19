@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe FeaturesReportService do
+describe Reports::FeatureUsageService do
   let(:features_report_service) { described_class.new }
 
   let!(:pages_with_all_answer_types) do

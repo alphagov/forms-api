@@ -9,7 +9,7 @@ class Page < ApplicationRecord
   has_many :goto_conditions, class_name: "Condition", foreign_key: "goto_page_id", dependent: :nullify
   acts_as_list scope: :form
 
-  ANSWER_TYPES = %w[number address date email national_insurance_number phone_number selection organisation_name text name].freeze
+  ANSWER_TYPES = %w[number address date email national_insurance_number phone_number selection organisation_name text name file].freeze
 
   validates :question_text, presence: true
   validates :question_text, length: { maximum: 250 }

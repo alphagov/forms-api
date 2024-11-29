@@ -15,6 +15,7 @@ describe Reports::FeatureUsageService do
       (build :page, answer_type: "number"),
       (build :page, answer_type: "selection"),
       (build :page, answer_type: "text"),
+      (build :page, answer_type: "file"),
     ]
   end
 
@@ -29,6 +30,7 @@ describe Reports::FeatureUsageService do
       (build :page, answer_type: "date"),
       (build :page, answer_type: "number"),
       (build :page, answer_type: "selection"),
+      (build :page, answer_type: "file"),
       (build :page, answer_type: "text"),
       (build :page, answer_type: "text"),
     ]
@@ -46,6 +48,7 @@ describe Reports::FeatureUsageService do
       (build :page, answer_type: "number"),
       (build :page, answer_type: "selection", routing_conditions: [(build :condition)]),
       (build :page, answer_type: "text"),
+      (build :page, answer_type: "file"),
     ]
   end
 
@@ -97,6 +100,7 @@ describe Reports::FeatureUsageService do
         expect(response[:live_forms_with_answer_type][:number]).to eq 2
         expect(response[:live_forms_with_answer_type][:selection]).to eq 2
         expect(response[:live_forms_with_answer_type][:text]).to eq 2
+        expect(response[:live_forms_with_answer_type][:file]).to eq 2
       end
 
       it "includes the number of live pages that use each answer type" do
@@ -111,6 +115,7 @@ describe Reports::FeatureUsageService do
         expect(response[:live_pages_with_answer_type][:date]).to eq 2
         expect(response[:live_pages_with_answer_type][:number]).to eq 2
         expect(response[:live_pages_with_answer_type][:selection]).to eq 2
+        expect(response[:live_forms_with_answer_type][:file]).to eq 2
         expect(response[:live_pages_with_answer_type][:text]).to eq 3
       end
 

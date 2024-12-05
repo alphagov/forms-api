@@ -50,10 +50,10 @@ class Condition < ApplicationRecord
   def warning_routing_to_next_page
     return nil if check_page.nil? || goto_page.nil? && !is_check_your_answers?
 
-    check_page_position = check_page.position
+    routing_page_position = routing_page.position
     goto_page_position = is_check_your_answers? ? form.pages.last.position + 1 : goto_page.position
 
-    return { name: "cannot_route_to_next_page" } if goto_page_position == (check_page_position + 1)
+    return { name: "cannot_route_to_next_page" } if goto_page_position == (routing_page_position + 1)
 
     nil
   end

@@ -30,11 +30,10 @@ RSpec.describe Page, type: :model do
       let(:routing_page) { create :page, form: }
       let!(:condition) { page.check_conditions.create! routing_page: }
 
-      it "removes association from the condition if it is deleted" do
+      it "deletes the condition if it is deleted" do
         page.destroy!
 
-        expect(condition).not_to be_destroyed
-        expect(condition.goto_page).to be_nil
+        expect(condition).to be_destroyed
       end
     end
 
@@ -47,6 +46,21 @@ RSpec.describe Page, type: :model do
 
         expect(condition).not_to be_destroyed
         expect(condition.goto_page).to be_nil
+      end
+    end
+
+    context "when it has a branch route with skip and secondary skip" do
+      let(:first_branch) { create :page, form: }
+      let(:second_branch) { create :page, form: }
+
+      let!(:skip_condition) { page.routing_conditions.create! goto_page: second_branch }
+      let!(:secondary_skip_condition) { page.check_conditions.create! routing_page: first_branch, skip_to_end: true }
+
+      it "deletes all the conditions if it is deleted" do
+        page.destroy!
+
+        expect(skip_condition).to be_destroyed
+        expect(secondary_skip_condition).to be_destroyed
       end
     end
   end

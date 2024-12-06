@@ -12,6 +12,45 @@ RSpec.describe Page, type: :model do
     expect(page).to be_valid
   end
 
+  describe "associations" do
+    let(:form) { create :form }
+    let(:page) { create :page, form: }
+
+    context "when it has a routing condition" do
+      let!(:condition) { page.routing_conditions.create! }
+
+      it "deletes the condition if it is deleted" do
+        page.destroy!
+
+        expect(condition).to be_destroyed
+      end
+    end
+
+    context "when it has a check condition" do
+      let(:routing_page) { create :page, form: }
+      let!(:condition) { page.check_conditions.create! routing_page: }
+
+      it "removes association from the condition if it is deleted" do
+        page.destroy!
+
+        expect(condition).not_to be_destroyed
+        expect(condition.goto_page).to be_nil
+      end
+    end
+
+    context "when it has a go to condition" do
+      let(:routing_page) { create :page, form: }
+      let!(:condition) { page.goto_conditions.create! routing_page: }
+
+      it "removes association from the condition if it is deleted" do
+        page.destroy!
+
+        expect(condition).not_to be_destroyed
+        expect(condition.goto_page).to be_nil
+      end
+    end
+  end
+
   describe "versioning", :versioning do
     it "enables paper trail" do
       expect(page).to be_versioned

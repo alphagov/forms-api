@@ -14,7 +14,7 @@ gem "paper_trail"
 # Add state machine for forms
 gem "aasm", "~> 5.5"
 # Used by AASM to autocommit state changes when even method is used with bang eg. make_live!
-gem "after_commit_everywhere", "~> 1.4"
+gem "after_commit_everywhere", "~> 1.5"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.5"

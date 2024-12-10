@@ -59,14 +59,9 @@ class Condition < ApplicationRecord
   end
 
   def warning_goto_page_before_check_page
-    return nil if check_page.nil? || goto_page.nil?
-
-    routing_page_position = routing_page.position
-    goto_page_position = goto_page.position
-
-    return { name: "cannot_have_goto_page_before_routing_page" } if goto_page_position < (routing_page_position + 1)
-
-    nil
+    if goto_page.present? && (goto_page.position <= routing_page.position)
+      { name: "cannot_have_goto_page_before_routing_page" }
+    end
   end
 
   def is_check_your_answers?

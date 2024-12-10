@@ -106,7 +106,7 @@ describe Api::V1::PagesController, type: :request do
       it "returns page id, status code 400 and an array of messages" do
         expect(response.status).to eq(400)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(error: "param is missing or the value is empty: page")
+        expect(json_body).to eq(error: "param is missing or the value is empty or invalid: page")
       end
 
       it "does not create a new page row" do

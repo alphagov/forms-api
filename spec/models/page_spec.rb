@@ -44,7 +44,7 @@ RSpec.describe Page, type: :model do
       it "removes association from the condition if it is deleted" do
         page.destroy!
 
-        expect(condition).not_to be_destroyed
+        expect(condition).to be_destroyed
         expect(condition.goto_page).to be_nil
       end
     end
@@ -76,6 +76,28 @@ RSpec.describe Page, type: :model do
           }.to change(Condition, :count).from(2).to(0)
 
           expect(Condition).not_to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the end of the branches has been deleted" do
+        it "deletes the secondary skip condition" do
+          expect {
+            end_of_branches.destroy!
+          }.to change(Condition, :count).from(2).to(1)
+
+          expect(Condition).to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the end of the first branch has been deleted" do
+        it "deletes the secondary skip condition" do
+          expect {
+            end_of_first_branch.destroy!
+          }.to change(Condition, :count).from(2).to(1)
+
+          expect(Condition).to exist(skip_condition.id)
           expect(Condition).not_to exist(secondary_skip_condition.id)
         end
       end

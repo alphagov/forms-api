@@ -85,7 +85,7 @@ GEM
     acts_as_list (1.2.4)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
-    after_commit_everywhere (1.4.0)
+    after_commit_everywhere (1.5.0)
       activerecord (>= 4.2)
       activesupport
     ast (2.4.2)
@@ -338,7 +338,7 @@ PLATFORMS
 DEPENDENCIES
   aasm (~> 5.5)
   acts_as_list
-  after_commit_everywhere (~> 1.4)
+  after_commit_everywhere (~> 1.5)
   aws-sdk-codepipeline (~> 1.91)
   bootsnap
   brakeman

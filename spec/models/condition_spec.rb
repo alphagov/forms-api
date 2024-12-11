@@ -41,7 +41,7 @@ RSpec.describe Condition, type: :model do
       %i[warning_goto_page_doesnt_exist
          warning_answer_doesnt_exist
          warning_routing_to_next_page
-         warning_goto_page_before_check_page ].each do |validation_methods|
+         warning_goto_page_before_routing_page ].each do |validation_methods|
         expect(condition).to receive(validation_methods)
       end
       condition.validation_errors
@@ -273,7 +273,7 @@ RSpec.describe Condition, type: :model do
     end
   end
 
-  describe "#warning_goto_page_before_check_page" do
+  describe "#warning_goto_page_before_routing_page" do
     let(:form) { build :form, pages: [previous_page, current_page, next_page, last_page] }
     let(:check_page) { build :page, position: 1 }
     let(:previous_page) { build :page, position: 2 }
@@ -283,13 +283,13 @@ RSpec.describe Condition, type: :model do
 
     shared_examples "returns no warning" do
       it "returns nil" do
-        expect(condition.warning_goto_page_before_check_page).to be_nil
+        expect(condition.warning_goto_page_before_routing_page).to be_nil
       end
     end
 
     shared_examples "returns routing warning" do
       it "returns cannot_have_goto_page_before_routing_page warning" do
-        expect(condition.warning_goto_page_before_check_page).to(
+        expect(condition.warning_goto_page_before_routing_page).to(
           eq({ name: "cannot_have_goto_page_before_routing_page" }),
         )
       end

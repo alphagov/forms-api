@@ -24,7 +24,7 @@ class Condition < ApplicationRecord
       warning_goto_page_doesnt_exist,
       warning_answer_doesnt_exist,
       warning_routing_to_next_page,
-      warning_goto_page_before_check_page,
+      warning_goto_page_before_routing_page,
     ].compact
   end
 
@@ -58,7 +58,7 @@ class Condition < ApplicationRecord
     nil
   end
 
-  def warning_goto_page_before_check_page
+  def warning_goto_page_before_routing_page
     if goto_page.present? && (goto_page.position <= routing_page.position)
       { name: "cannot_have_goto_page_before_routing_page" }
     end

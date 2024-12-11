@@ -25,7 +25,7 @@ describe Api::V1::ConditionsController, type: :request do
       expect(response.headers["Content-Type"]).to eq("application/json")
       expect(json_body.count).to eq(routing_page.routing_conditions.count)
       routing_page.routing_conditions.each_with_index do |p, i|
-        expect(json_body[i]).to eq(JSON.parse(p.to_json).symbolize_keys)
+        expect(json_body[i]).to match(p.as_json.deep_symbolize_keys)
       end
     end
   end
@@ -95,7 +95,7 @@ describe Api::V1::ConditionsController, type: :request do
       it "returns condition, status code 200" do
         expect(response.status).to eq(200)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(JSON.parse(condition.to_json).symbolize_keys)
+        expect(json_body).to match(condition.as_json.deep_symbolize_keys)
       end
     end
 

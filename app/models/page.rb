@@ -3,6 +3,8 @@ require "govuk_forms_markdown"
 class Page < ApplicationRecord
   has_paper_trail
 
+  before_destroy :destroy_secondary_skip_conditions
+
   belongs_to :form
   has_many :routing_conditions, class_name: "Condition", foreign_key: "routing_page_id", dependent: :destroy
   has_many :check_conditions, class_name: "Condition", foreign_key: "check_page_id", dependent: :destroy
@@ -93,5 +95,19 @@ private
     if tag_errors.any?
       errors.add(:guidance_markdown, :unsupported_markdown_syntax, message: "can only contain formatting for links, subheadings(##), bulleted listed (*), or numbered lists(1.)")
     end
+  end
+
+  def destroy_secondary_skip_conditions
+    return if goto_conditions.empty?
+
+    # We want to delete the secondary skip for the page at the start of the route
+    # That association isn't in the database, so we need to dig it out
+    # TODO: what if the page owning the routes has more than two routes?
+    goto_conditions
+      .filter { |condition| condition.check_page_id == condition.routing_page_id }
+      .map(&:check_page)
+      .flat_map(&:check_conditions)
+      .filter { |condition| condition.check_page_id != condition.routing_page_id }
+      .each(&:destroy!)
   end
 end

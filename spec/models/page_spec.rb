@@ -47,6 +47,35 @@ RSpec.describe Page, type: :model do
         expect(condition).to be_destroyed
         expect(condition.goto_page).to be_nil
       end
+
+      context "and the routing page has a secondary skip condition" do
+        let(:end_of_first_branch) { create :page, form: }
+        let!(:condition) { page.goto_conditions.create! routing_page:, check_page: routing_page }
+        let!(:secondary_skip_condition) { routing_page.check_conditions.create! routing_page: end_of_first_branch, skip_to_end: true }
+
+        it "deletes the secondary skip condition if it is deleted" do
+          expect {
+            page.destroy!
+          }.to change(Condition, :count).by(-2)
+
+          expect(condition).to be_destroyed
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the routing page has other routing conditions" do
+        let!(:condition) { page.goto_conditions.create! routing_page:, check_page: routing_page }
+        let!(:other_condition) { routing_page.routing_conditions.create! routing_page:, check_page: routing_page, skip_to_end: true }
+
+        it "does not deletes the other conditions if it is deleted" do
+          expect {
+            page.destroy!
+          }.to change(Condition, :count).by(-1)
+
+          expect(condition).to be_destroyed
+          expect(Condition).to exist(other_condition.id)
+        end
+      end
     end
 
     context "when the form has a branching route with skip and secondary skip" do
@@ -73,6 +102,17 @@ RSpec.describe Page, type: :model do
         it "deletes all the conditions" do
           expect {
             branch_question.destroy!
+          }.to change(Condition, :count).from(2).to(0)
+
+          expect(Condition).not_to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the start of the second branch has been deleted" do
+        it "deletes all the conditions" do
+          expect {
+            start_of_second_branch.destroy!
           }.to change(Condition, :count).from(2).to(0)
 
           expect(Condition).not_to exist(skip_condition.id)

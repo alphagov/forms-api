@@ -321,11 +321,14 @@ RSpec.describe Page, type: :model do
   end
 
   describe "#has_routing_errors" do
-    let(:routing_page) { create :page, form: }
-    let(:goto_page) { create :page, form: }
-    let(:goto_page_id) { goto_page.id }
-    let(:routing_conditions) { [condition] }
-    let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: }
+    subject(:page) { build :page, :with_selections_settings, routing_conditions: [condition] }
+
+    let(:condition) { build :condition }
+    let(:has_routing_errors) { false }
+
+    before do
+      allow(condition).to receive(:has_routing_errors).and_return(has_routing_errors)
+    end
 
     context "when there are no validation errors" do
       it "returns false" do
@@ -334,7 +337,7 @@ RSpec.describe Page, type: :model do
     end
 
     context "when there are validation errors" do
-      let(:goto_page_id) { nil }
+      let(:has_routing_errors) { true }
 
       it "returns true" do
         expect(page.has_routing_errors).to be true

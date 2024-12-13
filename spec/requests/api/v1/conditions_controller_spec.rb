@@ -76,7 +76,7 @@ describe Api::V1::ConditionsController, type: :request do
       it "returns condition id, status code 400 and an array of messages" do
         expect(response.status).to eq(400)
         expect(response.headers["Content-Type"]).to eq("application/json")
-        expect(json_body).to eq(error: "param is missing or the value is empty: condition")
+        expect(json_body).to eq(error: "param is missing or the value is empty or invalid: condition")
       end
 
       it "does not create a new condition row" do

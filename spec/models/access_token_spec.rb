@@ -24,6 +24,22 @@ RSpec.describe AccessToken, type: :model do
       expect(access_token).to be_invalid
       expect(access_token.errors[:token_digest]).to include("can't be blank")
     end
+
+    it "is invalid to have two active tokens with the same digest" do
+      access_token_1 = described_class.create!(owner: "test1", token_digest: "baabaa")
+      expect(access_token_1).to be_valid
+
+      access_token_2 = described_class.new(owner: "test2", token_digest: "baabaa")
+      expect(access_token_2).not_to be_valid
+    end
+
+    it "is valid to reuse the same token digest" do
+      access_token_1 = described_class.create!(owner: "test1", token_digest: "baabaa")
+      access_token_1.update!(deactivated_at: Time.zone.now)
+
+      access_token_2 = described_class.new(owner: "test2", token_digest: "baabaa")
+      expect(access_token_2).to be_valid
+    end
   end
 
   describe "scopes" do
@@ -50,12 +66,12 @@ RSpec.describe AccessToken, type: :model do
     let(:result) { access_token.generate_token }
 
     it "generates a user token before validation" do
-      expect(result).to eq("testing-123")
+      expect(result).to eq("forms_testing-123")
     end
 
     it "generates a sha-256 token before validation" do
       result
-      expect(access_token.token_digest).to eq("8d9754db9759ab1785644440dbf19f88ab45ae326e421da6c1cb6e45140d534f")
+      expect(access_token.token_digest).to eq("f3aed9ecfc2db207800ca641f45e24d2f6de030487b7270871c04046808c1b22")
     end
   end
 end

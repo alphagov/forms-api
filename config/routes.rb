@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       get "/selection-questions-with-autocomplete", to: "api/v1/reports#selection_questions_with_autocomplete"
       get "/selection-questions-with-radios", to: "api/v1/reports#selection_questions_with_radios"
       get "/selection-questions-with-checkboxes", to: "api/v1/reports#selection_questions_with_checkboxes"
+      get "/live-forms", to: "api/v1/reports#all_live_forms"
     end
   end
 end

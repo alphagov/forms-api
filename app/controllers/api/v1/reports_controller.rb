@@ -28,9 +28,4 @@ class Api::V1::ReportsController < ApplicationController
 
     render json: data.to_json, status: :ok
   end
-
-  def live_forms
-    live_forms = Api::V2::FormDocument.where(tag: "live")
-    paginate json: live_forms, per_page: 500
-  end
 end

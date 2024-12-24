@@ -12,6 +12,9 @@ Rails.application.routes.draw do
     resources :forms, controller: "api/v2/forms", only: %i[index show] do
       get "/:tag", to: "api/v2/form_documents#show", as: :document, constraints: { tag: /draft|live|archived/ }
     end
+
+    resources :form_documents, path: "form-documents", controller: "api/v2/form_documents", only: %i[index] do
+    end
   end
 
   scope "api/v1" do
@@ -49,7 +52,6 @@ Rails.application.routes.draw do
       get "/selection-questions-with-autocomplete", to: "api/v1/reports#selection_questions_with_autocomplete"
       get "/selection-questions-with-radios", to: "api/v1/reports#selection_questions_with_radios"
       get "/selection-questions-with-checkboxes", to: "api/v1/reports#selection_questions_with_checkboxes"
-      get "/live-forms", to: "api/v1/reports#all_live_forms"
     end
   end
 end

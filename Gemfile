@@ -65,8 +65,7 @@ gem "validate_url"
 gem "aws-sdk-codepipeline", "~> 1.92"
 
 # For pagination in the API
-gem "api-pagination"
-gem "pagy"
+gem "kaminari"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

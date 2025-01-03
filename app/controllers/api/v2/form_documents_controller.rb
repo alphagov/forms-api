@@ -8,7 +8,7 @@ class Api::V2::FormDocumentsController < ApplicationController
 
     documents = Api::V2::FormDocument.all
     documents = documents.where(tag:) if tag.present?
-    paginated = documents.page(params[:page]).per(params[:per_page] || DEFAULT_PAGE_SIZE)
+    paginated = documents.page(params[:page]).per(params[:per_page] || DEFAULT_PAGE_SIZE).order(:id)
 
     response.set_header("pagination-total", paginated.total_count.to_s)
     response.set_header("pagination-offset", paginated.offset_value.to_s)

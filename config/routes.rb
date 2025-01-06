@@ -12,6 +12,9 @@ Rails.application.routes.draw do
     resources :forms, controller: "api/v2/forms", only: %i[index show] do
       get "/:tag", to: "api/v2/form_documents#show", as: :document, constraints: { tag: /draft|live|archived/ }
     end
+
+    resources :form_documents, path: "form-documents", controller: "api/v2/form_documents", only: %i[index] do
+    end
   end
 
   scope "api/v1" do

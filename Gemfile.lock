@@ -185,6 +185,8 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.4)
+    nokogiri (1.18.2-aarch64-linux-gnu)
+      racc (~> 1.4)
     nokogiri (1.18.2-aarch64-linux-musl)
       racc (~> 1.4)
     nokogiri (1.18.2-arm64-darwin)
@@ -192,6 +194,8 @@ GEM
     nokogiri (1.18.2-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.2-x86_64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.2-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.0)
     paper_trail (16.0.0)
@@ -339,6 +343,7 @@ GEM
     zeitwerk (2.7.1)
 
 PLATFORMS
+  aarch64-linux-gnu
   aarch64-linux-musl
   arm64-darwin-21
   arm64-darwin-22
@@ -346,7 +351,8 @@ PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
   x86_64-darwin-23
-  x86_64-linux
+  x86_64-linux-gnu
+  x86_64-linux-musl
 
 DEPENDENCIES
   aasm (~> 5.5)

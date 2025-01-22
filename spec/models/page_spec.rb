@@ -44,23 +44,102 @@ RSpec.describe Page, type: :model do
       it "removes association from the condition if it is deleted" do
         page.destroy!
 
-        expect(condition).not_to be_destroyed
+        expect(condition).to be_destroyed
         expect(condition.goto_page).to be_nil
+      end
+
+      context "and the routing page has a secondary skip condition" do
+        let(:end_of_first_branch) { create :page, form: }
+        let!(:condition) { page.goto_conditions.create! routing_page:, check_page: routing_page }
+        let!(:secondary_skip_condition) { routing_page.check_conditions.create! routing_page: end_of_first_branch, skip_to_end: true }
+
+        it "deletes the secondary skip condition if it is deleted" do
+          expect {
+            page.destroy!
+          }.to change(Condition, :count).by(-2)
+
+          expect(condition).to be_destroyed
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the routing page has other routing conditions" do
+        let!(:condition) { page.goto_conditions.create! routing_page:, check_page: routing_page }
+        let!(:other_condition) { routing_page.routing_conditions.create! routing_page:, check_page: routing_page, skip_to_end: true }
+
+        it "does not deletes the other conditions if it is deleted" do
+          expect {
+            page.destroy!
+          }.to change(Condition, :count).by(-1)
+
+          expect(condition).to be_destroyed
+          expect(Condition).to exist(other_condition.id)
+        end
       end
     end
 
-    context "when it has a branch route with skip and secondary skip" do
-      let(:first_branch) { create :page, form: }
-      let(:second_branch) { create :page, form: }
+    context "when the form has a branching route with skip and secondary skip" do
+      let(:branch_question) { create :page, form: }
+      let(:end_of_first_branch) { create :page, form: }
+      let(:start_of_second_branch) { create :page, form: }
+      let(:end_of_branches) { create :page, form: }
 
-      let!(:skip_condition) { page.routing_conditions.create! goto_page: second_branch }
-      let!(:secondary_skip_condition) { page.check_conditions.create! routing_page: first_branch, skip_to_end: true }
+      let!(:skip_condition) do
+        create :condition, routing_page: branch_question, check_page: branch_question, goto_page: start_of_second_branch
+      end
+      let!(:secondary_skip_condition) do
+        create :condition, routing_page: end_of_first_branch, check_page: branch_question, goto_page: end_of_branches
+      end
 
-      it "deletes all the conditions if it is deleted" do
-        page.destroy!
+      before do
+        branch_question.reload
+        end_of_first_branch.reload
+        start_of_second_branch.reload
+        end_of_branches.reload
+      end
 
-        expect(skip_condition).to be_destroyed
-        expect(secondary_skip_condition).to be_destroyed
+      context "and the branch question has been deleted" do
+        it "deletes all the conditions" do
+          expect {
+            branch_question.destroy!
+          }.to change(Condition, :count).from(2).to(0)
+
+          expect(Condition).not_to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the start of the second branch has been deleted" do
+        it "deletes all the conditions" do
+          expect {
+            start_of_second_branch.destroy!
+          }.to change(Condition, :count).from(2).to(0)
+
+          expect(Condition).not_to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the end of the branches has been deleted" do
+        it "deletes the secondary skip condition" do
+          expect {
+            end_of_branches.destroy!
+          }.to change(Condition, :count).from(2).to(1)
+
+          expect(Condition).to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
+      end
+
+      context "and the question at the end of the first branch has been deleted" do
+        it "deletes the secondary skip condition" do
+          expect {
+            end_of_first_branch.destroy!
+          }.to change(Condition, :count).from(2).to(1)
+
+          expect(Condition).to exist(skip_condition.id)
+          expect(Condition).not_to exist(secondary_skip_condition.id)
+        end
       end
     end
   end

@@ -22,7 +22,7 @@ class ApplicationController < ActionController::API
 
   def append_info_to_payload(payload)
     super
-    payload[:host] = request.host
+    payload[:request_host] = request.host
     payload[:request_id] = request.request_id
     payload[:requested_by] = "#{@access_token.owner}-#{@access_token.id}" if @access_token.present?
     payload[:form_id] = params[:form_id] if params[:form_id].present?

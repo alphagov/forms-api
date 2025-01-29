@@ -188,4 +188,37 @@ describe ApplicationController, type: :request do
       expect(response).to have_http_status(:ok)
     end
   end
+
+  describe "logging" do
+    let(:output) { StringIO.new }
+    let(:logger) { ActiveSupport::Logger.new(output) }
+    let(:trace_id) { "Root=1-63441c4a-abcdef012345678912345678" }
+    let(:request_id) { "a-request-id" }
+
+    before do
+      # Intercept the request logs so we can do assertions on them
+      allow(Lograge).to receive(:logger).and_return(logger)
+
+      get forms_path, headers: {
+        "HTTP_X_AMZN_TRACE_ID": trace_id,
+        "X-Request-ID": request_id,
+      }
+    end
+
+    it "includes the trace ID on log lines" do
+      expect(log_lines[0]["trace_id"]).to eq(trace_id)
+    end
+
+    it "includes the request_id on log lines" do
+      expect(log_lines[0]["request_id"]).to eq(request_id)
+    end
+
+    it "includes the request_host on log lines" do
+      expect(log_lines[0]["request_host"]).to eq("www.example.com")
+    end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
+  end
 end

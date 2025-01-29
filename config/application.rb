@@ -57,7 +57,7 @@ module FormsApi
 
     config.lograge.custom_options = lambda do |event|
       {}.tap do |h|
-        h[:host] = event.payload[:host]
+        h[:request_host] = event.payload[:request_host]
         h[:request_id] = event.payload[:request_id]
         h[:requested_by] = event.payload[:requested_by] if event.payload[:requested_by]
         h[:form_id] = event.payload[:form_id] if event.payload[:form_id]

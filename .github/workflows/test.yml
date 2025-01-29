@@ -37,7 +37,7 @@ jobs:
       # Add or replace dependency steps here
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.
-        uses: ruby/setup-ruby@7a6302104fbeea3c6aaa43b1b91e08f7d6623279 # v1.209.0
+        uses: ruby/setup-ruby@1287d2b408066abada82d5ad1c63652e758428d9 # v1.214.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       # Add or replace database setup steps here

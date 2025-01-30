@@ -218,7 +218,7 @@ GEM
       date
       stringio
     public_suffix (5.0.4)
-    puma (6.5.0)
+    puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.8)
@@ -378,7 +378,7 @@ DEPENDENCIES
   lograge
   paper_trail
   pg (~> 1.5)
-  puma (~> 6.5)
+  puma (~> 6.6)
   rails (~> 8.0.1)
   reverse_markdown (~> 3.0)
   rspec-rails

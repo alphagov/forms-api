@@ -7,6 +7,8 @@ class Condition < ApplicationRecord
 
   has_one :form, through: :routing_page
 
+  before_destroy :destroy_postconditions
+
   def save_and_update_form
     save!
     # TODO: https://trello.com/c/dg9CFPgp/1503-user-triggers-state-change-from-live-to-livewithdraft
@@ -83,5 +85,12 @@ private
 
   def has_precondition?
     check_page_id && check_page_id != routing_page_id && !check_page.routing_conditions.empty?
+  end
+
+  def destroy_postconditions
+    return if check_page.nil?
+
+    postconditions = check_page.check_conditions.filter { it != self && it.routing_page_id != it.check_page_id }
+    postconditions.each(&:destroy!)
   end
 end

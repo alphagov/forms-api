@@ -70,6 +70,10 @@ class Condition < ApplicationRecord
     goto_page.nil? && skip_to_end
   end
 
+  def is_exit_page?
+    !exit_page_markdown.nil?
+  end
+
   def as_json(options = {})
     super(options.reverse_merge(
       except: [:next_page],

@@ -122,6 +122,18 @@ branch_route_form = Form.create!(
   name: "Branch route form",
   pages: [
     Page.create(
+      question_text: "Are you eligible to submit this form?",
+      answer_type: "selection",
+      answer_settings: {
+        only_one_option: "true",
+        selection_options: [
+          { "name": "Yes" },
+          { "name": "No" },
+        ],
+      },
+      is_optional: false,
+    ),
+    Page.create(
       question_text: "How many times have you filled out this form?",
       answer_type: "selection",
       answer_settings: {
@@ -179,15 +191,27 @@ branch_route_form = Form.create!(
   share_preview_completed: true,
 )
 Condition.create!(
-  check_page: branch_route_form.pages.first,
-  routing_page: branch_route_form.pages.first,
-  goto_page: branch_route_form.pages.fourth,
+  check_page: branch_route_form.pages.second,
+  routing_page: branch_route_form.pages.second,
+  goto_page: branch_route_form.pages.fifth,
   answer_value: "More than once",
 )
 Condition.create!(
-  check_page: branch_route_form.pages.first,
-  routing_page: branch_route_form.pages.third,
+  check_page: branch_route_form.pages.second,
+  routing_page: branch_route_form.pages.fourth,
   goto_page: branch_route_form.pages.last,
   answer_value: nil,
+)
+Condition.create!(
+  check_page: branch_route_form.pages.first,
+  routing_page: branch_route_form.pages.first,
+  goto_page: nil,
+  answer_value: "No",
+  exit_page_heading: "You are not eligible to submit this form",
+  exit_page_markdown: <<~MARKDOWN,
+    To complete this form you must:
+      - Be over 16
+      - Confirmed that you are eligible to submit this form
+  MARKDOWN
 )
 branch_route_form.reload.make_live!

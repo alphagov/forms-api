@@ -47,6 +47,18 @@ RSpec.describe Condition, type: :model do
     end
   end
 
+  describe "#is_exit_page?" do
+    it "returns false when exit_page_markdown is nil" do
+      condition.exit_page_markdown = nil
+      expect(condition.is_exit_page?).to be false
+    end
+
+    it "returns true when exit_page_markdown is not nil" do
+      condition.exit_page_markdown = ""
+      expect(condition.is_exit_page?).to be true
+    end
+  end
+
   describe "versioning", :versioning do
     it "enables paper trail" do
       expect(condition).to be_versioned
@@ -132,6 +144,14 @@ RSpec.describe Condition, type: :model do
 
       it "returns object with error short name code" do
         expect(condition.warning_goto_page_doesnt_exist).to eq({ name: "goto_page_doesnt_exist" })
+      end
+    end
+
+    context "when is_exit_page?" do
+      let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: nil, exit_page_markdown: "exit page" }
+
+      it "returns nil" do
+        expect(condition.warning_goto_page_doesnt_exist).to be_nil
       end
     end
   end

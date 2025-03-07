@@ -31,6 +31,7 @@ class Condition < ApplicationRecord
   end
 
   def warning_goto_page_doesnt_exist
+    return nil if is_exit_page?
     # goto_page_id isn't needed if the route is skipping to the end of the form
     return nil if is_check_your_answers?
 

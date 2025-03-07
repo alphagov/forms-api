@@ -146,6 +146,14 @@ RSpec.describe Condition, type: :model do
         expect(condition.warning_goto_page_doesnt_exist).to eq({ name: "goto_page_doesnt_exist" })
       end
     end
+
+    context "when is_exit_page?" do
+      let(:condition) { create :condition, routing_page_id: routing_page.id, goto_page_id: nil, exit_page_markdown: "exit page" }
+
+      it "returns nil" do
+        expect(condition.warning_goto_page_doesnt_exist).to be_nil
+      end
+    end
   end
 
   describe "#warning_answer_doesnt_exist" do

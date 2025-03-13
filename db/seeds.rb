@@ -210,6 +210,7 @@ Condition.create!(
   exit_page_heading: "You are not eligible to submit this form",
   exit_page_markdown: <<~MARKDOWN,
     To complete this form you must:
+
       - Be over 16
       - Confirmed that you are eligible to submit this form
   MARKDOWN

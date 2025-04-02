@@ -69,6 +69,42 @@ RSpec.describe Api::V1::ReportsController, type: :request do
     end
   end
 
+  describe "GET /add-another-answer-forms" do
+    let!(:form_with_repeatable_question) { create(:form, state: :live, pages: [repeatable_page]) }
+    let(:repeatable_page) { build(:page, answer_type: "text", is_repeatable: true) }
+
+    before do
+      create :form, state: :live, pages: [
+        (build :page, answer_type: "text"),
+        (build :page, answer_type: "text"),
+      ]
+
+      get "/api/v1/reports/add-another-answer-forms"
+    end
+
+    it "returns the forms with repeatable questions" do
+      response_hash = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response_hash).to eq({
+        count: 1,
+        forms: [
+          {
+            form_id: form_with_repeatable_question.id,
+            name: form_with_repeatable_question.name,
+            state: form_with_repeatable_question.state,
+            repeatable_pages: [
+              { page_id: repeatable_page.id, question_text: repeatable_page.question_text },
+            ],
+          },
+        ],
+      })
+    end
+
+    it "returns http success" do
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe "GET /selection-questions-summary" do
     before do
       form_1_pages = [

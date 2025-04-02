@@ -12,6 +12,13 @@ class Reports::FeatureUsageService
     }
   end
 
+  def add_another_answer_forms
+    forms = all_forms_with_add_another_answer
+
+    # adding the count even though forms-admin doesn't use it as ActiveResource doesn't like parsing JSON with a single root key
+    { forms:, count: forms.length }
+  end
+
 private
 
   # NOTE: all of these methods currently query the Form table rather than the MadeLiveForm table.

@@ -5,6 +5,12 @@ class Api::V1::ReportsController < ApplicationController
     render json: feature_stats.to_json, status: :ok
   end
 
+  def add_another_answer_forms
+    data = Reports::FeatureUsageService.new.add_another_answer_forms
+
+    render json: data.to_json, status: :ok
+  end
+
   def selection_questions_summary
     statistics = Reports::SelectionQuestionService.new.live_form_statistics
 

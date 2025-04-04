@@ -67,5 +67,8 @@ module FormsApi
         h[:trace_id] = event.payload[:trace_id] if event.payload[:trace_id]
       end
     end
+
+    # Prevent ActiveRecord::PreparedStatementCacheExpired errors when adding columns
+    config.active_record.enumerate_columns_in_select_statements = true
   end
 end

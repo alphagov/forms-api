@@ -47,7 +47,6 @@ Rails.application.routes.draw do
     end
 
     scope :reports do
-      get "/features", to: "api/v1/reports#features"
       get "/add-another-answer-forms", to: "api/v1/reports#add_another_answer_forms"
       get "/selection-questions-summary", to: "api/v1/reports#selection_questions_summary"
       get "/selection-questions-with-autocomplete", to: "api/v1/reports#selection_questions_with_autocomplete"

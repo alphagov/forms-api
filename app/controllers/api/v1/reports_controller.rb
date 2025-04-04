@@ -1,6 +1,6 @@
 class Api::V1::ReportsController < ApplicationController
   def add_another_answer_forms
-    data = Reports::FeatureUsageService.new.add_another_answer_forms
+    data = Reports::AddAnotherAnswerUsageService.new.add_another_answer_forms
 
     render json: data.to_json, status: :ok
   end

@@ -1,4 +1,4 @@
-class Reports::FeatureUsageService
+class Reports::AddAnotherAnswerUsageService
   def add_another_answer_forms
     forms = Form.includes(:pages)
                 .where(pages: { is_repeatable: true })

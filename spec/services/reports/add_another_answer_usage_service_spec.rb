@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Reports::FeatureUsageService do
+describe Reports::AddAnotherAnswerUsageService do
   subject(:features_report_service) { described_class.new }
 
   describe "#add_another_answer_forms" do

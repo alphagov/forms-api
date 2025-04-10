@@ -57,6 +57,8 @@ private
       :goto_page_id,
       :skip_to_end,
       :answer_value,
+      :exit_page_heading,
+      :exit_page_markdown,
     )
   end
 

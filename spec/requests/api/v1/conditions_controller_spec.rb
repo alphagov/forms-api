@@ -40,6 +40,8 @@ describe Api::V1::ConditionsController, type: :request do
         goto_page_id: goto_page.id,
         skip_to_end: false,
         answer_value: "hello",
+        exit_page_heading: nil,
+        exit_page_markdown: nil,
       }
     end
 

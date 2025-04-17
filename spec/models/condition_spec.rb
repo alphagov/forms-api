@@ -189,7 +189,7 @@ RSpec.describe Condition, type: :model do
     end
 
     context "when answer_value is 'None of the above" do
-      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id, answer_value: :none_of_the_above.to_s }
+      let(:condition) { create :condition, routing_page_id: check_page.id, check_page_id: check_page.id, goto_page_id: goto_page.id, answer_value: "None of the above" }
       let(:check_page) { create :page, :with_selections_settings, form:, is_optional: }
 
       context "and routing page has 'None of the above' as an option" do

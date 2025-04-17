@@ -45,7 +45,7 @@ class Condition < ApplicationRecord
     return nil if has_precondition? && answer_value.nil?
 
     answer_options = check_page&.answer_settings&.dig("selection_options")&.pluck("name")
-    return nil if answer_options.blank? || answer_options.include?(answer_value) || answer_value == :none_of_the_above.to_s && check_page.is_optional?
+    return nil if answer_options.blank? || answer_options.include?(answer_value) || answer_value == "None of the above" && check_page.is_optional?
 
     { name: "answer_value_doesnt_exist" }
   end

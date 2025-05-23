@@ -41,6 +41,7 @@ FROM base AS app
 # write to under /app/tmp/ must be added individually
 VOLUME "/tmp/"
 VOLUME "/app/tmp/sockets/"
+VOLUME "/app/tmp/cache"
 
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \

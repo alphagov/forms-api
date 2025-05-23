@@ -330,6 +330,7 @@ RSpec.describe Form, type: :model do
         "s3_bucket_name",
         "s3_bucket_aws_account_id",
         "s3_bucket_region",
+        "language",
       )
     end
   end

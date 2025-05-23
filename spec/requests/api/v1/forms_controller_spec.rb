@@ -197,6 +197,7 @@ describe Api::V1::FormsController, type: :request do
         s3_bucket_name: nil,
         s3_bucket_aws_account_id: nil,
         s3_bucket_region: nil,
+        language: "en",
       )
     end
   end

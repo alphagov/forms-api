@@ -37,9 +37,6 @@ COPY --chown=ruby:ruby . .
 
 FROM base AS app
 
-VOLUME "/tmp/"
-VOLUME "/app/tmp/"
-
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \
     USER="ruby"
@@ -60,6 +57,10 @@ RUN chmod 0755 bin/*
 
 COPY --chown=ruby:ruby --from=build /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=build /app /app
+
+RUN mkdir -p "/app/tmp/" && chown ruby:ruby "/app/tmp/"
+VOLUME "/tmp/"
+VOLUME "/app/tmp/"
 
 EXPOSE 9292
 

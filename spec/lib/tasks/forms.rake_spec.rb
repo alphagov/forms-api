@@ -543,4 +543,21 @@ RSpec.describe "forms.rake" do
       include_examples "does not change FormDocuments when invoked twice"
     end
   end
+
+  describe "forms:set_default_language" do
+    subject(:task) do
+      Rake::Task["forms:set_default_language"]
+        .tap(&:reenable)
+    end
+
+    let(:json_form_blob) { { id: 1 }.to_json }
+    let!(:made_live_form) { create :made_live_form, json_form_blob: }
+
+    it "sets the language on the MadeLiveForm" do
+      task.invoke
+      made_live_form.reload
+      form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
+      expect(form_blob[:language]).to eq("en")
+    end
+  end
 end

@@ -58,6 +58,13 @@ RSpec.describe "forms.rake" do
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email_with_csv")
       end
 
+      it "synchronises the FormDocument" do
+        task.invoke(form.id)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(1)
+        expect(form_documents.first["content"]["submission_type"]).to eq("email_with_csv")
+      end
+
       it "does not update a different form" do
         expect { task.invoke(form.id) }
           .not_to(change { other_form.reload.submission_type })
@@ -73,6 +80,13 @@ RSpec.describe "forms.rake" do
       it "sets a form's submission_type to email_with_csv" do
         expect { task.invoke(form.id) }
           .to change { form.reload.submission_type }.to("email_with_csv")
+      end
+
+      it "synchronises the FormDocument" do
+        task.invoke(form.id)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(1)
+        expect(form_documents.first["content"]["submission_type"]).to eq("email_with_csv")
       end
     end
 
@@ -90,6 +104,14 @@ RSpec.describe "forms.rake" do
       it "does not update the forms latest made live version" do
         task.invoke(form.id)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
+      end
+
+      it "synchronises the archived and draft FormDocuments" do
+        task.invoke(form.id)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(2)
+        expect(form_documents.first["content"]["submission_type"]).to eq("email_with_csv")
+        expect(form_documents.second["content"]["submission_type"]).to eq("email_with_csv")
       end
     end
   end
@@ -141,6 +163,14 @@ RSpec.describe "forms.rake" do
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["s3_bucket_name"]).to eq(s3_bucket_name)
       end
 
+      it "synchronises the FormDocument" do
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(1)
+        expect(form_documents.first["content"]["submission_type"]).to eq("s3")
+        expect(form_documents.first["content"]["s3_bucket_name"]).to eq(s3_bucket_name)
+      end
+
       it "does not update a different form" do
         expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .not_to(change { other_form.reload.submission_type })
@@ -167,6 +197,14 @@ RSpec.describe "forms.rake" do
         expect { task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region) }
           .to change { form.reload.s3_bucket_aws_account_id }.to(s3_bucket_aws_account_id)
       end
+
+      it "synchronises the FormDocument" do
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(1)
+        expect(form_documents.first["content"]["submission_type"]).to eq("s3")
+        expect(form_documents.first["content"]["s3_bucket_name"]).to eq(s3_bucket_name)
+      end
     end
 
     context "when the form is archived" do
@@ -183,6 +221,16 @@ RSpec.describe "forms.rake" do
       it "does not update the forms latest made live version" do
         task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
+      end
+
+      it "synchronises the archived and draft FormDocuments" do
+        task.invoke(form.id, s3_bucket_name, s3_bucket_aws_account_id, s3_bucket_region)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(2)
+        expect(form_documents.first["content"]["submission_type"]).to eq("s3")
+        expect(form_documents.first["content"]["s3_bucket_name"]).to eq(s3_bucket_name)
+        expect(form_documents.second["content"]["submission_type"]).to eq("s3")
+        expect(form_documents.second["content"]["s3_bucket_name"]).to eq(s3_bucket_name)
       end
     end
 
@@ -264,6 +312,13 @@ RSpec.describe "forms.rake" do
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("email")
       end
 
+      it "synchronises the FormDocument" do
+        task.invoke(form.id)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(1)
+        expect(form_documents.first["content"]["submission_type"]).to eq("email")
+      end
+
       it "does not update a different form" do
         expect { task.invoke(form.id) }
           .not_to(change { other_form.reload.submission_type })
@@ -296,6 +351,14 @@ RSpec.describe "forms.rake" do
       it "does not update the forms latest made live version" do
         task.invoke(form.id)
         expect(JSON.parse(form.made_live_forms.last.json_form_blob)["submission_type"]).to eq("s3")
+      end
+
+      it "synchronises the archived and draft FormDocuments" do
+        task.invoke(form.id)
+        form_documents = Api::V2::Form.find(form.id).form_documents
+        expect(form_documents.size).to eq(2)
+        expect(form_documents.first["content"]["submission_type"]).to eq("email")
+        expect(form_documents.second["content"]["submission_type"]).to eq("email")
       end
     end
   end

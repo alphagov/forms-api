@@ -52,6 +52,9 @@ namespace :forms do
 
       made_live_form.update!(json_form_blob: form_blob.to_json)
     end
+
+    Api::V2::FormDocumentSyncService.new.synchronize_form(form)
+
     Rails.logger.info("set submission_type to s3 and s3_bucket_name to #{args[:s3_bucket_name]} for form: #{args[:form_id]}")
   end
 
@@ -117,6 +120,8 @@ def set_submission_type(submission_type, form_id)
 
     made_live_form.update!(json_form_blob: form_blob.to_json)
   end
+
+  Api::V2::FormDocumentSyncService.new.synchronize_form(form)
 
   Rails.logger.info("set submission_type to #{submission_type} for form: #{form_id}")
 end

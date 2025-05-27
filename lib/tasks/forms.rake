@@ -96,6 +96,20 @@ namespace :forms do
   task summarise_form_documents: :environment do
     Rails.logger.info({ summarise_form_documents: })
   end
+
+  desc "Set default language on MadeLiveForms"
+  task set_default_language: :environment do
+    Rails.logger.info "forms:set_default_language starting"
+
+    MadeLiveForm.find_each do |made_live_form|
+      form_blob = JSON.parse(made_live_form.json_form_blob, symbolize_names: true)
+      form_blob[:language] = "en"
+
+      made_live_form.update!(json_form_blob: form_blob.to_json)
+    end
+
+    Rails.logger.info "forms:set_default_language finished"
+  end
 end
 
 def summarise_form_documents

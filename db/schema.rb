@@ -98,6 +98,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114304) do
     t.text "page_heading"
     t.text "guidance_markdown"
     t.boolean "is_repeatable", default: false, null: false
+    t.text "page_heading_en"
+    t.text "page_heading_cy"
+    t.text "question_text_en"
+    t.text "question_text_cy"
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 

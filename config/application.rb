@@ -45,6 +45,8 @@ module FormsApi
     # Include full precision of timestamps in JSON responses
     config.active_support.time_precision = 6
 
+    I18n.available_locales = %i[en cy]
+
     #### lOGGING #####
     # Include generic and useful information about system operation, but avoid logging too much
     # information to avoid inadvertent exposure of personally identifiable information (PII).

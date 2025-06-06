@@ -1,6 +1,9 @@
 require "govuk_forms_markdown"
 
 class Page < ApplicationRecord
+  extend Mobility
+  translates :question_text, :page_heading, locale_accessors: [:en, :cy]
+
   has_paper_trail
 
   before_destroy :destroy_secondary_skip_conditions

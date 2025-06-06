@@ -67,6 +67,9 @@ gem "aws-sdk-codepipeline", "~> 1.100"
 # For pagination in the API
 gem "kaminari"
 
+# For managing translated language for forms
+gem "mobility", "~> 1.3.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]

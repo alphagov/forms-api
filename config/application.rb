@@ -42,6 +42,8 @@ module FormsApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    I18n.available_locales = %i[en cy]
+
     #### lOGGING #####
     # Include generic and useful information about system operation, but avoid logging too much
     # information to avoid inadvertent exposure of personally identifiable information (PII).

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_142043) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_145213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,6 +99,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_142043) do
     t.text "page_heading"
     t.text "guidance_markdown"
     t.boolean "is_repeatable", default: false, null: false
+    t.text "page_heading_en"
+    t.text "page_heading_cy"
+    t.text "question_text_en"
+    t.text "question_text_cy"
     t.index ["form_id"], name: "index_pages_on_form_id"
   end
 

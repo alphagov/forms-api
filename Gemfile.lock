@@ -128,6 +128,7 @@ GEM
     diff-lcs (1.6.1)
     docile (1.4.0)
     drb (2.2.3)
+    erb (5.0.1)
     erubi (1.13.1)
     factory_bot (6.5.0)
       activesupport (>= 5.0.0)
@@ -247,7 +248,7 @@ GEM
       activesupport (= 8.0.2)
       bundler (>= 1.15.0)
       railties (= 8.0.2)
-    rails-dom-testing (2.2.0)
+    rails-dom-testing (2.3.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -263,8 +264,9 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.2.1)
-    rdoc (6.13.1)
+    rake (13.3.0)
+    rdoc (6.14.1)
+      erb
       psych (>= 4.0.0)
     redcarpet (3.6.0)
     regexp_parser (2.10.0)
@@ -329,10 +331,10 @@ GEM
       rubocop (~> 1.72, >= 1.72.1)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    sentry-rails (5.24.0)
+    sentry-rails (5.25.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.24.0)
-    sentry-ruby (5.24.0)
+      sentry-ruby (~> 5.25.0)
+    sentry-ruby (5.25.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     simplecov (0.22.0)
@@ -360,7 +362,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.7.2)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   aarch64-linux-gnu

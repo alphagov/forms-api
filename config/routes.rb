@@ -5,8 +5,8 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "/up" => "rails/health#show", as: :rails_health_check
 
-  get "/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
-  get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+  get "/security.txt" => redirect("https://vulnerability-reporting.service.security.gov.uk/.well-known/security.txt")
+  get "/.well-known/security.txt" => redirect("https://vulnerability-reporting.service.security.gov.uk/.well-known/security.txt")
 
   scope "api/v2", as: "api_v2" do
     resources :forms, controller: "api/v2/forms", only: %i[index show] do

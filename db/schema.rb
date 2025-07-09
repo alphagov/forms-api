@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_142043) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_114304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -89,7 +89,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_142043) do
     t.text "question_text"
     t.text "hint_text"
     t.text "answer_type"
-    t.integer "next_page"
     t.boolean "is_optional", null: false
     t.jsonb "answer_settings"
     t.datetime "created_at", null: false

@@ -77,6 +77,7 @@ class Form < ApplicationRecord
                 include: {
                   routing_conditions: { methods: :validation_errors },
                 },
+                methods: [:next_page],
               },
             }, methods: [:start_page]).merge(kwargs)
   end

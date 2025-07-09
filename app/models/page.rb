@@ -1,6 +1,8 @@
 require "govuk_forms_markdown"
 
 class Page < ApplicationRecord
+  self.ignored_columns += %w[next_page]
+
   has_paper_trail
 
   before_destroy :destroy_secondary_skip_conditions

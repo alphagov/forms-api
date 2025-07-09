@@ -302,7 +302,7 @@ RSpec.describe Form, type: :model do
   end
 
   describe "#snapshot" do
-    let(:snapshot) { create(:form).snapshot }
+    let(:snapshot) { create(:form, :with_pages).snapshot }
 
     it "creates a version of a form with its pages" do
       expect(snapshot.keys).to contain_exactly(
@@ -332,6 +332,36 @@ RSpec.describe Form, type: :model do
         "s3_bucket_region",
         "language",
       )
+    end
+
+    it "includes the form pages" do
+      pages = snapshot["pages"]
+      expect(pages).to all match(
+        a_hash_including(
+          "id",
+          "next_page",
+          "position",
+          "question_text",
+          "hint_text",
+          "answer_settings",
+          "is_optional",
+          "is_repeatable",
+          "page_heading",
+          "guidance_markdown",
+          "routing_conditions",
+        ),
+      )
+    end
+
+    it "includes the next page id for each page" do
+      pages = snapshot["pages"]
+      expect(pages).to match [
+        a_hash_including("position" => pages[0]["position"], "next_page" => pages[1]["id"]),
+        a_hash_including("position" => pages[0]["position"] + 1, "next_page" => pages[2]["id"]),
+        a_hash_including("position" => pages[0]["position"] + 2, "next_page" => pages[3]["id"]),
+        a_hash_including("position" => pages[0]["position"] + 3, "next_page" => pages[4]["id"]),
+        a_hash_including("position" => pages[0]["position"] + 4, "next_page" => nil),
+      ]
     end
   end
 

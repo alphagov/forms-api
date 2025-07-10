@@ -50,7 +50,7 @@ class Api::V1::FormsController < ApplicationController
 
   def make_live
     form.make_live!
-    render json: form.live_version, status: :ok
+    render json: form, status: :ok
   rescue AASM::InvalidTransition
     render json: form.incomplete_tasks.to_json, status: :forbidden
   end

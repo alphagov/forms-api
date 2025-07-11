@@ -45,13 +45,5 @@ Rails.application.routes.draw do
         get "/caller-identity", to: "api/v1/access_tokens#caller_identity", as: :show_details_for
       end
     end
-
-    scope :reports do
-      get "/add-another-answer-forms", to: "api/v1/reports#add_another_answer_forms"
-      get "/selection-questions-summary", to: "api/v1/reports#selection_questions_summary"
-      get "/selection-questions-with-autocomplete", to: "api/v1/reports#selection_questions_with_autocomplete"
-      get "/selection-questions-with-radios", to: "api/v1/reports#selection_questions_with_radios"
-      get "/selection-questions-with-checkboxes", to: "api/v1/reports#selection_questions_with_checkboxes"
-    end
   end
 end

@@ -21,7 +21,7 @@ private
     }
     if page["question_text"].present?
       step["type"] = "question_page"
-      step["data"] = page.slice(*%w[question_text hint_text answer_type is_optional answer_settings page_heading guidance_markdown is_repeatable])
+      step["data"] = page.slice(*%w[question_text question_text_en question_text_cy hint_text answer_type is_optional answer_settings page_heading page_heading_en page_heading_cy guidance_markdown is_repeatable])
     end
     step["routing_conditions"] = page.fetch("routing_conditions", [])
     step

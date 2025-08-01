@@ -1,4 +1,5 @@
 class Api::V2::FormDocumentsController < ApplicationController
+  around_action :set_locale, only: %i[show]
   before_action :set_form_document, only: %i[show]
 
   DEFAULT_PAGE_SIZE = 10
@@ -22,6 +23,11 @@ class Api::V2::FormDocumentsController < ApplicationController
   end
 
 private
+
+  def set_locale(&action)
+    locale = params[:locale] || I18n.default_locale
+    I18n.with_locale(locale, &action)
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_form_document

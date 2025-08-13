@@ -62,7 +62,7 @@ gem "sentry-ruby"
 gem "validate_url"
 
 # For pausing pipelines
-gem "aws-sdk-codepipeline", "~> 1.102"
+gem "aws-sdk-codepipeline", "~> 1.104"
 
 # For pagination in the API
 gem "kaminari"

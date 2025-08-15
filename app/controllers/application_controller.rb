@@ -65,6 +65,6 @@ private
   end
 
   def invalid_record(resource)
-    render json: resource.record.errors, status: :unprocessable_entity
+    render json: resource.record.errors, status: :unprocessable_content
   end
 end

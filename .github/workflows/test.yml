@@ -33,7 +33,7 @@ jobs:
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_api_test"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       # Add or replace dependency steps here
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.

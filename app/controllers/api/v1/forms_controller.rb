@@ -19,6 +19,7 @@ class Api::V1::FormsController < ApplicationController
       Api::V2::FormDocumentSyncService.new.synchronize_form(new_form)
       render json: new_form.to_json, status: :created
     else
+      Rails.logger.info("Error creating form", { errors: form.errors })
       render json: new_form.errors.to_json, status: :bad_request
     end
   end
@@ -34,6 +35,7 @@ class Api::V1::FormsController < ApplicationController
 
       render json: form.to_json, status: :ok
     else
+      Rails.logger.info("Error updating form", { errors: form.errors })
       render json: form.errors.to_json, status: :bad_request
     end
   end

@@ -338,10 +338,10 @@ GEM
       rubocop (~> 1.72, >= 1.72.1)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    sentry-rails (5.26.0)
+    sentry-rails (5.28.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.26.0)
-    sentry-ruby (5.26.0)
+      sentry-ruby (~> 5.28.0)
+    sentry-ruby (5.28.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     simplecov (0.22.0)
@@ -537,8 +537,8 @@ CHECKSUMS
   rubocop-rspec (3.6.0) sha256=c0e4205871776727e54dee9cc91af5fd74578001551ba40e1fe1a1ab4b404479
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-  sentry-rails (5.26.0) sha256=ae4d196dec9f722a40840c98dc8daec33ab4c98bc6c8e5f1a37a58df6449618c
-  sentry-ruby (5.26.0) sha256=37b82d4849683f7172cbdb0867ee6697e0d8ad8fe9c242b5df0edf690894554b
+  sentry-rails (5.28.0) sha256=a0cbba7ce86312172db9d1b3c39c5302de07e446e7df3f68e4f4b1d240a91fc2
+  sentry-ruby (5.28.0) sha256=745c1db3b85c765993dfeb941830aeafff82d85330cd953410c7f37197b0bd99
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5
   simplecov-html (0.12.3) sha256=4b1aad33259ffba8b29c6876c12db70e5750cb9df829486e4c6e5da4fa0aa07b
   simplecov_json_formatter (0.1.4) sha256=529418fbe8de1713ac2b2d612aa3daa56d316975d307244399fa4838c601b428

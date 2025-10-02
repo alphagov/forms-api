@@ -1,5 +1,10 @@
 ![tests status](https://github.com/alphagov/forms-api/actions/workflows/test.yml/badge.svg)
 
+> [!NOTE]
+> forms-api is now deprecated and is no longer a core part of the GOV.UK Forms service.
+> This repository will be archived in the near future.
+> Consider this document out of date and only of use for historical purposes.
+
 # GOV.UK Forms - API
 
 `forms-api` is the API for the GOV.UK Forms platform. It is a Ruby on Rails api app, currently using a Postgresql database for data storage and is used for storing/serving the form configurations that are created by form creators in [forms-admin](https://github.com/alphagov/forms-admin).

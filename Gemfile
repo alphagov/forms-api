@@ -20,7 +20,7 @@ gem "after_commit_everywhere", "~> 1.6"
 gem "pg", "~> 1.6"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 7.0"
+gem "puma", "~> 7.1"
 
 # Used for sorting/ordering of pages object
 gem "acts_as_list"

@@ -9,7 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (5.5.1)
+    aasm (5.5.2)
       concurrent-ruby (~> 1.0)
     actioncable (8.0.2.1)
       actionpack (= 8.0.2.1)
@@ -413,7 +413,7 @@ DEPENDENCIES
   validate_url
 
 CHECKSUMS
-  aasm (5.5.1) sha256=8cd7d59f43bf52d2e1bafcbf30b11de3b66a82d92f69a11ea3bc5a1898e1bce1
+  aasm (5.5.2) sha256=a3b874b33d9cbb3be4a2c77185c340a07fb46d7cd31911cbc49337e31d12612f
   actioncable (8.0.2.1) sha256=6f1cb20db39fba28a93569e8d5dab42b2749d7ddd4baebb5bbecd4217e49d6a2
   actionmailbox (8.0.2.1) sha256=8ea8c6e31e448961c06fc1d6282775b32aff1c009f232d4564e07e54850a6cad
   actionmailer (8.0.2.1) sha256=0de14d8d04541eab130858cb2f0697266be42de1afe1104bc43d7998137ddb9c

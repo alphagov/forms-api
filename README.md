@@ -2,7 +2,6 @@
 
 > [!NOTE]
 > forms-api is now deprecated and is no longer a core part of the GOV.UK Forms service.
-> This repository will be archived in the near future.
 > Consider this document out of date and only of use for historical purposes.
 
 # GOV.UK Forms - API
